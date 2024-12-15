@@ -1,0 +1,16 @@
+{
+  "name": "wheel-of-fortune",
+  "version": "1.0.0",
+  "description": "",
+  "main": "attr.blade.php",
+  "scripts": {
+    "start": "parcel attr.blade.php --open",
+    "build": "parcel build attr.blade.php"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "7.2.0",
+    "parcel-bundler": "^1.6.1"
+  },
+  "keywords": []
+}

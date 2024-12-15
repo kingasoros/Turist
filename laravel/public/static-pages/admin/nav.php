@@ -62,7 +62,7 @@
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
-            <a class="nav-link" href="attractions.php">
+                <a class="nav-link" href="attractions.php">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Látványosságok</span></a>
         </li>

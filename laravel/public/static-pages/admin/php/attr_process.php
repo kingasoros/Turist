@@ -58,8 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "Hiba történt: " . htmlspecialchars($e->getMessage());
         exit;
     }
+    header("Location:../attractions.php");
+    exit;
 }
+$stmt = $conn->prepare("SELECT * FROM attractions");
+$stmt->execute();
+$attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-header("Location: ../attractions.php");
-exit;
 ?>

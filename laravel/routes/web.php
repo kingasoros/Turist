@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Models\Order;
+use Illuminate\Http\Request;
+use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +17,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+Route::get('/search', function (Request $request) {
+    return Order::search($request->input('query'))->get();
+});
+
+Route::get('/search', [SearchController::class, 'search']);
+
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -21,6 +32,20 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/blogs', function () {
+    return view('static-pages.front.php.blogs');
+})->name('blogs');
+
+Route::get('/attractions', function () {
+    return view('static-pages.front.php.attractions');
+})->name('attractions');
+
+Route::get('/blogs_page/{id}', function ($id) {
+    return view('static-pages.front.php.blogs_page');
+})->name('blogs_page');
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

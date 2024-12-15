@@ -45,15 +45,24 @@ body, .homepage-box {
 .slider {
     background-image: url("../img/slider.jpg");
     background-position: center;
-    background-size: cover; 
+    background-size: cover;
     background-repeat: no-repeat;
     margin:0 !important;
     height: 440px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 }
 
 .slider-text {
     color: #fff;
-    margin-top: 158px;
+    text-align: center;
+    z-index: 1; /* Ensure text is on top */
+}
+
+.slider-text h1 {
+    font-size: 35px;
 }
 
 .logo-login{
@@ -62,11 +71,11 @@ body, .homepage-box {
 
 @media (max-width: 767.98px) {
     .slider-text h1 {
-        font-size: 1.5rem; 
+        font-size: 1.5rem;
     }
 
     .slider-text p {
-        font-size: 1rem; 
+        font-size: 1rem;
     }
 }
 

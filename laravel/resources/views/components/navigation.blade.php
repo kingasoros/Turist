@@ -1,5 +1,6 @@
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 navbar2">
 <!-- <nav x-data="{ open: false }" class="bg-custom-green border-b border-gray-100 navbar2"> -->
+
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -7,7 +8,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <img id="logoImage" src="img/logo.png" alt="Logo" loading="lazy" class="block h-16 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                        <img src="img/logo.png" alt="Logo" loading="lazy" class="block h-16 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
 
@@ -16,13 +17,6 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Home') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('blogs')" :active="request()->routeIs('blogs')">
-                        {{ __('Blogok') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('attractions')" :active="request()->routeIs('attractions')">
-                        {{ __('Látványosságok') }}
-                    </x-nav-link>
-
                 </div>
             </div>
 

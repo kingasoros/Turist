@@ -1,0 +1,119 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width:100%;
+}
+
+#wheelOfFortune {
+  /* display: inline-block; */
+  position: relative;
+  overflow: hidden;
+  margin: 7% 10%;
+}
+
+#wheel {
+  display: block;
+  margin: 0% auto;
+}
+
+#spin {
+  font: 1em/1 sans-serif;  /* A font méretét kisebbre állítjuk */
+  user-select: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Pontosan középre helyezi */
+  width: 100px; /* Gomb mérete */
+  height: 100px;
+  background: #fff;
+  color: #000;
+  box-shadow: 0 0 0 8px currentColor, 0 0 15px 5px rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  transition: 0.8s;
+}
+
+#spin::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 10px solid transparent;
+  border-bottom-color: currentColor;
+  border-top: none;
+}
+
+
+.content-container {
+  display: flex;
+}
+
+.wheel-box_first {
+  width: 65%;
+}
+
+.wheel-box_second {
+  width: 35%;
+}
+
+#wheelMessage{
+  color:#00c7efa6;
+  font-size: 16px;
+  font-family: Helvetica, sans-serif;
+  margin:1% 10%;
+  font-weight: bold;
+  text-align: center;
+}
+
+#selectedWord{
+  color:#00c7efa6;
+  font-size: 24px;
+  font-family: Helvetica, sans-serif;
+  margin:1% 10%;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.card-group{
+  margin:2%;
+}
+
+.blog_container{
+  background: #ffffff70;
+  padding: 1%;
+  width: 70%;
+  margin: 2% auto;
+  border-radius: 32px;
+}
+
+.blog_container h5{
+  font-size: 35px;
+}
+
+.blog_container p, .blog_container h5{
+  text-align: center;
+  color:#000;
+}
+
+.blog_container img{
+  margin: 5px auto;
+}
+
+.text-muted{
+  color:#464c51 !important;
+}
+
+#search{
+  margin-left:100px;
+  margin-top: 5px;
+  width:25%;
+}
