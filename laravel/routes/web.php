@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\TourController;
+use App\Http\Controllers\FavoriteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +47,22 @@ Route::get('/blogs_page/{id}', function ($id) {
     return view('static-pages.front.php.blogs_page');
 })->name('blogs_page');
 
+Route::get('/tours', function () {
+    return view('static-pages.front.php.tours');
+})->name('tours');
 
+Route::get('/tours_make', function () {
+    return view('static-pages.front.php.tours_make');
+})->name('tours_make');
+
+Route::get('/favorites', function () {
+    return view('static-pages.front.php.favorites');
+})->name('favorites');
+
+Route::post('/tours_make_process', [TourController::class, 'store'])->name('tours.store');
+
+Route::post('/add-to-favorites', [FavoritesController::class, 'addToFavorites'])->name('favorites.add');
+Route::post('/remove-from-favorites', [FavoritesController::class, 'removeFromFavorites'])->name('favorites.remove');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -54,3 +71,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+

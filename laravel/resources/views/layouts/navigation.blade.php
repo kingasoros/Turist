@@ -22,6 +22,9 @@
                     <x-nav-link :href="route('attractions')" :active="request()->routeIs('attractions')">
                         {{ __('Látványosságok') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('tours')" :active="request()->routeIs('tours')">
+                        {{ __('Túrák') }}
+                    </x-nav-link>
 
                 </div>
             </div>
@@ -42,8 +45,14 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <x-dropdown-link :href="route('tours_make')">
+                            {{ __('Túrák létrehozása') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link :href="route('favorites')">
+                            {{ __('Kedvencek') }}
+                        </x-dropdown-link>
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            {{ __('Profil') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -53,7 +62,7 @@
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                {{ __('Kijelentkezés') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
@@ -79,19 +88,33 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>
-
+        
         <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+        <div class="pt-4 pb-1 border-t dark:border-gray-600" style="background-color:#3b5147;">
             <div class="px-4">
                 <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
+                <x-responsive-nav-link :href="route('blogs')">
+                    {{ __('Blogok') }}
                 </x-responsive-nav-link>
-
+                <x-responsive-nav-link :href="route('attractions')">
+                    {{ __('Látványosságok') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('tours')">
+                    {{ __('Túrák') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('tours_make')">
+                    {{ __('Túrák létrehozása') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('favorites')">
+                    {{ __('Kedvencek') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('profile.edit')">
+                    {{ __('Beállítások') }}
+                </x-responsive-nav-link>
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -99,7 +122,7 @@
                     <x-responsive-nav-link :href="route('logout')"
                             onclick="event.preventDefault();
                                         this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                        {{ __('Kijelentkezés') }}
                     </x-responsive-nav-link>
                 </form>
             </div>

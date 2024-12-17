@@ -38,15 +38,18 @@ $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <x-app-layout>
-        <x-slot name="header">
+    <x-slot name="header">
+        <div class="header-container flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Látványosságok') }}
             </h2>
-        </x-slot>
-        <div>
-            <input type="text" id="search" placeholder="Keresés...">
-            <ul id="results"></ul>
+            <div class="search-container">
+                <input type="text" id="search" class="search-input" placeholder="Keresés...">
+                <ul id="results"></ul>
+            </div>
         </div>
+    </x-slot>
+
         <div class="content-container">
             <div class="wheel-box_first">
                 <?php if (!empty($attractions)){ ?>
@@ -88,24 +91,7 @@ $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
     </x-app-layout>
-    <script>
-        const searchInput = document.getElementById('search');
-        const resultsList = document.getElementById('results');
-
-        searchInput.addEventListener('input', async function () {
-            const query = searchInput.value;
-
-            if (query.length < 3) {
-                resultsList.innerHTML = '';
-                return;
-            }
-
-            const response = await fetch(`/search?query=${query}`);
-            const results = await response.json();
-
-            resultsList.innerHTML = results.map(result => `<li>${result.name}</li>`).join('');
-        });
-    </script>
+    
 </body>
 
 </html>

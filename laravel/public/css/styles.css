@@ -113,7 +113,36 @@ body {
 }
 
 #search{
-  margin-left:100px;
-  margin-top: 5px;
-  width:25%;
+  width:475px;
+}
+
+.header-container {
+  display: flex;
+}
+
+.search-container {
+  display: flex;
+}
+
+.card-header{
+  background-color: #d5a64d94;
+}
+
+/* .card-footer .text-muted{
+  color:#fff !important;
+} */
+
+.tours_make-container{
+  color:#fff;
+}
+
+.tours_input{
+  background-color: #ffffff73 !important;
+  border:1px solid #ced4da !important;
+  border-radius: .25rem !important;
+}
+
+.favorites_buttons{
+  justify-content: center;
+  align-items: center;
 }
