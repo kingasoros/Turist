@@ -30,16 +30,11 @@ $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <script src="{{ asset('js/index.js') }}"></script>
 
-    <style>
-        .text-muted {
-            color: #ffffffc4 !important;
-        }
-    </style>
 </head>
 <body>
     <x-app-layout>
     <x-slot name="header">
-        <div class="header-container flex items-center justify-between">
+        <div class="header-container flex items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Látványosságok') }}
             </h2>
@@ -54,7 +49,7 @@ $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="wheel-box_first">
                 <?php if (!empty($attractions)){ ?>
                     <?php foreach ($attractions as $attraction){ ?>
-                        <div class="card mb-3" style=" margin:5px; background-color:#002f3b; color:#fff;">
+                        <div class="card mb-3" style=" margin:5px; background-color:#002f3b; color:#fff;" data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>">
                             <div class="row g-0">
                                 <div class="col-md-4">
                                     <?php if (!empty($attraction['image'])){ ?>
@@ -86,12 +81,69 @@ $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <canvas id="wheel" width="500" height="500"></canvas>
                     <div id="spin">SPIN</div>
                 </div>
-                <h4 id="selectedWord"></h4> 
+                <h4 id="selectedWord"></h4>
             </div>
         </div>
 
     </x-app-layout>
-    
+    <footer>
+        <div class="footer__container">
+            <?php
+                $userAgent = $_SERVER['HTTP_USER_AGENT'];
+
+                if (preg_match('/mobile/i', $userAgent)) {
+                    // Ha mobil eszköz, akkor megjelenítjük a linket
+                    echo '<a class="app__text" href="https://example.com">Töltsd le az applikációt!</a>';
+                } else {
+                    // Ha asztali gép, nem jelenítünk meg semmit
+                    echo '';
+                }
+            ?>
+            <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('search').addEventListener('input', function () {
+    const query = this.value;
+
+    // AJAX request to the Laravel API
+    fetch(`/api/search?query=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';
+
+            // Display search results
+            data.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.name; // 'name' field of attractions
+
+                // Add event listener for clicking on a result
+                li.addEventListener('click', function () {
+                    // Log the name of the clicked attraction to the console
+                    console.log(item.name);
+
+                    // Hide the search results
+                    resultsContainer.innerHTML = '';
+                });
+
+                resultsContainer.appendChild(li);
+            });
+        });
+});
+
+// Close results when clicking outside of the search input or results
+document.addEventListener('click', function (event) {
+    const searchInput = document.getElementById('search');
+    const resultsContainer = document.getElementById('results');
+
+    if (!searchInput.contains(event.target) && !resultsContainer.contains(event.target)) {
+        resultsContainer.innerHTML = ''; // Hide the results when clicking outside
+    }
+});
+
+</script>
 </body>
 
 </html>

@@ -53,6 +53,22 @@ if ($id) {
         }
     }    
 </script>
+<footer>
+        <div class="footer__container">
+            <?php
+                $userAgent = $_SERVER['HTTP_USER_AGENT'];
+
+                if (preg_match('/mobile/i', $userAgent)) {
+                    // Ha mobil eszköz, akkor megjelenítjük a linket
+                    echo '<a class="app__text" href="https://example.com">Töltsd le az applikációt!</a>';
+                } else {
+                    // Ha asztali gép, nem jelenítünk meg semmit
+                    echo '';
+                }
+            ?>
+            <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>
 

@@ -1,0 +1,117 @@
+.info-blocks {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.info-block {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+    padding: 15px;
+    background-color: #333;
+    color: white;
+    border-radius: 8px;
+    margin: 1%;
+    box-shadow: 0 19px 27px rgba(0, 0, 0, 1.2); 
+}
+
+.info-block svg {
+    display: block;
+    margin: 0 auto 10px;
+}
+
+.footer__container{
+    background: #3b5147;
+    padding:2%;
+    margin-top:2%;
+  }
+  
+.app__text{
+    color:#fff;
+}
+
+.text-center{
+    margin:6% 1%;
+}
+
+.card {
+    border: 1px solid #3b5147;
+    background-color: #001d18;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+    background-color: #3b5147;
+    color: white;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.card-body {
+    padding: 20px;
+    text-align: center;
+}
+
+.card-title {
+    font-size: 24px;
+    color: #f4f4f4;
+    margin-bottom: 15px;
+}
+
+.card-text {
+    color: #b0b0b0;
+    margin-bottom: 20px;
+}
+
+.card-footer {
+    background-color: #3b5147;
+    color: white;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: #3b5147;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    text-transform: uppercase;
+}
+
+.btn-primary:hover {
+    background-color: #2d4135;
+}
+
+.gallery-images {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.gallery-images img {
+    width: 21%;  
+    margin: 1% auto;
+    border-radius: 8px;
+    justify-content: center;
+}
+
+@media (max-width: 1024px) {
+    .gallery-images img {
+        width: 48%;  
+    }
+}
+
+@media (max-width: 768px) {
+    .info-blocks {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .gallery-images img {
+        width: 95%;
+    }
+}

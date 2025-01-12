@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Tour;
+use App\Models\Attraction;
+
 
 class TourController extends Controller
 {
@@ -41,4 +44,23 @@ class TourController extends Controller
 
         return redirect()->route('tours_make')->with('success', 'Túra sikeresen létrehozva!');
     }
+
+    public function destroy(Tour $tour)
+    {
+        $tour->attractions()->detach();
+        
+        $tour->delete();
+
+        return redirect()->route('tours_make')->with('success', 'Túra sikeresen törölve!');
+        // return redirect()->route('tours.index')->with('success', 'Túra sikeresen törölve!');
+    }
+
+
+    public function index()
+    {
+        $tours = Tour::all(); 
+        return view('static-pages.front.php.tours', compact('tours'));
+
+    }
+
 }

@@ -192,7 +192,11 @@ foreach ($tours as $tour) {
                             <p class="text-muted">Nincsenek látványosságok a túrához.</p>
                         <?php } ?>
                         <div class="favorites_buttons">
-                            <a href="#" class="btn btn-dark mt-3">Delete from my list</a>
+                            <form action="{{ route('tours.destroy', $tour['id']) }}" method="POST" onsubmit="return confirm('Biztos, hogy törölni szeretnéd ezt a túrát?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger mt-3">Törlés</button>
+                            </form>
                         </div>
                     </div>
                     <div class="card-footer text-center py-2">

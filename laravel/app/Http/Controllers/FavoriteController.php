@@ -7,35 +7,45 @@ use Illuminate\Support\Facades\DB;
 
 class FavoriteController extends Controller
 {
-    public function addToFavorites(Request $request)
+    public function store(Request $request)
     {
-        // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
-        $userId = Auth::id();
-        if (!$userId) {
-            return response()->json(['message' => 'Not authenticated'], 401);
-        }
-
-        // A kérés validálása
         $request->validate([
-            'attractions_id' => 'required|integer|exists:attractions,attractions_id',
+            'tour_id' => 'required|integer|exists:tours,tour_id',
         ]);
 
-        // Ellenőrizzük, hogy már nem szerepel-e a kedvencek között
-        $existingFavorite = DB::table('turist_favorites')
-            ->where('id', $userId)
-            ->where('attractions_id', $request->input('attractions_id'))
-            ->exists();
+        $userId = Auth::id();
+        $tourId = $request->tour_id;
 
-        if ($existingFavorite) {
-            return response()->json(['message' => 'Already in favorites!'], 409);
+        $existingFavorite = DB::table('turist_favorites')
+                            ->where('id', $userId)
+                            ->where('tour_id', $tourId)
+                            ->exists();
+
+        if (!$existingFavorite) {
+            DB::table('turist_favorites')->insert([
+                'id' => $userId,
+                'tour_id' => $tourId,
+            ]);
         }
 
-        // Adatbevitel a `turist_favorites` táblába
-        DB::table('turist_favorites')->insert([
-            'id' => $userId,
-            'attractions_id' => $request->input('attractions_id'),
-        ]);
-
-        return response()->json(['message' => 'Added to favorites successfully!']);
+        return redirect()->back()->with('favorite_added', true);
     }
+
+    public function delete(Request $request)
+    {
+        $userId = $request->input('user_id');
+        $tourId = $request->input('tour_id');
+
+        $deleted = DB::table('turist_favorites')
+                    ->where('id', $userId)
+                    ->where('tour_id', $tourId)
+                    ->delete();
+
+        if ($deleted) {
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
 }

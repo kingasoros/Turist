@@ -1,4 +1,6 @@
 <?php
+use App\Models\Tour;
+
 include base_path('resources/views/static-pages/front/php/db_conn.php');
 
 $stmt = $conn->prepare("
@@ -104,7 +106,21 @@ foreach ($tours as $tour) {
                         <p class="text-muted">Nincsenek látványosságok a túrához.</p>
                     <?php } ?>
                     
-                    <a href="#" class="btn btn-dark mt-3">Add to my list</a>
+                    <form method="POST" action="{{ url('/add-to-favorites') }}">
+                        @csrf <!-- Laravel CSRF token -->
+                        <input type="hidden" name="tour_id" value="{{ $tour['id'] }}"> 
+                        <input type="hidden" name="user_id" value="{{ Auth::id() }}"> 
+                        
+                        <button type="submit" class="btn btn-dark mt-3" 
+                            @if(\App\Models\Tour::find($tour['id'])->isFavorite(Auth::id())) disabled @endif>
+                            @if(\App\Models\Tour::find($tour['id'])->isFavorite(Auth::id())) 
+                                Kedvencek között
+                            @else
+                                Tetszik
+                            @endif
+                        </button>
+                    </form>
+
                 </div>
                 <div class="card-footer bg-secondary text-white text-center py-2">
                     <small><?= date('Y-m-d', strtotime($tour['created_at'] ?? 'now')) ?></small>
@@ -118,5 +134,21 @@ foreach ($tours as $tour) {
     </div>
 </div>
 </x-app-layout>
+<footer>
+        <div class="footer__container">
+            <?php
+                $userAgent = $_SERVER['HTTP_USER_AGENT'];
+
+                if (preg_match('/mobile/i', $userAgent)) {
+                    // Ha mobil eszköz, akkor megjelenítjük a linket
+                    echo '<a class="app__text" href="https://example.com">Töltsd le az applikációt!</a>';
+                } else {
+                    // Ha asztali gép, nem jelenítünk meg semmit
+                    echo '';
+                }
+            ?>
+            <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>

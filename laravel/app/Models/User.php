@@ -17,10 +17,14 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    // Ha szükséges, adjuk hozzá az is_active mezőt az `$fillable` vagy `$casts` tömbhöz
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'name', 'email', 'password', 'is_active',
+    ];
+
+    // Biztosítjuk, hogy az is_active bool típusú legyen
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     /**
@@ -33,12 +37,4 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
 }

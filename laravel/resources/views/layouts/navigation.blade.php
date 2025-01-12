@@ -116,6 +116,14 @@
                     {{ __('Beállítások') }}
                 </x-responsive-nav-link>
                 <!-- Authentication -->
+                <!-- <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+
+                    <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
+                        {{ __('Kijelentkezés') }}
+                    </x-dropdown-link>
+                </form> -->
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
 

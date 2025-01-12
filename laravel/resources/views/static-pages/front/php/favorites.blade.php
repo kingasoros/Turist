@@ -54,7 +54,6 @@ foreach ($tours as $tour) {
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ asset('css/styles_1.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
 </head>
 <body>
 <x-app-layout>
@@ -67,12 +66,14 @@ foreach ($tours as $tour) {
         <div class="row">
         <?php if (!empty($toursGrouped)) { ?>
         <?php foreach ($toursGrouped as $tour) { ?>
-            <div class="col-12 col-md-6 mb-4">
+            <!-- Show the tour_id here -->
+            <div class="col-12 col-md-6 mb-4" id="tour-<?= htmlspecialchars($tour['id']) ?>">
                 <div class="card">
-                <div class="card-header text-white text-center py-3">
-                    <h4><?= htmlspecialchars($tour['tour_name']) ?> <i class="fas fa-heart text-danger"></i></h4>
-                </div>
+                    <div class="card-header text-white text-center py-3">
+                        <h4><?= htmlspecialchars($tour['tour_name']) ?> <i class="fas fa-heart text-danger"></i></h4>
+                    </div>
                     <div class="card-body">
+                        
                         <h5 class="card-title text-secondary"><?= htmlspecialchars($tour['tour_description'] ?? 'Nincs leírás') ?></h5>
                         <p class="card-text text-muted">Felbecsült ár: <?= htmlspecialchars($tour['price'] ?? 'Nincs ár megadva') ?></p>
 
@@ -83,11 +84,9 @@ foreach ($tours as $tour) {
                                     <li class="list-group-item d-flex align-items-center py-3">
                                         <strong class="mr-2"><?= htmlspecialchars($attraction['name']) ?>:</strong>
                                         <div class="row w-100">
-                                            <!-- Leírás oszlop -->
                                             <div class="col-md-6">
                                                 <small class="text-muted"><?= htmlspecialchars($attraction['description'] ?? 'Nincs leírás') ?></small>
                                             </div>
-                                            <!-- Kép oszlop -->
                                             <div class="col-md-6 text-center">
                                                 <?php if (!empty($attraction['image'])) { ?>
                                                     <img src="http://localhost/Turist/img/<?= htmlspecialchars($attraction['image']) ?>" alt="<?= htmlspecialchars($attraction['name']) ?>">
@@ -100,9 +99,18 @@ foreach ($tours as $tour) {
                         <?php } else { ?>
                             <p class="text-muted">Nincsenek látványosságok a túrához.</p>
                         <?php } ?>
-                        <div class="favorites_buttons">
-                            <a href="#" class="btn btn-dark mt-3">Delete from my list</a>
-                        </div>
+
+                        <?php if (isset($tour['id'])) { ?>
+                            <form id="deleteForm-<?= htmlspecialchars($tour['id']) ?>" action="{{ route('favorites.delete') }}" method="POST" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <input type="hidden" name="tour_id" value="<?= htmlspecialchars($tour['id']) ?>">
+                                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+                                <button type="button" class="btn btn-dark mt-3" onclick="deleteFavorite(<?= htmlspecialchars($tour['id']) ?>)">Törlés a kedvencekből</button>
+                            </form>
+                        <?php } else { ?>
+                            <p class="text-danger">Tour ID hiányzik</p>
+                        <?php } ?>
                     </div>
                     <div class="card-footer text-center py-2">
                         <small><?= date('Y-m-d', strtotime($tour['created_at'] ?? 'now')) ?></small>
@@ -116,5 +124,48 @@ foreach ($tours as $tour) {
         </div>
     </div>
 </x-app-layout>
+<footer>
+        <div class="footer__container">
+            <?php
+                $userAgent = $_SERVER['HTTP_USER_AGENT'];
+
+                if (preg_match('/mobile/i', $userAgent)) {
+                    // Ha mobil eszköz, akkor megjelenítjük a linket
+                    echo '<a class="app__text" href="https://example.com">Töltsd le az applikációt!</a>';
+                } else {
+                    // Ha asztali gép, nem jelenítünk meg semmit
+                    echo '';
+                }
+            ?>
+            <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
+        </div>
+    </footer>
+<script>
+    function deleteFavorite(tourId) {
+        var form = document.getElementById('deleteForm-' + tourId);
+        var formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                var tourCard = document.getElementById('tour-' + tourId);
+                if (tourCard) {
+                    tourCard.remove();
+                }
+                alert('Túra sikeresen törölve a listádról.');
+            } else {
+                alert('Hiba történt a törlés során.');
+            }
+        })
+        .catch(error => {
+            console.error('Hiba történt:', error);
+            alert('Hiba történt a törlés során.');
+        });
+    }
+</script>
 </body>
 </html>
