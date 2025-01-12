@@ -24,8 +24,14 @@ require __DIR__.'/auth.php';
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/', function () {
+    return view('welcome'); 
+})->name('home');
+
 Route::middleware(['auth', 'is_active'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
 Route::get('/search', function (Request $request) {
     return Order::search($request->input('query'))->get();
@@ -96,10 +102,10 @@ Route::get('/users/{id}/approve/{token}', [AdminUserController::class, 'approveU
 Route::get('/users/{id}/decline/{token}', [AdminUserController::class, 'declineUser']);
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-});
 
 Route::post('/logout', function () {
     Auth::logout();
-    return redirect('/');  // Kijelentkezés után irányítás a főoldalra
+    return redirect('/'); 
 })->name('logout');
+
 Route::get('/users/{id}/activate/{token}', [AdminUserController::class, 'activateUser']);

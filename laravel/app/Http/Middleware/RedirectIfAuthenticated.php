@@ -29,10 +29,11 @@ class RedirectIfAuthenticated
 
     //     return $next($request);
     // }
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         if (Auth::check()) {
-            return redirect(RouteServiceProvider::HOME);
+            // Bejelentkezés után a dashboard-ra irányítson
+            return redirect()->route('dashboard');
         }
 
         return $next($request);
