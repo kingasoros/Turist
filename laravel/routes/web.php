@@ -123,3 +123,31 @@ Route::get('/activate/{token}', function ($token) {
 
     return redirect('/')->with('message', 'Fiókod aktiválva lett!');
 })->name('activate.account');
+
+Route::post('/api/saveSelectedName', function (Request $request) {
+    session(['selectedName' => $request->name]);  // Kiválasztott név mentése a session-ba
+    return response()->json(['success' => true]);
+});
+
+Route::get('/api/getAttractions', function (Request $request) {
+    $selectedName = $request->query('selectedName', '');
+
+    $stmt = DB::connection()->getPdo()->prepare("SELECT * FROM attractions");
+    $stmt->execute();
+    $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (!empty($selectedName)) {
+        $selectedAttraction = DB::connection()->getPdo()->prepare("SELECT * FROM attractions WHERE name = :name LIMIT 1");
+        $selectedAttraction->bindParam(':name', $selectedName, PDO::PARAM_STR);
+        $selectedAttraction->execute();
+        $selectedAttraction = $selectedAttraction->fetch(PDO::FETCH_ASSOC);
+
+        $attractions = array_filter($attractions, function ($attraction) use ($selectedName) {
+            return $attraction['name'] !== $selectedName;
+        });
+
+        array_unshift($attractions, $selectedAttraction);
+    }
+
+    return response()->json($attractions);
+});

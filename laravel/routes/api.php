@@ -20,3 +20,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/search', [AttractionController::class, 'search']);
+
+// Route::post('/saveSelectedName', function (Request $request) {
+//     $selectedName = $request->input('name');
+//     session(['selectedName' => $selectedName]);
+//     \Log::info('Session updated:', ['selectedName' => $selectedName]);
+//     return response()->json(['success' => true]);
+// });
+
+
+
+
+

@@ -187,3 +187,11 @@ body {
 .app__text{
   color:#fff;
 }
+
+#selectedWord {
+  cursor: pointer;
+}
+
+#selectedWord:hover {
+  text-decoration: underline;
+}

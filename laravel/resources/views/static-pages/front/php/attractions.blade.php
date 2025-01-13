@@ -1,21 +1,35 @@
 <?php
 include base_path('resources/views/static-pages/front/php/db_conn.php');
 
-$stmt = $conn->prepare("SELECT name FROM attractions ORDER BY RAND() LIMIT 10");
-$stmt->execute();
-$attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
-
-<script>
-    const sectors = <?= json_encode(array_map(fn($attraction) => ['color' => '', 'label' => $attraction['name']], $attractions)); ?>;
-</script>
-<?php
-
 $stmt = $conn->prepare("SELECT * FROM attractions");
 $stmt->execute();
 $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$selectedName = session('selectedName', '');  // Laravel session metódus
+$selectedAttraction = null;
+
+// Ha a selectedName nem üres, módosítjuk az attractions listát
+if (!empty($selectedName)) {
+    $stmt = $conn->prepare("SELECT * FROM attractions WHERE name = :name LIMIT 1");
+    $stmt->bindParam(':name', $selectedName, PDO::PARAM_STR);
+    $stmt->execute();
+    $selectedAttraction = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // A kiválasztott látványosságot helyezzük az első helyre
+    $attractions = array_filter($attractions, function ($attraction) use ($selectedName) {
+        return $attraction['name'] !== $selectedName;
+    });
+
+    // Tegyük az első helyre a kiválasztott látványosságot
+    if ($selectedAttraction) {
+        array_unshift($attractions, $selectedAttraction);
+    }
+}
 ?>
+<script>
+    const sectors = <?= json_encode(array_map(fn($attraction) => ['color' => '', 'label' => $attraction['name']], $attractions)); ?>;
+</script>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,6 +58,8 @@ $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
     </x-slot>
+
+    <?php $selectedName = session('selectedName', ''); ?>
 
         <div class="content-container">
             <div class="wheel-box_first">
@@ -81,7 +97,7 @@ $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <canvas id="wheel" width="500" height="500"></canvas>
                     <div id="spin">SPIN</div>
                 </div>
-                <h4 id="selectedWord"></h4>
+                <h4 id="selectedWord" onclick="copyToClipboard()"></h4>
             </div>
         </div>
 
@@ -102,30 +118,48 @@ $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
         </div>
     </footer>
-
-    <script>
+<script>
         document.getElementById('search').addEventListener('input', function () {
     const query = this.value;
 
-    // AJAX request to the Laravel API
+    // AJAX kérés a Laravel API-hoz
     fetch(`/api/search?query=${encodeURIComponent(query)}`)
         .then(response => response.json())
         .then(data => {
             const resultsContainer = document.getElementById('results');
             resultsContainer.innerHTML = '';
 
-            // Display search results
+            // A találatok megjelenítése
             data.forEach(item => {
                 const li = document.createElement('li');
-                li.textContent = item.name; // 'name' field of attractions
+                li.textContent = item.name;  // 'name' mező az attractions táblából
 
-                // Add event listener for clicking on a result
+                // Kattintás esemény a találat kiválasztásához
                 li.addEventListener('click', function () {
-                    // Log the name of the clicked attraction to the console
-                    console.log(item.name);
+                    const selectedName = item.name;
 
-                    // Hide the search results
-                    resultsContainer.innerHTML = '';
+                    // AJAX kérés a kiválasztott név mentésére a session-ba
+                    fetch('/api/saveSelectedName', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}', // Laravel CSRF token
+                        },
+                        body: JSON.stringify({ name: selectedName }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // console.log('Név mentve:', selectedName);
+
+                            // Az oldalon a mentett név frissítése
+                            const savedNameElement = document.querySelector('p');
+                            // savedNameElement.textContent = `Mentett név: ${selectedName}`;
+
+                            // A látványosságok sorrendjének frissítése AJAX segítségével
+                            updateAttractionsOrder(selectedName);
+                        }
+                    });
                 });
 
                 resultsContainer.appendChild(li);
@@ -133,17 +167,68 @@ $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
         });
 });
 
-// Close results when clicking outside of the search input or results
+// A látványosságok sorrendjének frissítése
+function updateAttractionsOrder(selectedName) {
+    fetch(`/api/getAttractions?selectedName=${encodeURIComponent(selectedName)}`)
+        .then(response => response.json())
+        .then(data => {
+            // A DOM frissítése az új sorrenddel
+            const attractionsContainer = document.querySelector('.wheel-box_first');
+            attractionsContainer.innerHTML = ''; // Töröljük az eddigi tartalmat
+
+            data.forEach(attraction => {
+                const card = document.createElement('div');
+                card.className = 'card mb-3';
+                card.style = 'margin:5px; background-color:#002f3b; color:#fff;';
+                card.innerHTML = `
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="http://localhost/Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%;">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">${attraction.name}</h5>
+                                <p class="card-text">${attraction.description}</p>
+                                <p class="card-text"><small class="text-muted">${attraction.address}</small></p>
+                                <p class="card-text"><small class="text-muted">${attraction.created_by}</small></p>
+                                <p class="card-text"><small class="text-muted">${attraction.city_name}</small></p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                attractionsContainer.appendChild(card);
+            });
+        });
+}
+
+// Kattintás kívül, hogy eltüntesse a keresési találatokat
 document.addEventListener('click', function (event) {
     const searchInput = document.getElementById('search');
     const resultsContainer = document.getElementById('results');
 
     if (!searchInput.contains(event.target) && !resultsContainer.contains(event.target)) {
-        resultsContainer.innerHTML = ''; // Hide the results when clicking outside
+        resultsContainer.innerHTML = ''; // Eltünteti a találatokat, ha kívül kattintanak
     }
 });
 
+function copyToClipboard() {
+    // Az elem, aminek a szövegét másolni szeretnénk
+    var text = document.getElementById("selectedWord").innerText;
+
+    // Létrehozunk egy ideiglenes input mezőt a másoláshoz
+    var tempInput = document.createElement("input");
+    document.body.appendChild(tempInput);
+    tempInput.value = text;  // Beállítjuk az input mező értékét a szövegre
+    tempInput.select();  // Kiválasztjuk az input mezőt
+    document.execCommand("copy");  // Másolás
+
+    // Eltávolítjuk az ideiglenes input mezőt
+    document.body.removeChild(tempInput);
+
+    // Informáljuk a felhasználót (opcionális)
+    alert("Szöveg másolva: " + text);
+}
+
 </script>
 </body>
-
 </html>
