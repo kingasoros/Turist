@@ -38,7 +38,6 @@
                     <th>Cím</th>
                     <th>Szerző</th>
                     <th>Szöveg</th>
-                    <th>Kép</th>
                     <th>Műveletek</th>
                 </tr>
             </thead>
@@ -50,14 +49,12 @@
                         <td><?= htmlspecialchars($blog['title']) ?></td>
                         <td><?= htmlspecialchars($blog['author']) ?></td>
                         <td><?= htmlspecialchars(substr($blog['content'], 0, 10)) . (strlen($blog['content']) > 10 ? '...' : '') ?></td>
-                        <td><img src="<?= htmlspecialchars($blog['image']) ?>" alt="Blog image" style="width: 100px; height: auto;"></td>
                         <td>
                             <button class="btn btn-sm btn-warning edit-btn" 
                                 data-id="<?= htmlspecialchars($blog['id']) ?>"
                                 data-title="<?= htmlspecialchars($blog['title']) ?>"
                                 data-content="<?= htmlspecialchars($blog['content']) ?>"
                                 data-author="<?= htmlspecialchars($blog['author']) ?>"
-                                data-image="<?= htmlspecialchars($blog['image']) ?>"
                                 data-toggle="modal" 
                                 data-target="#editBlogModal">Szerkesztés</button>
 

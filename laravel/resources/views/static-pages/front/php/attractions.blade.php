@@ -57,40 +57,63 @@ if (!empty($selectedName)) {
                 <ul id="results"></ul>
             </div>
         </div>
+        <div class="filters-container">
+            <label for="city"></label>
+            <select id="city" class="filter-input">
+                <option value="">Város</option>
+                <!-- Városok listája itt fog megjelenni -->
+            </select>
+
+            <label for="type"></label>
+            <select id="type" class="filter-input">
+                <option value="">Típus</option>
+                <!-- Típusok listája itt fog megjelenni -->
+            </select>
+
+            <label for="interest"></label>
+            <select id="interest" class="filter-input">
+                <option value="">Érdeklődés</option>
+                <!-- Érdeklődési körök listája itt fog megjelenni -->
+            </select>
+
+            <button class="search__button" id="apply-filters">Keresés</button>
+        </div>
+
     </x-slot>
 
     <?php $selectedName = session('selectedName', ''); ?>
 
-        <div class="content-container">
-            <div class="wheel-box_first">
-                <?php if (!empty($attractions)){ ?>
-                    <?php foreach ($attractions as $attraction){ ?>
-                        <div class="card mb-3" style=" margin:5px; background-color:#002f3b; color:#fff;" data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>">
-                            <div class="row g-0">
-                                <div class="col-md-4">
-                                    <?php if (!empty($attraction['image'])){ ?>
-                                        <img src="http://localhost/Turist/img/<?= htmlspecialchars($attraction['image']) ?>" alt="<?= htmlspecialchars($attraction['name']) ?>" style="height:100%;">
-                                    <?php }else{ ?>
-                                        <img src=".." class="img-fluid rounded-start" alt="...">
-                                    <?php } ?>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title" style="font-weight:bold; font-size:20px;"><?= htmlspecialchars($attraction['name']) ?></h5>
-                                        <p class="card-text"><?= htmlspecialchars($attraction['description']) ?></p>
-                                        <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['address']) ?></small></p>
-                                        <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['created_by']) ?></small></p>
-                                        <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['city_name']) ?></small></p>
-                                    </div>
-                                </div>
+    <div class="content-container">
+    <div class="wheel-box_first">
+        <?php if (!empty($attractions)){ ?>
+            <?php foreach ($attractions as $attraction){ ?>
+                <div class="card mb-3" style=" margin:5px; background-color:#002f3b; color:#fff;" data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <?php if (!empty($attraction['image'])){ ?>
+                                <img src="http://localhost/Turist/img/<?= htmlspecialchars($attraction['image']) ?>" alt="<?= htmlspecialchars($attraction['name']) ?>" style="height:100%;">
+                            <?php }else{ ?>
+                                <img src=".." class="img-fluid rounded-start" alt="...">
+                            <?php } ?>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-weight:bold; font-size:20px;"><?= htmlspecialchars($attraction['name']) ?></h5>
+                                <p class="card-text"><?= htmlspecialchars($attraction['description']) ?></p>
+                                <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['address']) ?></small></p>
+                                <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['created_by']) ?></small></p>
+                                <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['city_name']) ?></small></p>
+                                <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['type']) ?></small></p>
+                                <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['interest']) ?></small></p>
                             </div>
                         </div>
-                    <?php }
-                } else { ?>
-                    <p>Nincsenek elérhető adatok.</p>
-                <?php } ?>
-            </div>
-
+                    </div>
+                </div>
+            <?php }
+        } else { ?>
+            <p>Nincsenek elérhető adatok.</p>
+        <?php } ?>
+    </div>
             <div id="wheel-box_second">
                 <h3 id="wheelMessage">Túl sok látványosság, és nem tudsz dönteni? Bízd a szerencsére! Pörgesd meg a kereket, és fedezz fel valami izgalmasat!</h3>
                 <div id="wheelOfFortune">
@@ -108,10 +131,8 @@ if (!empty($selectedName)) {
                 $userAgent = $_SERVER['HTTP_USER_AGENT'];
 
                 if (preg_match('/mobile/i', $userAgent)) {
-                    // Ha mobil eszköz, akkor megjelenítjük a linket
                     echo '<a class="app__text" href="https://example.com">Töltsd le az applikációt!</a>';
                 } else {
-                    // Ha asztali gép, nem jelenítünk meg semmit
                     echo '';
                 }
             ?>
@@ -119,10 +140,10 @@ if (!empty($selectedName)) {
         </div>
     </footer>
 <script>
-        document.getElementById('search').addEventListener('input', function () {
+    document.getElementById('search').addEventListener('input', function () {
     const query = this.value;
 
-    // AJAX kérés a Laravel API-hoz
+    // AJAX kérés a Laravel API-hoz a kereséshez
     fetch(`/api/search?query=${encodeURIComponent(query)}`)
         .then(response => response.json())
         .then(data => {
@@ -132,7 +153,7 @@ if (!empty($selectedName)) {
             // A találatok megjelenítése
             data.forEach(item => {
                 const li = document.createElement('li');
-                li.textContent = item.name;  // 'name' mező az attractions táblából
+                li.textContent = item.name; 
 
                 // Kattintás esemény a találat kiválasztásához
                 li.addEventListener('click', function () {
@@ -143,20 +164,13 @@ if (!empty($selectedName)) {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}', // Laravel CSRF token
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
                         body: JSON.stringify({ name: selectedName }),
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // console.log('Név mentve:', selectedName);
-
-                            // Az oldalon a mentett név frissítése
-                            const savedNameElement = document.querySelector('p');
-                            // savedNameElement.textContent = `Mentett név: ${selectedName}`;
-
-                            // A látványosságok sorrendjének frissítése AJAX segítségével
                             updateAttractionsOrder(selectedName);
                         }
                     });
@@ -172,9 +186,8 @@ function updateAttractionsOrder(selectedName) {
     fetch(`/api/getAttractions?selectedName=${encodeURIComponent(selectedName)}`)
         .then(response => response.json())
         .then(data => {
-            // A DOM frissítése az új sorrenddel
             const attractionsContainer = document.querySelector('.wheel-box_first');
-            attractionsContainer.innerHTML = ''; // Töröljük az eddigi tartalmat
+            attractionsContainer.innerHTML = ''; 
 
             data.forEach(attraction => {
                 const card = document.createElement('div');
@@ -192,6 +205,8 @@ function updateAttractionsOrder(selectedName) {
                                 <p class="card-text"><small class="text-muted">${attraction.address}</small></p>
                                 <p class="card-text"><small class="text-muted">${attraction.created_by}</small></p>
                                 <p class="card-text"><small class="text-muted">${attraction.city_name}</small></p>
+                                <p class="card-text"><small class="text-muted">${attraction.type}</small></p>
+                                <p class="card-text"><small class="text-muted">${attraction.interest}</small></p>
                             </div>
                         </div>
                     </div>
@@ -201,31 +216,108 @@ function updateAttractionsOrder(selectedName) {
         });
 }
 
+
 // Kattintás kívül, hogy eltüntesse a keresési találatokat
 document.addEventListener('click', function (event) {
     const searchInput = document.getElementById('search');
     const resultsContainer = document.getElementById('results');
 
     if (!searchInput.contains(event.target) && !resultsContainer.contains(event.target)) {
-        resultsContainer.innerHTML = ''; // Eltünteti a találatokat, ha kívül kattintanak
+        resultsContainer.innerHTML = ''; 
     }
 });
 
+// Városok, típusok és érdeklődési körök lista betöltése
+fetch('/api/cities')
+    .then(response => response.json())
+    .then(cities => {
+        const citySelect = document.getElementById('city');
+        cities.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+        });
+    });
+
+fetch('/api/types')
+    .then(response => response.json())
+    .then(types => {
+        const typeSelect = document.getElementById('type');
+        types.forEach(type => {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            typeSelect.appendChild(option);
+        });
+    });
+
+fetch('/api/interests')
+    .then(response => response.json())
+    .then(interests => {
+        const interestSelect = document.getElementById('interest');
+        interests.forEach(interest => {
+            const option = document.createElement('option');
+            option.value = interest;
+            option.textContent = interest;
+            interestSelect.appendChild(option);
+        });
+    });
+
+
+// Keresés alkalmazása a szűrőre
+document.getElementById('apply-filters').addEventListener('click', function () {
+    const city = document.getElementById('city').value;
+    const type = document.getElementById('type').value;
+    const interest = document.getElementById('interest').value;
+
+    // AJAX kérés a város, típus és érdeklődési kör szűrésére
+    fetch(`/api/getAttractionsByFilters?city=${encodeURIComponent(city)}&type=${encodeURIComponent(type)}&interest=${encodeURIComponent(interest)}`)
+        .then(response => response.json())
+        .then(data => {
+            const attractionsContainer = document.querySelector('.wheel-box_first');
+            attractionsContainer.innerHTML = ''; // Az előző találatok törlése
+
+            data.forEach(attraction => {
+                const card = document.createElement('div');
+                card.className = 'card mb-3';
+                card.style = 'margin:5px; background-color:#002f3b; color:#fff;';
+                card.innerHTML = `
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="http://localhost/Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%;">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">${attraction.name}</h5>
+                                <p class="card-text">${attraction.description}</p>
+                                <p class="card-text"><small class="text-muted">${attraction.address}</small></p>
+                                <p class="card-text"><small class="text-muted">${attraction.created_by}</small></p>
+                                <p class="card-text"><small class="text-muted">${attraction.city_name}</small></p>
+                                <p class="card-text"><small class="text-muted">${attraction.type}</small></p>
+                                <p class="card-text"><small class="text-muted">${attraction.interest}</small></p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                attractionsContainer.appendChild(card);
+            });
+        });
+});
+
+
+
 function copyToClipboard() {
-    // Az elem, aminek a szövegét másolni szeretnénk
     var text = document.getElementById("selectedWord").innerText;
 
-    // Létrehozunk egy ideiglenes input mezőt a másoláshoz
     var tempInput = document.createElement("input");
     document.body.appendChild(tempInput);
-    tempInput.value = text;  // Beállítjuk az input mező értékét a szövegre
-    tempInput.select();  // Kiválasztjuk az input mezőt
-    document.execCommand("copy");  // Másolás
+    tempInput.value = text;  
+    tempInput.select();  
+    document.execCommand("copy");  
 
-    // Eltávolítjuk az ideiglenes input mezőt
     document.body.removeChild(tempInput);
 
-    // Informáljuk a felhasználót (opcionális)
     alert("Szöveg másolva: " + text);
 }
 

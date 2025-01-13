@@ -129,6 +129,11 @@ Route::post('/api/saveSelectedName', function (Request $request) {
     return response()->json(['success' => true]);
 });
 
+Route::get('/api/cities', function () {
+    $cities = DB::table('attractions')->distinct()->pluck('city_name');
+    return response()->json($cities);
+});
+
 Route::get('/api/getAttractions', function (Request $request) {
     $selectedName = $request->query('selectedName', '');
 
@@ -148,6 +153,48 @@ Route::get('/api/getAttractions', function (Request $request) {
 
         array_unshift($attractions, $selectedAttraction);
     }
+
+    return response()->json($attractions);
+});
+
+Route::get('/api/getAttractionsByCity', function (Request $request) {
+    $city = $request->input('city');
+    
+    $attractions = DB::table('attractions')
+                     ->when($city, function ($query, $city) {
+                         return $query->where('city_name', $city);
+                     })
+                     ->get();
+
+    return response()->json($attractions);
+});
+
+Route::get('/api/types', function () {
+    $types = DB::table('attractions')->distinct()->pluck('type');
+    return response()->json($types);
+});
+
+Route::get('/api/interests', function () {
+    $interests = DB::table('attractions')->distinct()->pluck('interest');
+    return response()->json($interests);
+});
+
+Route::get('/api/getAttractionsByFilters', function (Request $request) {
+    $city = $request->input('city');
+    $type = $request->input('type');
+    $interest = $request->input('interest');
+    
+    $attractions = DB::table('attractions')
+                     ->when($city, function ($query, $city) {
+                         return $query->where('city_name', $city);
+                     })
+                     ->when($type, function ($query, $type) {
+                         return $query->where('type', $type);
+                     })
+                     ->when($interest, function ($query, $interest) {
+                         return $query->where('interest', $interest);
+                     })
+                     ->get();
 
     return response()->json($attractions);
 });

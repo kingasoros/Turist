@@ -48,8 +48,9 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                 <th>Helyszín</th>
                 <th>Létrehozta</th>
                 <th>Város neve</th>
-                <th>Kép</th>
                 <th>Műveletek</th>
+                <th>Típus</th>
+                <th>Érdekeltség</th>
             </tr>
         </thead>
         <tbody>
@@ -62,13 +63,8 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars($attraction['address']) ?></td>
                     <td><?= htmlspecialchars($attraction['created_by']) ?></td>
                     <td><?= htmlspecialchars($attraction['city_name']) ?></td>
-                    <td>
-                        <?php if (!empty($attraction['image'])): ?>
-                            <img src="<?= htmlspecialchars($attraction['image']) ?>" alt="<?= htmlspecialchars($attraction['name']) ?>" style="width: 100px; height: auto;">
-                        <?php else: ?>
-                            Nincs kép
-                        <?php endif; ?>
-                    </td>
+                    <td><?= htmlspecialchars($attraction['type']) ?></td>
+                    <td><?= htmlspecialchars($attraction['interest']) ?></td>
                     <td>
                         <button class="btn btn-sm btn-warning edit-btn" 
                             data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>"
@@ -77,6 +73,8 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                             data-address="<?= htmlspecialchars($attraction['address']) ?>" 
                             data-created-by="<?= htmlspecialchars($attraction['created_by']) ?>"
                             data-city-name="<?= htmlspecialchars($attraction['city_name']) ?>"
+                            data-type="<?= htmlspecialchars($attraction['type']) ?>"
+                            data-interest="<?= htmlspecialchars($attraction['interest']) ?>"
                             data-toggle="modal" 
                             data-target="#editAttractionModal">Szerkesztés</button>
                         <button class="btn btn-sm btn-danger delete-btn" 
@@ -88,7 +86,7 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="8" class="text-center">Nincsenek elérhető adatok.</td>
+                    <td colspan="7" class="text-center">Nincsenek elérhető adatok.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
@@ -98,7 +96,7 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
 <!-- Add Attraction Modal -->
 <div class="modal fade" id="addAttractionModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form method="POST" action="php/attr_process.php" enctype="multipart/form-data">
+        <form method="POST" action="php/attr_process.php">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Új látványosság hozzáadása</h5>
@@ -133,8 +131,26 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Kép feltöltése</label>
-                        <input type="file" class="form-control-file" name="image">
+                        <label>Típus</label>
+                        <select class="form-control" name="type" required>
+                            <option value="Múzeumok">Múzeumok</option>
+                            <option value="Természeti látnivalók">Természeti látnivalók</option>
+                            <option value="Történelmi helyek">Történelmi helyek</option>
+                            <option value="Szórakoztató helyek">Szórakoztató helyek</option>
+                            <option value="Vallási helyek">Vallási helyek</option>
+                            <option value="Kulturális események">Kulturális események</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Érdekeltség</label>
+                        <select class="form-control" name="interest" required>
+                            <option value="Családbarát">Családbarát</option>
+                            <option value="Kalandturizmus">Kalandturizmus</option>
+                            <option value="Kultúra és művészetek">Kultúra és művészetek</option>
+                            <option value="Gasztronómia">Gasztronómia</option>
+                            <option value="Történelem">Történelem</option>
+                            <option value="Sport">Sport</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -149,7 +165,7 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
 <!-- Edit Attraction Modal -->
 <div class="modal fade" id="editAttractionModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form method="POST" action="php/attr_process.php" enctype="multipart/form-data">
+        <form method="POST" action="php/attr_process.php">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Látványosság szerkesztése</h5>
@@ -185,8 +201,26 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Kép frissítése (opcionális)</label>
-                        <input type="file" class="form-control-file" name="image">
+                        <label>Típus</label>
+                        <select class="form-control" name="type" id="editType" required>
+                            <option value="Múzeumok">Múzeumok</option>
+                            <option value="Természeti látnivalók">Természeti látnivalók</option>
+                            <option value="Történelmi helyek">Történelmi helyek</option>
+                            <option value="Szórakoztató helyek">Szórakoztató helyek</option>
+                            <option value="Vallási helyek">Vallási helyek</option>
+                            <option value="Kulturális események">Kulturális események</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Érdekeltség</label>
+                        <select class="form-control" name="interest" id="editInterest" required>
+                            <option value="Családbarát">Családbarát</option>
+                            <option value="Kalandturizmus">Kalandturizmus</option>
+                            <option value="Kultúra és művészetek">Kultúra és művészetek</option>
+                            <option value="Gasztronómia">Gasztronómia</option>
+                            <option value="Történelem">Történelem</option>
+                            <option value="Sport">Sport</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -235,12 +269,16 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                 const address = this.dataset.address;
                 const createdBy = this.dataset.createdBy;
                 const cityName = this.dataset.cityName;
+                const type = this.dataset.type;
+                const interest = this.dataset.interest;
 
                 document.getElementById('editAttractionId').value = id;
                 document.getElementById('editAttractionName').value = name;
                 document.getElementById('editAttractionDescription').value = description;
                 document.getElementById('editAttractionAddress').value = address;
                 document.getElementById('editAttractionCreatedBy').value = createdBy;
+                document.getElementById('editType').value = address;
+                document.getElementById('editInterest').value = createdBy;
 
                 const citySelect = document.getElementById('editAttractionCityName');
                 for (let option of citySelect.options) {
