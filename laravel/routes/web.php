@@ -12,6 +12,10 @@ use App\Http\Controllers\AttractionsController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Http\Middleware\CheckIfUserCanRegister;
+use App\Http\Controllers\Auth\RegisteredUserController;
+
 
 require __DIR__.'/auth.php';
 /*
@@ -29,16 +33,16 @@ Route::get('/', function () {
     return view('welcome'); 
 })->name('home');
 
-Route::middleware(['auth', 'is_active'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-});
-
 Route::get('/search', function (Request $request) {
     return Order::search($request->input('query'))->get();
 });
 
 Route::get('/search', [SearchController::class, 'search']);
 
+Route::middleware(['checkifusercanregister'])->group(function () {
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'store']);
+});
 
 Route::get('/', function () {
     return view('welcome');
@@ -86,11 +90,6 @@ Route::post('/api/attractions', [AttractionsController::class, 'getAttractionDet
 
 Route::middleware(['auth', 'is_active'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-});
-
-
-// Route::post('/add-to-favorites', [FavoritesController::class, 'addToFavorites'])->name('favorites.add');
-// Route::post('/remove-from-favorites', [FavoritesController::class, 'removeFromFavorites'])->name('favorites.remove');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -98,10 +97,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+});
+
 Route::get('/users/{id}/approve/{token}', [AdminUserController::class, 'approveUser']);
 Route::get('/users/{id}/decline/{token}', [AdminUserController::class, 'declineUser']);
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
 
 Route::post('/logout', function () {
     Auth::logout();
@@ -109,3 +109,17 @@ Route::post('/logout', function () {
 })->name('logout');
 
 Route::get('/users/{id}/activate/{token}', [AdminUserController::class, 'activateUser']);
+
+Route::get('/activate/{token}', function ($token) {
+    $user = User::where('activation_token', $token)->first();
+
+    if (!$user) {
+        return response('Érvénytelen vagy lejárt token.', 400);
+    }
+
+    $user->is_active = 1;
+    $user->activation_token = null;
+    $user->save();
+
+    return redirect('/')->with('message', 'Fiókod aktiválva lett!');
+})->name('activate.account');

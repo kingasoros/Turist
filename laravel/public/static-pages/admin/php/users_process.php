@@ -11,22 +11,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ':name' => $_POST['name'],
                 ':email' => $_POST['email'],
                 ':password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
-                ':role' => 1 
+                ':role' => $_POST['role'] // A role itt most már dinamikusan van beállítva a felhasználó által választott érték alapján
             ]);
         }
 
         if ($action == 'edit') {
-            $stmt = $conn->prepare("UPDATE users SET name = :name, email = :email, password = :password WHERE id = :id AND role = 1");
+            $stmt = $conn->prepare("UPDATE users SET name = :name, email = :email, password = :password, role = :role WHERE id = :id");
             $stmt->execute([
                 ':name' => $_POST['name'],
                 ':email' => $_POST['email'],
                 ':password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
+                ':role' => $_POST['role'], // A szerepkör frissítése
                 ':id' => $_POST['id']
             ]);
         }
 
         if ($action == 'delete') {
-            $stmt = $conn->prepare("DELETE FROM users WHERE id = :id AND role = 1");
+            $stmt = $conn->prepare("DELETE FROM users WHERE id = :id");
             $stmt->execute([':id' => $_POST['id']]);
         }
     } catch (Exception $e) {
@@ -37,7 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit();
 }
 
-$stmt = $conn->prepare("SELECT * FROM users WHERE role = 1");
+// Lekérdezzük az adatbázisból azokat a felhasználókat, akiknek a role értéke 0 (tiltott) vagy 1 (felhasználó)
+$stmt = $conn->prepare("SELECT * FROM users WHERE role IN (0, 1)");
 $stmt->execute();
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>

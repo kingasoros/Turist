@@ -20,7 +20,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
-
 <body id="page-top">
 <?php include 'nav.php'; ?>
 <div class="container mt-4">
@@ -33,6 +32,7 @@
                 <th>Név</th>
                 <th>Email</th>
                 <th>Létrehozva</th>
+                <th>Szerepkör</th> <!-- New column for role -->
                 <th>Műveletek</th>
             </tr>
         </thead>
@@ -45,10 +45,20 @@
                     <td><?= htmlspecialchars($user['email']) ?></td>
                     <td><?= htmlspecialchars($user['created_at']) ?></td>
                     <td>
+                        <?php
+                            switch ($user['role']) {
+                                case 0: echo 'Tiltott'; break;
+                                case 1: echo 'Felhasználó'; break;
+                                case 2: echo 'Admin'; break;
+                            }
+                        ?>
+                    </td>
+                    <td>
                         <button class="btn btn-sm btn-warning edit-btn" 
                             data-id="<?= htmlspecialchars($user['id']) ?>"
                             data-name="<?= htmlspecialchars($user['name']) ?>"
                             data-email="<?= htmlspecialchars($user['email']) ?>" 
+                            data-role="<?= htmlspecialchars($user['role']) ?>"
                             data-toggle="modal" 
                             data-target="#editUserModal">Szerkesztés</button>
                         <button class="btn btn-sm btn-danger delete-btn" 
@@ -60,14 +70,14 @@
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="5" class="text-center">Nincsenek elérhető adatok.</td>
+                    <td colspan="6" class="text-center">Nincsenek elérhető adatok.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
     </table>
 </div>
 
-<!-- Add User Modal -->
+<!-- New User Modal -->
 <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <form method="POST" action="php/users_process.php">
@@ -81,26 +91,35 @@
                 <div class="modal-body">
                     <input type="hidden" name="action" value="add">
                     <div class="form-group">
-                        <label for="user-name">Név</label>
-                        <input type="text" class="form-control" id="user-name" name="name" required>
+                        <label for="add-user-name">Név</label>
+                        <input type="text" class="form-control" id="add-user-name" name="name" required>
                     </div>
                     <div class="form-group">
-                        <label for="user-email">Email</label>
-                        <input type="email" class="form-control" id="user-email" name="email" required>
+                        <label for="add-user-email">Email</label>
+                        <input type="email" class="form-control" id="add-user-email" name="email" required>
                     </div>
                     <div class="form-group">
-                        <label for="user-password">Jelszó</label>
-                        <input type="password" class="form-control" id="user-password" name="password" required>
+                        <label for="add-user-password">Jelszó</label>
+                        <input type="password" class="form-control" id="add-user-password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-user-role">Szerepkör</label>
+                        <select class="form-control" id="add-user-role" name="role" required>
+                            <option value="0">Tiltott</option>
+                            <option value="1">Felhasználó</option>
+                            <option value="2">Admin</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
-                    <button type="submit" class="btn btn-primary">Hozzáadás</button>
+                    <button type="submit" class="btn btn-primary">Mentés</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+
 
 <!-- Edit User Modal -->
 <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
@@ -127,6 +146,14 @@
                     <div class="form-group">
                         <label for="edit-user-password">Új Jelszó</label>
                         <input type="password" class="form-control" id="edit-user-password" name="password">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-user-role">Szerepkör</label>
+                        <select class="form-control" id="edit-user-role" name="role" required>
+                            <option value="0">Tiltott</option>
+                            <option value="1">Felhasználó</option>
+                            <option value="2">Admin</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -163,7 +190,6 @@
     </div>
 </div>
 
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const editButtons = document.querySelectorAll('.edit-btn');
@@ -174,10 +200,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const userId = this.dataset.id;
             const userName = this.dataset.name;
             const userEmail = this.dataset.email;
+            const userRole = this.dataset.role;
 
             document.getElementById('edit-user-id').value = userId;
             document.getElementById('edit-user-name').value = userName;
             document.getElementById('edit-user-email').value = userEmail;
+            document.getElementById('edit-user-role').value = userRole;
         });
     });
 

@@ -14,6 +14,7 @@ use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\WelcomeMail;
+use Illuminate\Support\Str;
 
 
 class RegisteredUserController extends Controller
@@ -32,25 +33,44 @@ class RegisteredUserController extends Controller
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+{
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+    $existingUser = User::where('email', $request->email)->first();
 
-        event(new Registered($user));
-
-        Mail::to($user->email)->send(new WelcomeMail($user));
-
-        Auth::login($user);
-
-        return redirect(RouteServiceProvider::HOME);
+    if ($existingUser && !$existingUser->is_active) {
+        return redirect()->route('register')
+                         ->withErrors(['email' => 'Ez az e-mail cím már regisztrálva van, de a fiókod még nem aktivált. Kérjük, erősítsd meg az email-edet.']);
     }
+
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+    ]);
+
+    event(new Registered($user));
+
+    $user->activation_token = Str::random(64);
+    $user->save();
+
+    Mail::to($user->email)->send(new WelcomeMail($user));
+
+    Auth::login($user);
+
+    // Ellenőrizzük az aktív státuszt bejelentkezés után
+    if (!$user->is_active) {
+        Auth::logout();
+        return redirect('/login')->withErrors([
+            'email' => 'A fiókod még nem lett aktiválva. Kérjük, erősítsd meg az email-edet az aktiváláshoz.',
+        ]);
+    }
+
+    return redirect(RouteServiceProvider::HOME);
+}
+
 }

@@ -19,7 +19,10 @@ class WelcomeMail extends Mailable
 
     public function build()
     {
+        $activationLink = route('activate.account', ['token' => $this->user->activation_token]);
+
         return $this->subject('Üdvözlünk a platformon!')
-                    ->view('emails.welcome');
+                    ->view('emails.welcome', compact('activationLink'));
     }
 }
+
