@@ -1,6 +1,4 @@
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 navbar2">
-<!-- <nav x-data="{ open: false }" class="bg-custom-green border-b border-gray-100 navbar2"> -->
-    <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
@@ -22,57 +20,85 @@
                     <x-nav-link :href="route('attractions')" :active="request()->routeIs('attractions')">
                         {{ __('Látványosságok') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('tours')" :active="request()->routeIs('tours')">
-                        {{ __('Túrák') }}
-                    </x-nav-link>
 
+                    @auth
+                        <x-nav-link :href="route('tours')" :active="request()->routeIs('tours')">
+                            {{ __('Túrák') }}
+                        </x-nav-link>
+                    @endauth
                 </div>
             </div>
 
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ml-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+            @auth
+                <div class="hidden sm:flex sm:items-center sm:ml-6">
+                    <x-dropdown align="right" width="48">
+                        <x-slot name="trigger">
+                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                <div>{{ Auth::user()->name }}</div>
+                                <div class="ml-1">
+                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            </button>
+                        </x-slot>
 
-                            <div class="ml-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('tours_make')">
-                            {{ __('Túrák létrehozása') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link :href="route('favorites')">
-                            {{ __('Kedvencek') }}
-                        </x-dropdown-link>
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profil') }}
-                        </x-dropdown-link>
-                        @if(auth()->check() && auth()->user()->role == 2)
-                            <x-dropdown-link href="{{ asset('static-pages/admin/index.html') }}">
-                                {{ __('Admin') }}
+                        <x-slot name="content">
+                            <x-dropdown-link :href="route('tours_make')">
+                                {{ __('Túrák létrehozása') }}
                             </x-dropdown-link>
+                            <x-dropdown-link :href="route('favorites')">
+                                {{ __('Kedvencek') }}
+                            </x-dropdown-link>
+                            <x-dropdown-link :href="route('profile.edit')">
+                                {{ __('Profil') }}
+                            </x-dropdown-link>
+                            @if(auth()->check() && auth()->user()->role == 2)
+                                <x-dropdown-link href="{{ asset('static-pages/admin/index.html') }}">
+                                    {{ __('Admin') }}
+                                </x-dropdown-link>
+                            @endif
+
+                            <!-- Authentication -->
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <x-dropdown-link :href="route('logout')"
+                                        onclick="event.preventDefault();
+                                                    this.closest('form').submit();">
+                                    {{ __('Kijelentkezés') }}
+                                </x-dropdown-link>
+                            </form>
+                        </x-slot>
+                    </x-dropdown>
+                </div>
+            @endauth
+
+            <style>
+                .register_menu {
+                    display: flex;
+                    align-items: center;
+                    margin-top:0;
+                    height:64px;
+                }
+
+                .register_menu a {
+                    margin-right: 10px; 
+                }
+            </style>
+
+            @guest
+                <!-- Login/Registration Links -->
+                @if (Route::has('login'))
+                    <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block register_menu">
+                        <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-500 nav-link">Log in</a>
+
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 dark:text-gray-500 nav-link">Register</a>
                         @endif
-
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Kijelentkezés') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
+                    </div>
+                @endif
+            @endguest
 
             <!-- Hamburger -->
             <div class="-mr-2 flex items-center sm:hidden">
@@ -93,12 +119,12 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>
-        
+
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t dark:border-gray-600" style="background-color:#3b5147;">
             <div class="px-4">
-                <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name ?? '' }}</div>
+                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email ?? ''}}</div>
             </div>
 
             <div class="mt-3 space-y-1">
@@ -108,36 +134,42 @@
                 <x-responsive-nav-link :href="route('attractions')">
                     {{ __('Látványosságok') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('tours')">
-                    {{ __('Túrák') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('tours_make')">
-                    {{ __('Túrák létrehozása') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('favorites')">
-                    {{ __('Kedvencek') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Beállítások') }}
-                </x-responsive-nav-link>
-                <!-- Authentication -->
-                <!-- <form method="POST" action="{{ route('logout') }}">
-                    @csrf
 
-                    <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
-                        {{ __('Kijelentkezés') }}
-                    </x-dropdown-link>
-                </form> -->
-
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Kijelentkezés') }}
+                @auth
+                    <x-responsive-nav-link :href="route('tours')">
+                        {{ __('Túrák') }}
                     </x-responsive-nav-link>
-                </form>
+                    <x-responsive-nav-link :href="route('tours_make')">
+                        {{ __('Túrák létrehozása') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('favorites')">
+                        {{ __('Kedvencek') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('profile.edit')">
+                        {{ __('Beállítások') }}
+                    </x-responsive-nav-link>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <x-responsive-nav-link :href="route('logout')"
+                                onclick="event.preventDefault();
+                                            this.closest('form').submit();">
+                            {{ __('Kijelentkezés') }}
+                        </x-responsive-nav-link>
+                    </form>
+                @endauth
+
+                <!-- Login/Registration Links -->
+                @guest
+                    @if (Route::has('login'))
+                        <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block register_menu">
+                            <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-500 nav-link">Log in</a>
+
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 dark:text-gray-500 nav-link">Register</a>
+                            @endif
+                        </div>
+                    @endif
+                @endguest
             </div>
         </div>
     </div>
