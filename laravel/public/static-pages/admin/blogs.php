@@ -77,7 +77,7 @@
     <!-- Edit Blog Modal -->
     <div class="modal fade" id="editBlogModal" tabindex="-1" role="dialog" aria-labelledby="editBlogModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <form method="POST" action="php/blogs_process.php">
+            <form method="POST" action="php/blogs_process.php" enctype="multipart/form-data">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="editBlogModalLabel">Blog bejegyzés módosítása</h5>
@@ -101,10 +101,8 @@
                             <label>Szerző</label>
                             <input type="text" class="form-control" id="edit-author" name="author" required>
                         </div>
-                        <div class="form-group">
-                            <label>Kép URL</label>
-                            <input type="text" class="form-control" id="edit-image" name="image">
-                        </div>
+                        <label for="image">Kép feltöltése</label>
+                        <input type="file" name="image" class="form-control-file" id="image">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
@@ -143,7 +141,7 @@
     <!-- Add Blog Modal -->
     <div class="modal fade" id="addBlogModal" tabindex="-1" role="dialog" aria-labelledby="addBlogModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <form method="POST" action="php/blogs_process.php">
+            <form method="POST" action="php/blogs_process.php" enctype="multipart/form-data">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addBlogModalLabel">Új blog bejegyzés hozzáadása</h5>
@@ -165,10 +163,8 @@
                             <label>Szerző</label>
                             <input type="text" class="form-control" name="author" required>
                         </div>
-                        <div class="form-group">
-                            <label>Kép URL</label>
-                            <input type="text" class="form-control" name="image">
-                        </div>
+                        <label for="image">Kép feltöltése</label>
+                        <input type="file" name="image" class="form-control-file" id="image">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>

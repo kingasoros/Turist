@@ -144,6 +144,8 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <option value="public">Public</option>
                         </select>
                     </div>
+                    <label for="image">Kép feltöltése</label>
+                    <input type="file" name="image" class="form-control-file" id="image">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
@@ -196,6 +198,8 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <option value="public">Public</option>
                         </select>
                     </div>
+                    <label for="image">Kép feltöltése</label>
+                    <input type="file" name="image" class="form-control-file" id="image">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>

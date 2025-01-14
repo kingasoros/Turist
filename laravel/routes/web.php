@@ -76,6 +76,10 @@ Route::get('/favorites', function () {
     return view('static-pages.front.php.favorites');
 })->name('favorites');
 
+Route::get('/admin', function () {
+    return view('static-pages.front.php.attractions');
+})->name('admin');
+
 Route::get('/tours', [TourController::class, 'index'])->name('tours');
 
 Route::post('/add-to-favorites', [FavoriteController::class, 'store'])->middleware('auth');

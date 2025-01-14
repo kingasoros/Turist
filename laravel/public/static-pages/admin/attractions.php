@@ -96,7 +96,7 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
 <!-- Add Attraction Modal -->
 <div class="modal fade" id="addAttractionModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form method="POST" action="php/attr_process.php">
+        <form method="POST" action="php/attr_process.php" enctype="multipart/form-data">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Új látványosság hozzáadása</h5>
@@ -152,6 +152,11 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                             <option value="Sport">Sport</option>
                         </select>
                     </div>
+                    <!-- <label>Kép feltöltése</label>
+                    <input type="file" class="form-control-file" name="image" accept="image/*"> -->
+
+                    <label for="image">Kép feltöltése</label>
+                    <input type="file" name="image" class="form-control-file" id="image"> 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
@@ -165,7 +170,7 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
 <!-- Edit Attraction Modal -->
 <div class="modal fade" id="editAttractionModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form method="POST" action="php/attr_process.php">
+        <form method="POST" action="php/attr_process.php" enctype="multipart/form-data">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Látványosság szerkesztése</h5>
@@ -222,6 +227,8 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                             <option value="Sport">Sport</option>
                         </select>
                     </div>
+                    <label for="image">Kép feltöltése</label>
+                    <input type="file" name="image" class="form-control-file" id="image">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
@@ -257,43 +264,43 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const editButtons = document.querySelectorAll('.edit-btn');
-        const deleteButtons = document.querySelectorAll('.delete-btn');
+document.addEventListener('DOMContentLoaded', function () {
+    const editButtons = document.querySelectorAll('.edit-btn');
+    const deleteButtons = document.querySelectorAll('.delete-btn');
 
-        editButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const id = this.dataset.id;
-                const name = this.dataset.name;
-                const description = this.dataset.description;
-                const address = this.dataset.address;
-                const createdBy = this.dataset.createdBy;
-                const cityName = this.dataset.cityName;
-                const type = this.dataset.type;
-                const interest = this.dataset.interest;
+    editButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.dataset.id;
+            const name = this.dataset.name;
+            const description = this.dataset.description;
+            const address = this.dataset.address;
+            const createdBy = this.dataset.createdBy;
+            const cityName = this.dataset.cityName;
+            const type = this.dataset.type;
+            const interest = this.dataset.interest;
 
-                document.getElementById('editAttractionId').value = id;
-                document.getElementById('editAttractionName').value = name;
-                document.getElementById('editAttractionDescription').value = description;
-                document.getElementById('editAttractionAddress').value = address;
-                document.getElementById('editAttractionCreatedBy').value = createdBy;
-                document.getElementById('editType').value = address;
-                document.getElementById('editInterest').value = createdBy;
+            document.getElementById('editAttractionId').value = id;
+            document.getElementById('editAttractionName').value = name;
+            document.getElementById('editAttractionDescription').value = description;
+            document.getElementById('editAttractionAddress').value = address;
+            document.getElementById('editAttractionCreatedBy').value = createdBy;
+            document.getElementById('editType').value = type;
+            document.getElementById('editInterest').value = interest;
 
-                const citySelect = document.getElementById('editAttractionCityName');
-                for (let option of citySelect.options) {
-                    option.selected = option.value === cityName;
-                }
-            });
-        });
-
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const id = this.dataset.id;
-                document.getElementById('deleteAttractionId').value = id;
-            });
+            const citySelect = document.getElementById('editAttractionCityName');
+            for (let option of citySelect.options) {
+                option.selected = option.value === cityName;
+            }
         });
     });
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.dataset.id;
+            document.getElementById('deleteAttractionId').value = id;
+        });
+    });
+});
 </script>
 </body>
 </html>

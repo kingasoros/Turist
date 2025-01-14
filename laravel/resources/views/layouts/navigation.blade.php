@@ -54,6 +54,11 @@
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profil') }}
                         </x-dropdown-link>
+                        @if(auth()->check() && auth()->user()->role == 2)
+                            <x-dropdown-link href="{{ asset('static-pages/admin/index.html') }}">
+                                {{ __('Admin') }}
+                            </x-dropdown-link>
+                        @endif
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
