@@ -5,22 +5,19 @@ $stmt = $conn->prepare("SELECT * FROM attractions");
 $stmt->execute();
 $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$selectedName = session('selectedName', '');  // Laravel session metódus
+$selectedName = session('selectedName', '');  
 $selectedAttraction = null;
 
-// Ha a selectedName nem üres, módosítjuk az attractions listát
 if (!empty($selectedName)) {
     $stmt = $conn->prepare("SELECT * FROM attractions WHERE name = :name LIMIT 1");
     $stmt->bindParam(':name', $selectedName, PDO::PARAM_STR);
     $stmt->execute();
     $selectedAttraction = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // A kiválasztott látványosságot helyezzük az első helyre
     $attractions = array_filter($attractions, function ($attraction) use ($selectedName) {
         return $attraction['name'] !== $selectedName;
     });
 
-    // Tegyük az első helyre a kiválasztott látványosságot
     if ($selectedAttraction) {
         array_unshift($attractions, $selectedAttraction);
     }
@@ -43,7 +40,7 @@ if (!empty($selectedName)) {
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <script src="{{ asset('js/index.js') }}"></script>
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
     <x-app-layout>
@@ -140,7 +137,10 @@ if (!empty($selectedName)) {
         </div>
     </footer>
 <script>
-    document.getElementById('search').addEventListener('input', function () {
+    const searchInput = document.getElementById('search');
+    const resultsList = document.getElementById('results');
+
+    searchInput.addEventListener('input', function () {
     const query = this.value;
 
     // AJAX kérés a Laravel API-hoz a kereséshez
@@ -223,7 +223,7 @@ document.addEventListener('click', function (event) {
     const resultsContainer = document.getElementById('results');
 
     if (!searchInput.contains(event.target) && !resultsContainer.contains(event.target)) {
-        resultsContainer.innerHTML = ''; 
+        resultsContainer.innerHTML = '';  // Kiürítjük a találatokat
     }
 });
 
@@ -265,19 +265,47 @@ fetch('/api/interests')
     });
 
 
-// Keresés alkalmazása a szűrőre
-document.getElementById('apply-filters').addEventListener('click', function () {
+    document.getElementById('apply-filters').addEventListener('click', function () {
     const city = document.getElementById('city').value;
     const type = document.getElementById('type').value;
     const interest = document.getElementById('interest').value;
 
-    // AJAX kérés a város, típus és érdeklődési kör szűrésére
+    const data = {
+        city: city,
+        type: type,
+        interest: interest,
+        timestamp: new Date().toISOString()
+    };
+
+    console.log('Küldött JSON:', JSON.stringify(data));
+
+    fetch('/api/insertNewSearchRecord', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            
+            // Töröld a CSRF token küldését ideiglenesen, ha nem szükséges
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Új keresési rekord mentve!');
+        } else {
+            console.error('Hiba történt a keresési rekord mentése során:', data.error);
+        }
+    })
+    .catch(error => console.error('Új keresési rekord mentési hiba:', error));
+
+    // Szűrt adatok lekérése az adatbázisból
     fetch(`/api/getAttractionsByFilters?city=${encodeURIComponent(city)}&type=${encodeURIComponent(type)}&interest=${encodeURIComponent(interest)}`)
         .then(response => response.json())
         .then(data => {
             const attractionsContainer = document.querySelector('.wheel-box_first');
             attractionsContainer.innerHTML = ''; // Az előző találatok törlése
 
+            // Kártyák létrehozása az adatok megjelenítéséhez
             data.forEach(attraction => {
                 const card = document.createElement('div');
                 card.className = 'card mb-3';
@@ -285,27 +313,26 @@ document.getElementById('apply-filters').addEventListener('click', function () {
                 card.innerHTML = `
                     <div class="row g-0">
                         <div class="col-md-4">
-                            <img src="http://localhost/Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%;">
+                            <img src="http://localhost/Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%; width:100%;">
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
                                 <h5 class="card-title">${attraction.name}</h5>
                                 <p class="card-text">${attraction.description}</p>
-                                <p class="card-text"><small class="text-muted">${attraction.address}</small></p>
-                                <p class="card-text"><small class="text-muted">${attraction.created_by}</small></p>
-                                <p class="card-text"><small class="text-muted">${attraction.city_name}</small></p>
-                                <p class="card-text"><small class="text-muted">${attraction.type}</small></p>
-                                <p class="card-text"><small class="text-muted">${attraction.interest}</small></p>
+                                <p class="card-text"><small class="text-muted">Cím: ${attraction.address}</small></p>
+                                <p class="card-text"><small class="text-muted">Készítő: ${attraction.created_by}</small></p>
+                                <p class="card-text"><small class="text-muted">Város: ${attraction.city_name}</small></p>
+                                <p class="card-text"><small class="text-muted">Típus: ${attraction.type}</small></p>
+                                <p class="card-text"><small class="text-muted">Érdeklődés: ${attraction.interest}</small></p>
                             </div>
                         </div>
                     </div>
                 `;
                 attractionsContainer.appendChild(card);
             });
-        });
+        })
+        .catch(error => console.error('Lekérési hiba:', error));
 });
-
-
 
 function copyToClipboard() {
     var text = document.getElementById("selectedWord").innerText;

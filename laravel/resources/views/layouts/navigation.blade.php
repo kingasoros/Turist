@@ -55,7 +55,7 @@
                                 {{ __('Profil') }}
                             </x-dropdown-link>
                             @if(auth()->check() && auth()->user()->role == 2)
-                                <x-dropdown-link href="{{ asset('static-pages/admin/index.html') }}">
+                                <x-dropdown-link href="{{ asset('static-pages/admin/index.php') }}">
                                     {{ __('Admin') }}
                                 </x-dropdown-link>
                             @endif
