@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Middleware\CheckIfUserCanRegister;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\AdminController;
 
 
 require __DIR__.'/auth.php';
@@ -91,6 +92,9 @@ Route::delete('/favorites/delete', [FavoriteController::class, 'delete'])->name(
 Route::delete('/tour/{tour}', [TourController::class, 'destroy'])->name('tours.destroy');
 
 Route::post('/api/attractions', [AttractionsController::class, 'getAttractionDetails']);
+
+Route::get('/dashboard', [AdminController::class, 'showDashboard'])->middleware('auth');
+
 
 Route::middleware(['auth', 'is_active'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

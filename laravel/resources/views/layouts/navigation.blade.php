@@ -54,10 +54,11 @@
                             <x-dropdown-link :href="route('profile.edit')">
                                 {{ __('Profil') }}
                             </x-dropdown-link>
-                            @if(auth()->check() && auth()->user()->role == 2)
-                                <x-dropdown-link href="{{ asset('static-pages/admin/index.php') }}">
-                                    {{ __('Admin') }}
-                                </x-dropdown-link>
+                            @if(auth()->check() && (auth()->user()->role == 2 || auth()->user()->role == 3))
+                            <x-dropdown-link href="{{ url('static-pages/admin/index.php?role=' . Auth::user()->role) }}">
+                                {{ __('Admin') }}
+                            </x-dropdown-link>
+
                             @endif
 
                             <!-- Authentication -->

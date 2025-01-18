@@ -1,6 +1,7 @@
 <?php 
 require "php/db_conn.php";
 
+// Kezdeti üres tömbök a kategóriákhoz
 $xValues = [
     "city" => [],
     "type" => [],
@@ -13,43 +14,22 @@ $yValues = [
 ];
 
 try {
-    // Városok (city) lekérdezése
-    $stmt = $conn->prepare("
-        SELECT filter_value, COUNT(*) AS count 
-        FROM filter_search_statistics 
-        WHERE filter_name = 'city' 
-        GROUP BY filter_value
-    ");
-    $stmt->execute();
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $xValues["city"][] = $row['filter_value'];
-        $yValues["city"][] = (int)$row['count'];  // Átváltás szám típusra
-    }
+    // Közös lekérdezés a három kategóriához
+    $categories = ['city', 'type', 'interest'];
 
-    // Típusok (type) lekérdezése
-    $stmt = $conn->prepare("
-        SELECT filter_value, COUNT(*) AS count 
-        FROM filter_search_statistics 
-        WHERE filter_name = 'type' 
-        GROUP BY filter_value
-    ");
-    $stmt->execute();
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $xValues["type"][] = $row['filter_value'];
-        $yValues["type"][] = (int)$row['count']; 
-    }
+    foreach ($categories as $category) {
+        $stmt = $conn->prepare("
+            SELECT filter_value, count
+            FROM filter_search_statistics
+            WHERE filter_name = :category
+        ");
+        $stmt->bindParam(':category', $category, PDO::PARAM_STR);
+        $stmt->execute();
 
-    // Érdeklődés (interest) lekérdezése
-    $stmt = $conn->prepare("
-        SELECT filter_value, COUNT(*) AS count 
-        FROM filter_search_statistics 
-        WHERE filter_name = 'interest' 
-        GROUP BY filter_value
-    ");
-    $stmt->execute();
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $xValues["interest"][] = $row['filter_value'];
-        $yValues["interest"][] = (int)$row['count'];  
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $xValues[$category][] = $row['filter_value'];
+            $yValues[$category][] = (int)$row['count'];  // Átváltás szám típusra
+        }
     }
 } catch (PDOException $e) {
     echo "Hiba: " . $e->getMessage();
@@ -283,8 +263,6 @@ try {
             }
         }
     });
-</script>
-
 </script>
 
 </body>

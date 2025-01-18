@@ -8,13 +8,10 @@ class CreateFilterSearchStatisticsTable extends Migration
 {
     public function up()
     {
-        Schema::create('filter_search_statistics', function (Blueprint $table) {
+        Schema::create('search_records', function (Blueprint $table) {
             $table->id();  
             $table->string('city');
             $table->string('type');
-            $table->string('interest');
-            $table->timestamp('timestamp');
-            $table->timestamps();
         });
     }
 

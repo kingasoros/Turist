@@ -1,3 +1,14 @@
+<?php
+    session_start();
+
+    if (isset($_GET['role'])) {
+        $_SESSION['user_role'] = $_GET['role']; 
+    }
+    $user_role=$_SESSION['user_role'];
+
+?>
+
+
 <!-- Page Wrapper -->
 <div id="wrapper">
 
@@ -24,8 +35,8 @@
         </li>
 
         <!-- Divider -->
+        <?php if($user_role == 3){ ?>
         <hr class="sidebar-divider">
-
         <!-- Heading -->
         <div class="sidebar-heading">
             Felhasználók kezelése
@@ -44,7 +55,7 @@
                 <i class="bi bi-person-fill"></i>
                 <span>Felhasználók</span></a>
         </li>
-
+        <?php } ?>
         <!-- Divider -->
         <hr class="sidebar-divider">
 

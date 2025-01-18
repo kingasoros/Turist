@@ -9,7 +9,8 @@ class SearchRecord extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['city', 'type', 'interest', 'timestamp'];
+    protected $fillable = ['city', 'type'];
     protected $table = 'search_records'; 
     protected $primaryKey = 'id'; 
 }
+

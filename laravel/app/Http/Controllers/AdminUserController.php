@@ -18,18 +18,14 @@ class AdminUserController extends Controller
             return response()->json(['message' => 'Érvénytelen link vagy már aktivált felhasználó.'], 404);
         }
 
-        // A felhasználó aktiválása
         $user->is_active = true;
-        $user->approval_token = null; // A token már nem szükséges
+        $user->approval_token = null; 
         $user->save();
 
-        // Email küldése a felhasználónak a sikeres aktiválásról
         Mail::to($user->email)->send(new UserApprovedMail($user));
 
-        // Bejelentkezés után a felhasználó automatikusan beléphet (ha ezt szeretnéd)
         Auth::login($user);
 
-        // Visszairányítás a dashboard-ra és sikerüzenet
         return redirect()->route('dashboard')->with('success', 'A fiókod sikeresen aktiválva lett!');
     }
 }

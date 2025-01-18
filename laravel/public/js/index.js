@@ -112,151 +112,158 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   initWithStopCheck();
-});
 
-document.getElementById('search').addEventListener('input', function () {
-  const query = this.value;
-
-  // AJAX kérés a Laravel API-hoz a kereséshez
-  fetch(`/api/search?query=${encodeURIComponent(query)}`)
-      .then(response => response.json())
-      .then(data => {
-          const resultsContainer = document.getElementById('results');
-          resultsContainer.innerHTML = '';
-
-          // A találatok megjelenítése
-          data.forEach(item => {
-              const li = document.createElement('li');
-              li.textContent = item.name; 
-
-              // Kattintás esemény a találat kiválasztásához
-              li.addEventListener('click', function () {
-                  const selectedName = item.name;
-
-                  // AJAX kérés a kiválasztott név mentésére a session-ba
-                  fetch('/api/saveSelectedName', {
-                      method: 'POST',
-                      headers: {
-                          'Content-Type': 'application/json',
-                          'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                      },
-                      body: JSON.stringify({ name: selectedName }),
-                  })
-                  .then(response => response.json())
-                  .then(data => {
-                      if (data.success) {
-                          updateAttractionsOrder(selectedName);
-                      }
-                  });
-              });
-
-              resultsContainer.appendChild(li);
-          });
-      });
-});
-
-// A látványosságok sorrendjének frissítése
-function updateAttractionsOrder(selectedName) {
-  fetch(`/api/getAttractions?selectedName=${encodeURIComponent(selectedName)}`)
-      .then(response => response.json())
-      .then(data => {
-          const attractionsContainer = document.querySelector('.wheel-box_first');
-          attractionsContainer.innerHTML = ''; 
-
-          data.forEach(attraction => {
-              const card = document.createElement('div');
-              card.className = 'card mb-3';
-              card.style = 'margin:5px; background-color:#002f3b; color:#fff;';
-              card.innerHTML = `
-                  <div class="row g-0">
-                      <div class="col-md-4">
-                          <img src="http://localhost/Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%;">
-                      </div>
-                      <div class="col-md-8">
-                          <div class="card-body">
-                              <h5 class="card-title">${attraction.name}</h5>
-                              <p class="card-text">${attraction.description}</p>
-                              <p class="card-text"><small class="text-muted">${attraction.address}</small></p>
-                              <p class="card-text"><small class="text-muted">${attraction.created_by}</small></p>
-                              <p class="card-text"><small class="text-muted">${attraction.city_name}</small></p>
-                          </div>
-                      </div>
-                  </div>
-              `;
-              attractionsContainer.appendChild(card);
-          });
-      });
-}
-
-// Kattintás kívül, hogy eltüntesse a keresési találatokat
-document.addEventListener('click', function (event) {
+  // Keresés funkció és AJAX kérés
   const searchInput = document.getElementById('search');
-  const resultsContainer = document.getElementById('results');
+  if (searchInput) {
+    searchInput.addEventListener('input', function () {
+      const query = this.value;
 
-  if (!searchInput.contains(event.target) && !resultsContainer.contains(event.target)) {
-      resultsContainer.innerHTML = ''; 
+      // AJAX kérés a Laravel API-hoz a kereséshez
+      fetch(`/api/search?query=${encodeURIComponent(query)}`)
+          .then(response => response.json())
+          .then(data => {
+              const resultsContainer = document.getElementById('results');
+              resultsContainer.innerHTML = '';
+
+              // A találatok megjelenítése
+              data.forEach(item => {
+                  const li = document.createElement('li');
+                  li.textContent = item.name;
+
+                  // Kattintás esemény a találat kiválasztásához
+                  li.addEventListener('click', function () {
+                      const selectedName = item.name;
+
+                      // AJAX kérés a kiválasztott név mentésére a session-ba
+                      fetch('/api/saveSelectedName', {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json',
+                              'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                          },
+                          body: JSON.stringify({ name: selectedName }),
+                      })
+                      .then(response => response.json())
+                      .then(data => {
+                          if (data.success) {
+                              updateAttractionsOrder(selectedName);
+                          }
+                      });
+                  });
+
+                  resultsContainer.appendChild(li);
+              });
+          });
+    });
+  } else {
+    console.error('A "search" ID-jú input elem nem található!');
   }
-});
 
-// Városok lista betöltése
-fetch('/api/cities')
-  .then(response => response.json())
-  .then(cities => {
-      const citySelect = document.getElementById('city');
-      cities.forEach(city => {
-          const option = document.createElement('option');
-          option.value = city;
-          option.textContent = city;
-          citySelect.appendChild(option);
-      });
+  // A látványosságok sorrendjének frissítése
+  function updateAttractionsOrder(selectedName) {
+    fetch(`/api/getAttractions?selectedName=${encodeURIComponent(selectedName)}`)
+        .then(response => response.json())
+        .then(data => {
+            const attractionsContainer = document.querySelector('.wheel-box_first');
+            attractionsContainer.innerHTML = ''; 
+
+            data.forEach(attraction => {
+                const card = document.createElement('div');
+                card.className = 'card mb-3';
+                card.style = 'margin:5px; background-color:#002f3b; color:#fff;';
+                card.innerHTML = `
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="http://localhost/Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%;">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">${attraction.name}</h5>
+                                <p class="card-text">${attraction.description}</p>
+                                <p class="card-text"><small class="text-muted">${attraction.address}</small></p>
+                                <p class="card-text"><small class="text-muted">${attraction.created_by}</small></p>
+                                <p class="card-text"><small class="text-muted">${attraction.city_name}</small></p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                attractionsContainer.appendChild(card);
+            });
+        });
+  }
+
+  // Kattintás kívül, hogy eltüntesse a keresési találatokat
+  document.addEventListener('click', function (event) {
+    const searchInput = document.getElementById('search');
+    const resultsContainer = document.getElementById('results');
+
+    if (!searchInput.contains(event.target) && !resultsContainer.contains(event.target)) {
+        resultsContainer.innerHTML = ''; 
+    }
   });
 
-// Keresés alkalmazása a szűrőre
-document.getElementById('apply-filters').addEventListener('click', function () {
-  const city = document.getElementById('city').value;
+  // Városok lista betöltése
+  fetch('/api/cities')
+    .then(response => response.json())
+    .then(cities => {
+        const citySelect = document.getElementById('city');
+        cities.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+        });
+    });
 
-  // AJAX kérés a város szűrésére
-  fetch(`/api/getAttractionsByCity?city=${encodeURIComponent(city)}`)
-      .then(response => response.json())
-      .then(data => {
-          const attractionsContainer = document.querySelector('.wheel-box_first');
-          attractionsContainer.innerHTML = ''; 
+  // Keresés alkalmazása a szűrőre
+  document.getElementById('apply-filters').addEventListener('click', function () {
+    const city = document.getElementById('city').value;
 
-          data.forEach(attraction => {
-              const card = document.createElement('div');
-              card.className = 'card mb-3';
-              card.style = 'margin:5px; background-color:#002f3b; color:#fff;';
-              card.innerHTML = `
-                  <div class="row g-0">
-                      <div class="col-md-4">
-                          <img src="http://localhost/Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%;">
-                      </div>
-                      <div class="col-md-8">
-                          <div class="card-body">
-                              <h5 class="card-title">${attraction.name}</h5>
-                              <p class="card-text">${attraction.description}</p>
-                              <p class="card-text"><small class="text-muted">${attraction.address}</small></p>
-                              <p class="card-text"><small class="text-muted">${attraction.created_by}</small></p>
-                              <p class="card-text"><small class="text-muted">${attraction.city_name}</small></p>
-                          </div>
-                      </div>
-                  </div>
-              `;
-              attractionsContainer.appendChild(card);
-          });
-      });
+    // AJAX kérés a város szűrésére
+    fetch(`/api/getAttractionsByCity?city=${encodeURIComponent(city)}`)
+        .then(response => response.json())
+        .then(data => {
+            const attractionsContainer = document.querySelector('.wheel-box_first');
+            attractionsContainer.innerHTML = ''; 
+
+            data.forEach(attraction => {
+                const card = document.createElement('div');
+                card.className = 'card mb-3';
+                card.style = 'margin:5px; background-color:#002f3b; color:#fff;';
+                card.innerHTML = `
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="http://localhost/Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%;">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">${attraction.name}</h5>
+                                <p class="card-text">${attraction.description}</p>
+                                <p class="card-text"><small class="text-muted">${attraction.address}</small></p>
+                                <p class="card-text"><small class="text-muted">${attraction.created_by}</small></p>
+                                <p class="card-text"><small class="text-muted">${attraction.city_name}</small></p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                attractionsContainer.appendChild(card);
+            });
+        });
+  });
+
+  // Szöveg másolása a vágólapra
+  function copyToClipboard() {
+    var text = document.getElementById("selectedWord").innerText;
+
+    var tempInput = document.createElement("input");
+    document.body.appendChild(tempInput);
+    tempInput.value = text;  
+    tempInput.select();  
+    document.execCommand("copy");  
+
+    document.body.removeChild(tempInput);
+
+    alert("Szöveg másolva: " + text);
+  }
 });
-
-function copyToClipboard() {
-  var text = document.getElementById("selectedWord").innerText;
-
-  var tempInput = document.createElement("input");
-  document.body.appendChild(tempInput);
-  tempInput.value = text;  
-  tempInput.select();  
-  document.execCommand("copy");  
-
-  document.body.removeChild(tempInput);
-
-  alert("Szöveg másolva: " + text);
-}

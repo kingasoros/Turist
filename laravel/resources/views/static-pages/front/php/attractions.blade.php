@@ -22,6 +22,7 @@ if (!empty($selectedName)) {
         array_unshift($attractions, $selectedAttraction);
     }
 }
+
 ?>
 <script>
     const sectors = <?= json_encode(array_map(fn($attraction) => ['color' => '', 'label' => $attraction['name']], $attractions)); ?>;
@@ -228,17 +229,17 @@ document.addEventListener('click', function (event) {
 });
 
 // Városok, típusok és érdeklődési körök lista betöltése
-fetch('/api/cities')
-    .then(response => response.json())
-    .then(cities => {
-        const citySelect = document.getElementById('city');
-        cities.forEach(city => {
-            const option = document.createElement('option');
-            option.value = city;
-            option.textContent = city;
-            citySelect.appendChild(option);
-        });
-    });
+// fetch('/api/cities')
+//     .then(response => response.json())
+//     .then(cities => {
+//         const citySelect = document.getElementById('city');
+//         cities.forEach(city => {
+//             const option = document.createElement('option');
+//             option.value = city;
+//             option.textContent = city;
+//             citySelect.appendChild(option);
+//         });
+//     });
 
 fetch('/api/types')
     .then(response => response.json())
@@ -274,7 +275,6 @@ fetch('/api/interests')
         city: city,
         type: type,
         interest: interest,
-        timestamp: new Date().toISOString()
     };
 
     console.log('Küldött JSON:', JSON.stringify(data));

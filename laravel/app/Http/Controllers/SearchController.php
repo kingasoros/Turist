@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Order;
 use App\Models\SearchRecord;
 
 class SearchController extends Controller
@@ -12,25 +12,25 @@ class SearchController extends Controller
     // A kérés adatait kiírjuk a logba
     \Log::info('Request data: ' . json_encode($request->all())); 
 
-    // Debugging output
-    dd($request->all());  // Megállítja a kérést és kiírja a JSON adatokat
+    try {
+        $request->validate([
+            'city' => 'required|string',
+            'type' => 'required|string',
+        ]);
 
-    $request->validate([
-        'city' => 'required|string',
-        'type' => 'required|string',
-        'interest' => 'required|string',
-        'timestamp' => 'required|date',
-    ]);
+        // Az adatokat elmentjük az adatbázisba (timestamp nem szükséges)
+        SearchRecord::create([
+            'city' => $request->city,
+            'type' => $request->type,
+        ]);
 
-    // Az adatokat elmentjük az adatbázisba
-    FilterSearchStatistic::create([
-        'city' => $request->city,
-        'type' => $request->type,
-        'interest' => $request->interest,
-        'timestamp' => $request->timestamp,
-    ]);
+        return response()->json(['success' => true]);
 
-    return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        // Ha hiba lép fel, logoljuk és válaszolunk egy hibával
+        \Log::error('Error while saving search record: ' . $e->getMessage());
+        return response()->json(['success' => false, 'error' => $e->getMessage()]);
+    }
 }
 
 }
