@@ -22,6 +22,17 @@
             width: 100px;
             height: auto;
         }
+
+        @media (max-width: 768px) {
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table {
+                min-width: 500px; 
+            }
+        }
     </style>
 </head>
 
@@ -31,47 +42,49 @@
     <div class="container mt-4">
         <h2>Blogbejegyzések</h2>
         <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addBlogModal">Új bejegyzés hozzáadása</button>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Cím</th>
-                    <th>Szerző</th>
-                    <th>Szöveg</th>
-                    <th>Műveletek</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($blogs)): ?>
-                    <?php foreach ($blogs as $blog): ?>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
                     <tr>
-                        <td><?= htmlspecialchars($blog['id']) ?></td>
-                        <td><?= htmlspecialchars($blog['title']) ?></td>
-                        <td><?= htmlspecialchars($blog['author']) ?></td>
-                        <td><?= htmlspecialchars(substr($blog['content'], 0, 10)) . (strlen($blog['content']) > 10 ? '...' : '') ?></td>
-                        <td>
-                            <button class="btn btn-sm btn-warning edit-btn" 
-                                data-id="<?= htmlspecialchars($blog['id']) ?>"
-                                data-title="<?= htmlspecialchars($blog['title']) ?>"
-                                data-content="<?= htmlspecialchars($blog['content']) ?>"
-                                data-author="<?= htmlspecialchars($blog['author']) ?>"
-                                data-toggle="modal" 
-                                data-target="#editBlogModal">Szerkesztés</button>
+                        <th>ID</th>
+                        <th>Cím</th>
+                        <th>Szerző</th>
+                        <th>Szöveg</th>
+                        <th>Műveletek</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($blogs)): ?>
+                        <?php foreach ($blogs as $blog): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($blog['id']) ?></td>
+                            <td><?= htmlspecialchars($blog['title']) ?></td>
+                            <td><?= htmlspecialchars($blog['author']) ?></td>
+                            <td><?= htmlspecialchars(substr($blog['content'], 0, 10)) . (strlen($blog['content']) > 10 ? '...' : '') ?></td>
+                            <td>
+                                <button class="btn btn-sm btn-warning edit-btn" 
+                                    data-id="<?= htmlspecialchars($blog['id']) ?>"
+                                    data-title="<?= htmlspecialchars($blog['title']) ?>"
+                                    data-content="<?= htmlspecialchars($blog['content']) ?>"
+                                    data-author="<?= htmlspecialchars($blog['author']) ?>"
+                                    data-toggle="modal" 
+                                    data-target="#editBlogModal">Szerkesztés</button>
 
-                            <button class="btn btn-sm btn-danger delete-btn" 
-                                data-id="<?= htmlspecialchars($blog['id']) ?>" 
-                                data-toggle="modal" 
-                                data-target="#deleteBlogModal">Törlés</button>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="6" class="text-center">Nincsenek elérhető bejegyzések.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                                <button class="btn btn-sm btn-danger delete-btn" 
+                                    data-id="<?= htmlspecialchars($blog['id']) ?>" 
+                                    data-toggle="modal" 
+                                    data-target="#deleteBlogModal">Törlés</button>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="text-center">Nincsenek elérhető bejegyzések.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Edit Blog Modal -->

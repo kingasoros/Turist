@@ -18,7 +18,18 @@
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+    @media (max-width: 768px) {
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
 
+        .table {
+            min-width: 500px; 
+        }
+    }
+    </style>
 </head>
 
 <body id="page-top">
@@ -28,46 +39,48 @@
 <div class="container mt-4">
     <h2>Városok</h2>
     <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addCityModal">Új város hozzáadása</button>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Ország</th>
-                <th>Város</th>
-                <th>Irányítószám</th>
-                <th>Műveletek</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($cities)): ?>
-                <?php foreach ($cities as $city): ?>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
                 <tr>
-                    <td><?= htmlspecialchars($city['city_id']) ?></td>
-                    <td><?= htmlspecialchars($city['country_name']) ?></td>
-                    <td><?= htmlspecialchars($city['city_name']) ?></td>
-                    <td><?= htmlspecialchars($city['zip_code']) ?></td>
-                    <td>
-                        <button class="btn btn-sm btn-warning edit-btn" 
-                            data-id="<?= htmlspecialchars($city['city_id']) ?>"
-                            data-country="<?= htmlspecialchars($city['country_name']) ?>"
-                            data-city="<?= htmlspecialchars($city['city_name']) ?>"
-                            data-zip="<?= htmlspecialchars($city['zip_code']) ?>" 
-                            data-toggle="modal" 
-                            data-target="#editCityModal">Szerkesztés</button>
-                        <button class="btn btn-sm btn-danger delete-btn" 
-                            data-id="<?= htmlspecialchars($city['city_id']) ?>" 
-                            data-toggle="modal" 
-                            data-target="#deleteCityModal">Törlés</button>
-                    </td>
+                    <th>ID</th>
+                    <th>Ország</th>
+                    <th>Város</th>
+                    <th>Irányítószám</th>
+                    <th>Műveletek</th>
                 </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="5" class="text-center">Nincsenek elérhető adatok.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php if (!empty($cities)): ?>
+                    <?php foreach ($cities as $city): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($city['city_id']) ?></td>
+                        <td><?= htmlspecialchars($city['country_name']) ?></td>
+                        <td><?= htmlspecialchars($city['city_name']) ?></td>
+                        <td><?= htmlspecialchars($city['zip_code']) ?></td>
+                        <td>
+                            <button class="btn btn-sm btn-warning edit-btn" 
+                                data-id="<?= htmlspecialchars($city['city_id']) ?>"
+                                data-country="<?= htmlspecialchars($city['country_name']) ?>"
+                                data-city="<?= htmlspecialchars($city['city_name']) ?>"
+                                data-zip="<?= htmlspecialchars($city['zip_code']) ?>" 
+                                data-toggle="modal" 
+                                data-target="#editCityModal">Szerkesztés</button>
+                            <button class="btn btn-sm btn-danger delete-btn" 
+                                data-id="<?= htmlspecialchars($city['city_id']) ?>" 
+                                data-toggle="modal" 
+                                data-target="#deleteCityModal">Törlés</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5" class="text-center">Nincsenek elérhető adatok.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- Edit City Modal -->

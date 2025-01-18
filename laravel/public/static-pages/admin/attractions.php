@@ -29,6 +29,18 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
             max-width:1400px;
         }
     }    
+
+    @media (max-width: 768px) {
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            min-width: 500px; 
+        }
+    }
+
     </style>
 
 </head>
@@ -39,58 +51,60 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
 <div class="container mt-7">
     <h2>Látványosságok</h2>
     <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addAttractionModal">Új látványosság hozzáadása</button>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Neve</th>
-                <th>Leírás</th>
-                <th>Helyszín</th>
-                <th>Létrehozta</th>
-                <th>Város neve</th>
-                <th>Műveletek</th>
-                <th>Típus</th>
-                <th>Érdekeltség</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($attractions)): ?>
-                <?php foreach ($attractions as $attraction): ?>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
                 <tr>
-                    <td><?= htmlspecialchars($attraction['attractions_id']) ?></td>
-                    <td><?= htmlspecialchars($attraction['name']) ?></td>
-                    <td><?= htmlspecialchars($attraction['description']) ?></td>
-                    <td><?= htmlspecialchars($attraction['address']) ?></td>
-                    <td><?= htmlspecialchars($attraction['created_by']) ?></td>
-                    <td><?= htmlspecialchars($attraction['city_name']) ?></td>
-                    <td><?= htmlspecialchars($attraction['type']) ?></td>
-                    <td><?= htmlspecialchars($attraction['interest']) ?></td>
-                    <td>
-                        <button class="btn btn-sm btn-warning edit-btn" 
-                            data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>"
-                            data-name="<?= htmlspecialchars($attraction['name']) ?>"
-                            data-description="<?= htmlspecialchars($attraction['description']) ?>"
-                            data-address="<?= htmlspecialchars($attraction['address']) ?>" 
-                            data-created-by="<?= htmlspecialchars($attraction['created_by']) ?>"
-                            data-city-name="<?= htmlspecialchars($attraction['city_name']) ?>"
-                            data-type="<?= htmlspecialchars($attraction['type']) ?>"
-                            data-interest="<?= htmlspecialchars($attraction['interest']) ?>"
-                            data-toggle="modal" 
-                            data-target="#editAttractionModal">Szerkesztés</button>
-                        <button class="btn btn-sm btn-danger delete-btn" 
-                            data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>" 
-                            data-toggle="modal" 
-                            data-target="#deleteAttractionModal">Törlés</button>
-                    </td>
+                    <th>ID</th>
+                    <th>Neve</th>
+                    <th>Leírás</th>
+                    <th>Helyszín</th>
+                    <th>Létrehozta</th>
+                    <th>Város neve</th>
+                    <th>Műveletek</th>
+                    <th>Típus</th>
+                    <th>Érdekeltség</th>
                 </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="7" class="text-center">Nincsenek elérhető adatok.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php if (!empty($attractions)): ?>
+                    <?php foreach ($attractions as $attraction): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($attraction['attractions_id']) ?></td>
+                        <td><?= htmlspecialchars($attraction['name']) ?></td>
+                        <td><?= htmlspecialchars($attraction['description']) ?></td>
+                        <td><?= htmlspecialchars($attraction['address']) ?></td>
+                        <td><?= htmlspecialchars($attraction['created_by']) ?></td>
+                        <td><?= htmlspecialchars($attraction['city_name']) ?></td>
+                        <td><?= htmlspecialchars($attraction['type']) ?></td>
+                        <td><?= htmlspecialchars($attraction['interest']) ?></td>
+                        <td>
+                            <button class="btn btn-sm btn-warning edit-btn" 
+                                data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>"
+                                data-name="<?= htmlspecialchars($attraction['name']) ?>"
+                                data-description="<?= htmlspecialchars($attraction['description']) ?>"
+                                data-address="<?= htmlspecialchars($attraction['address']) ?>" 
+                                data-created-by="<?= htmlspecialchars($attraction['created_by']) ?>"
+                                data-city-name="<?= htmlspecialchars($attraction['city_name']) ?>"
+                                data-type="<?= htmlspecialchars($attraction['type']) ?>"
+                                data-interest="<?= htmlspecialchars($attraction['interest']) ?>"
+                                data-toggle="modal" 
+                                data-target="#editAttractionModal">Szerkesztés</button>
+                            <button class="btn btn-sm btn-danger delete-btn" 
+                                data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>" 
+                                data-toggle="modal" 
+                                data-target="#deleteAttractionModal">Törlés</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="7" class="text-center">Nincsenek elérhető adatok.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- Add Attraction Modal -->
