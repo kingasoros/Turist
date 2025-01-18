@@ -1,10 +1,8 @@
 import React from 'react'; 
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'; 
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 
 const BottomNavBar = ({ navigation }) => { 
- 
   return (
     <View style={topNavBarStyles.container}>
       <View style={topNavBarStyles.iconsContainer}>
@@ -13,7 +11,9 @@ const BottomNavBar = ({ navigation }) => {
           <Ionicons name="search" size={30} />
         </TouchableOpacity>
         <TouchableOpacity style={topNavBarStyles.button}>
-          <Ionicons name="heart" size={30} />
+          <Ionicons name="heart" size={30} 
+          onPress={() => navigation.navigate('Tours')}
+           />
         </TouchableOpacity>
         <TouchableOpacity style={topNavBarStyles.button}>
           <Ionicons name="home" size={45} />
@@ -24,7 +24,8 @@ const BottomNavBar = ({ navigation }) => {
         >
           <Ionicons name="map" size={30} />
         </TouchableOpacity>
-        <TouchableOpacity style={topNavBarStyles.button}>
+        <TouchableOpacity style={topNavBarStyles.button}
+        onPress={() => navigation.navigate('Profile')}>
           <Ionicons name="person" size={30} />
         </TouchableOpacity>
       </View>
@@ -37,10 +38,12 @@ const topNavBarStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height:100, 
+    height: 100, 
     backgroundColor: '#3b5147',
-    paddingHorizontal: 10,
-    borderBottomColor: '#ddd',
+    width: '100%',  
+    position: 'absolute',  
+    bottom: 0,  
+    left:0,
   },
   iconsContainer: {
     flexDirection: 'row',
@@ -51,7 +54,7 @@ const topNavBarStyles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    color:"#000",
+    color: "#000",
   },
 });
 
