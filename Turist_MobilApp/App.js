@@ -17,7 +17,7 @@ export default function App() {
   const HomeScreen = ({ navigation }) => {
     return (
       <ImageBackground
-        source={{ uri: 'http://192.168.1.6/Turist/Turist_MobilApp/img/backgrnd.jpg' }} // A háttérkép URL-je
+        source={{ uri: 'http://192.168.1.6/Turist/Turist_MobilApp/img/backgrnd.jpg' }} 
         style={styles.container}
       >
         <StatusBar style="auto" />
@@ -27,7 +27,6 @@ export default function App() {
           style={styles.image}
         />
         
-        {/* A szöveg, ami rá lesz írva a képre */}
         <Text style={styles.overlayText}>
           Fedezd fel a természet szépségeit és válaszd ki a számodra tökéletes túraútvonalat.
         </Text>

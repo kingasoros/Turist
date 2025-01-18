@@ -6,7 +6,6 @@ const ProfileScreen = () => {
   const [userName, setUserName] = useState('');
   const navigation = useNavigation();
 
-  // Session-ból való adat lekérése
   useEffect(() => {
     fetch('http://192.168.1.6/Turist/Turist_MobilApp/screens/get_user_name.php', {
       method: 'GET',
@@ -14,7 +13,7 @@ const ProfileScreen = () => {
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          setUserName(data.user_name); // Felhasználó név beállítása
+          setUserName(data.user_name); 
         } else {
           Alert.alert('Hiba', 'Nem sikerült lekérni a felhasználó nevét.');
         }
@@ -25,7 +24,6 @@ const ProfileScreen = () => {
       });
   }, []);
 
-  // Kijelentkezés logika
   const handleLogout = () => {
     fetch('http://192.168.1.6/Turist/Turist_MobilApp/screens/logout.php', {
       method: 'POST',
@@ -34,7 +32,7 @@ const ProfileScreen = () => {
       .then(data => {
         if (data.success) {
           Alert.alert('Kijelentkezés', 'Sikeresen kijelentkeztél!');
-          navigation.navigate('Login'); // Visszairányítás a bejelentkezési oldalra
+          navigation.navigate('Login'); 
         } else {
           Alert.alert('Hiba', 'Nem sikerült kijelentkezni.');
         }
@@ -47,9 +45,8 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Profil kép */}
       <Image 
-        source={{uri: 'http://192.168.1.6/Turist/img/profil.jpg'}} // Cseréld ki a helyes kép URL-jére
+        source={{uri: 'http://192.168.1.6/Turist/img/profil.jpg'}} 
         style={styles.profileImage}
       />
       
@@ -67,7 +64,6 @@ const ProfileScreen = () => {
           Használatával még egyszerűbbé válik a felfedezés és a tervezés!
         </Text>
 
-        {/* Kijelentkezés gomb */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>Kijelentkezés</Text>
         </TouchableOpacity>
@@ -83,8 +79,8 @@ const styles = StyleSheet.create({
   },
   profileImage: {
     width: '100%',
-    height: 250,  // A kép méretének beállítása
-    position: 'absolute',  // A kép a képernyő tetejére kerül
+    height: 250,  
+    position: 'absolute', 
     top: 0,
     left: 0,
     zIndex: 1, 
@@ -93,7 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    marginTop: 230,  // A tartalom eltolása, hogy ne takarja el a képet
+    marginTop: 230,  
     paddingHorizontal: 16,
   },
   title: {

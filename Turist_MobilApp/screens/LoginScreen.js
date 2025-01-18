@@ -19,7 +19,6 @@ const LoginScreen = ({ navigation }) => {
 
       if (result.success) {
         Alert.alert('Sikeres bejelentkezés', `Üdvözlünk, ${result.user.name}!`);
-        // Navigálás az applikáció főképernyőjére
         navigation.navigate('Home');
       } else {
         Alert.alert('Hiba', result.message);

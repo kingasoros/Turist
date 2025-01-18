@@ -11,7 +11,6 @@ $userId = $_SESSION['id'];
 
 include('db_conn.php');
 
-// Először lekérjük a túrákat
 $tourQuery = "
     SELECT t.*, tf.id as favorite_id
     FROM tours t
@@ -26,7 +25,6 @@ try {
     $tours = $tourStmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (count($tours) > 0) {
-        // Lekérjük az attrakciókat a túrákhoz
         $tourIds = implode(",", array_column($tours, 'tour_id'));
         $attractionsQuery = "
             SELECT 
@@ -48,7 +46,6 @@ try {
         $attractionsStmt = $conn->query($attractionsQuery);
         $attractions = $attractionsStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Most hozzárendeljük az attrakciókat a túrákhoz
         foreach ($tours as &$tour) {
             $tour['attractions'] = [];
             foreach ($attractions as $attraction) {
@@ -61,7 +58,6 @@ try {
             }
         }
 
-        // Visszaadjuk a túrák adatokat attrakciókkal együtt
         echo json_encode(['success' => true, 'tours' => $tours]);
     } else {
         echo json_encode(['success' => false, 'message' => 'No favorite tours found']);

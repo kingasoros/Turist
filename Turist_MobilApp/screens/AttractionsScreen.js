@@ -4,10 +4,10 @@ import axios from 'axios';
 
 const AttractionsScreen = () => {
   const [attractions, setAttractions] = useState([]);
-  const [search, setSearch] = useState(''); // A keresett szöveg
+  const [search, setSearch] = useState(''); 
 
   const fetchAttractions = (searchQuery) => {
-    console.log('API hívás indítása', searchQuery); // Ellenőrizd, hogy mit küldesz
+    console.log('API hívás indítása', searchQuery); 
     axios
         .get(`http://192.168.1.6/Turist/Turist_MobilApp/screens/get_attractions.php?search=${searchQuery}`)
         .then((response) => {
@@ -19,21 +19,19 @@ const AttractionsScreen = () => {
   };
   
 
-  // Az adatok betöltése keresés nélkül
   useEffect(() => {
-    fetchAttractions(''); // Kezdetben üres keresési feltétellel
+    fetchAttractions(''); 
   }, []);
 
   const handleSearch = () => {
-    console.log('Keresés:', search); // Ellenőrizd a keresési értéket
-    fetchAttractions(search); // Keresés indítása
+    console.log('Keresés:', search); 
+    fetchAttractions(search); 
   };
 
   return (
     <View style={styles.container}>
       <Text>Attractions List:</Text>
       
-      {/* Kereső mező */}
       <TextInput
         style={styles.searchInput}
         placeholder="Search attractions"
@@ -41,10 +39,8 @@ const AttractionsScreen = () => {
         onChangeText={setSearch}
       />
       
-      {/* Keresés gomb */}
       <Button title="Search" onPress={handleSearch} />
       
-      {/* Lista megjelenítése */}
       <Text>{attractions.length ? '' : 'Nincs adat'}</Text>
       <FlatList
         data={attractions}

@@ -12,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        // E-mail ellenőrzés
         $stmt = $conn->prepare("SELECT id, name, password FROM users WHERE email = :email AND is_active = 1");
         $stmt->bindParam(':email', $email);
         $stmt->execute();
@@ -20,12 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
-            // Jelszó ellenőrzés
             if (password_verify($password, $user['password'])) {
-                // Hashelt jelszót eltávolítjuk a válaszból biztonsági okokból
                 unset($user['password']);
                 
-                // Felhasználó neve elmentése a session-be
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['id'] = $user['id'];
                 
