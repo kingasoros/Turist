@@ -129,7 +129,7 @@ if (!empty($selectedName)) {
                 $userAgent = $_SERVER['HTTP_USER_AGENT'];
 
                 if (preg_match('/mobile/i', $userAgent)) {
-                    echo '<a class="app__text" href="https://example.com">Töltsd le az applikációt!</a>';
+                    echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
                 } else {
                     echo '';
                 }
@@ -279,24 +279,28 @@ fetch('/api/interests')
 
     console.log('Küldött JSON:', JSON.stringify(data));
 
-    fetch('/api/insertNewSearchRecord', {
+    // requests.js
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch('http://127.0.0.1:8000/api/saveFilterStatistics', {
         method: 'POST',
-        body: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json',
-            
-            // Töröld a CSRF token küldését ideiglenesen, ha nem szükséges
+            'X-CSRF-TOKEN': csrfToken,
         },
+        body: JSON.stringify({
+            city: '',
+            type: 'Történelmi helyek',
+            interest: '',
+        }),
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            console.log('Új keresési rekord mentve!');
-        } else {
-            console.error('Hiba történt a keresési rekord mentése során:', data.error);
-        }
+        console.log('Success:', data);
     })
-    .catch(error => console.error('Új keresési rekord mentési hiba:', error));
+    .catch((error) => {
+        console.error('Error:', error);
+    });
 
     // Szűrt adatok lekérése az adatbázisból
     fetch(`/api/getAttractionsByFilters?city=${encodeURIComponent(city)}&type=${encodeURIComponent(type)}&interest=${encodeURIComponent(interest)}`)
@@ -333,6 +337,7 @@ fetch('/api/interests')
         })
         .catch(error => console.error('Lekérési hiba:', error));
 });
+
 
 function copyToClipboard() {
     var text = document.getElementById("selectedWord").innerText;

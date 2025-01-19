@@ -59,10 +59,8 @@ if ($id) {
                 $userAgent = $_SERVER['HTTP_USER_AGENT'];
 
                 if (preg_match('/mobile/i', $userAgent)) {
-                    // Ha mobil eszköz, akkor megjelenítjük a linket
-                    echo '<a class="app__text" href="https://example.com">Töltsd le az applikációt!</a>';
+                    echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
                 } else {
-                    // Ha asztali gép, nem jelenítünk meg semmit
                     echo '';
                 }
             ?>

@@ -4,7 +4,6 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Order;
 use Illuminate\Http\Request;
-use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TourController;
 use App\Http\Controllers\FavoriteController;
 use App\Models\Tour;

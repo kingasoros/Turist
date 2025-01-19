@@ -3,7 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttractionController;
-use App\Http\Controllers\FilterController;
+// use App\Http\Controllers\FilterController;
+// use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,8 +23,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/search', [AttractionController::class, 'search']);
 
-Route::post('/saveFilterSearch', [FilterController::class, 'saveFilterSearch']);
-Route::post('/insertNewSearchRecord', [SearchController::class, 'insertNewSearchRecord']);
+Route::post('/api/saveFilterStatistics', [AttractionController::class, 'saveFilterStatistics']);
+
+// Route::post('/saveFilterSearch', [FilterController::class, 'saveFilterSearch']);
+// Route::post('/insertNewSearchRecord', [SearchController::class, 'insertNewSearchRecord']);
 
 
 
