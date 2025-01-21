@@ -8,10 +8,13 @@ $stmt = $conn->prepare("
         t.*,
         a.name AS attraction_name,
         a.description AS attraction_description,
-        a.image AS attraction_image
+        a.image AS attraction_image,
+        t.start_date,  -- Hozzáadva a start_date
+        t.end_date     -- Hozzáadva az end_date
     FROM tours t
     LEFT JOIN tour_attractions ta ON t.tour_id = ta.tour_id
     LEFT JOIN attractions a ON ta.attractions_id = a.attractions_id
+    WHERE t.status = 'public'
     ORDER BY t.tour_id, ta.attraction_order
 ");
 $stmt->execute();
@@ -27,6 +30,8 @@ foreach ($tours as $tour) {
             'tour_description' => $tour['tour_description'],
             'price' => $tour['price'],
             'created_at' => $tour['created_at'],
+            'start_date' => $tour['start_date'],  // Hozzáadva a start_date
+            'end_date' => $tour['end_date'],      // Hozzáadva az end_date
             'attractions' => []
         ];
     }
@@ -38,6 +43,7 @@ foreach ($tours as $tour) {
         ];
     }
 }
+
 
 ?>
 <!DOCTYPE html>
@@ -51,7 +57,7 @@ foreach ($tours as $tour) {
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 
     <style>
         .text-muted {
@@ -123,7 +129,14 @@ foreach ($tours as $tour) {
 
                 </div>
                 <div class="card-footer bg-secondary text-white text-center py-2">
-                    <small><?= date('Y-m-d', strtotime($tour['created_at'] ?? 'now')) ?></small>
+                    <small>
+                        <!-- Eltérő dátumformátumok megjelenítése -->
+                        <?php 
+                            $startDate = isset($tour['start_date']) ? date('Y-m-d', strtotime($tour['start_date'])) : 'Nincs kezdési dátum';
+                            $endDate = isset($tour['end_date']) ? date('Y-m-d', strtotime($tour['end_date'])) : 'Nincs befejezési dátum';
+                            echo "Túra időpontja: $startDate - $endDate";
+                        ?>
+                    </small>
                 </div>
             </div>
         </div>

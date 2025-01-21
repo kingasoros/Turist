@@ -4,9 +4,9 @@ include 'db_conn.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $action = $_POST['action'];
-
         $new_file_name = null;
 
+        // Ellenőrizzük, hogy a fájl valóban létezik, és nincs hiba
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $file_name = $_FILES['image']["name"];
             $file_temp = $_FILES["image"]["tmp_name"];
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $ext_temp = explode(".", $file_name);
             $extension = end($ext_temp);
-            $new_file_name = date("YmdHis") . ".$extension";
+            $new_file_name = date("YmdHis") . ".$extension"; 
 
             $directory = "../../../../../img";
             $upload = "$directory/$new_file_name";
@@ -32,44 +32,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 mkdir($directory, 0777, true); 
             }
 
-            if (move_uploaded_file($file_temp, $upload)) {
-            } else {
+            if (!move_uploaded_file($file_temp, $upload)) {
                 header("Location: ../attractions.php?error=Hiba történt a fájl feltöltése közben.");
                 exit();
             }
         }
 
+        // Hozzáadás vagy szerkesztés logikája
         if ($action == 'add') {
-            $stmt = $conn->prepare("INSERT INTO blogs (title, content, author, image) VALUES (:title, :content, :author, :new_file_name)");
+            $stmt = $conn->prepare("INSERT INTO blogs (title, content, author, image) VALUES (:title, :content, :author, :image)");
             $stmt->execute([
                 ':title' => $_POST['title'],
                 ':content' => $_POST['content'],
                 ':author' => $_POST['author'],
-                ':new_file_name' => $_POST['new_file_name'] ?? null
+                ':image' => $new_file_name ?? null 
             ]);
         }
 
         if ($action == 'edit') {
-            $stmt = $conn->prepare("UPDATE blogs SET title = :title, content = :content, author = :author, image = :new_file_name WHERE id = :id");
+            $stmt = $conn->prepare("UPDATE blogs SET title = :title, content = :content, author = :author, image = :image WHERE id = :id");
             $stmt->execute([
                 ':title' => $_POST['title'],
                 ':content' => $_POST['content'], 
                 ':author' => $_POST['author'],
-                ':new_file_name' => $_POST['new_file_name'] ?? null,
+                ':image' => $new_file_name ?? $_POST['existing_image'], 
                 ':id' => $_POST['id']
             ]);
         }
 
+        // Törlés logika
         if ($action == 'delete') {
-            $stmt = $conn->prepare("DELETE FROM blogs WHERE id = :id");
+            $stmt = $conn->prepare("SELECT image FROM blogs WHERE id = :id");
             $stmt->execute([':id' => $_POST['id']]);
             $image = $stmt->fetch(PDO::FETCH_ASSOC);
-            $imagePath = "../../../../../img/" . $new_file_name;
+            $imagePath = "../../../../../img/" . $image['image']; 
             if (file_exists($imagePath)) {
-                unlink($imagePath);  
+                unlink($imagePath); 
             }
             $stmt = $conn->prepare("DELETE FROM blogs WHERE id = :id");
-            $stmt->execute([':id' => (int)$_POST['id']]);
+            $stmt->execute([':id' => $_POST['id']]);
         }
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();

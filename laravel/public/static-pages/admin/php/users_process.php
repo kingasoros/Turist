@@ -6,12 +6,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $action = $_POST['action'];
 
         if ($action == 'add') {
-            $stmt = $conn->prepare("INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, :role)");
+            $stmt = $conn->prepare("INSERT INTO users (name, email, password, role, created_at) VALUES (:name, :email, :password, :role, NOW())");
             $stmt->execute([
                 ':name' => $_POST['name'],
                 ':email' => $_POST['email'],
                 ':password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
-                ':role' => $_POST['role'] // A role itt most már dinamikusan van beállítva a felhasználó által választott érték alapján
+                ':role' => $_POST['role'] 
             ]);
         }
 
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ':name' => $_POST['name'],
                 ':email' => $_POST['email'],
                 ':password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
-                ':role' => $_POST['role'], // A szerepkör frissítése
+                ':role' => $_POST['role'],
                 ':id' => $_POST['id']
             ]);
         }

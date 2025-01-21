@@ -129,13 +129,25 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <label>Ár</label>
                         <input type="number" class="form-control" name="price" required>
                     </div>
+                    <label for="start_date">Kezdő dátum:</label>
+                    <input type="date" id="start_date" name="start_date" required><br>
+
+                    <label for="end_date">Befejező dátum:</label>
+                    <input type="date" id="end_date" name="end_date" required>
                     <div class="form-group">
-                        <label>Látványosságok</label>
-                        <select class="form-control" name="attractions[]" multiple required>
-                            <?php foreach ($attractions as $attraction): ?>
-                                <option value="<?= $attraction['attractions_id'] ?>"><?= htmlspecialchars($attraction['name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                        <label class="form-label">Látványosságok</label>
+                        <div class="row">
+                            <?php foreach ($attractions as $attraction) { ?>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="<?= $attraction['attractions_id'] ?>" id="attraction_<?= $attraction['attractions_id'] ?>" name="attractions[]">
+                                        <label class="form-check-label" for="attraction_<?= $attraction['attractions_id'] ?>">
+                                            <?= htmlspecialchars($attraction['name']) ?> (<?= htmlspecialchars($attraction['city_name']) ?>)
+                                        </label>
+                                    </div>
+                                </div>
+                            <?php } ?>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Statusz</label>
@@ -144,8 +156,6 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <option value="public">Public</option>
                         </select>
                     </div>
-                    <label for="image">Kép feltöltése</label>
-                    <input type="file" name="image" class="form-control-file" id="image">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
@@ -183,13 +193,25 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <label>Ár</label>
                         <input type="number" class="form-control" name="price" id="edit-tour-price" required>
                     </div>
+                    <label for="start_date">Kezdő dátum:</label>
+                    <input type="date" id="start_date" name="start_date" required><br>
+
+                    <label for="end_date">Befejező dátum:</label>
+                    <input type="date" id="end_date" name="end_date" required>
                     <div class="form-group">
-                        <label>Látványosságok</label>
-                        <select class="form-control" name="attractions[]" multiple id="edit-tour-attractions" required>
-                            <?php foreach ($attractions as $attraction): ?>
-                                <option value="<?= $attraction['attractions_id'] ?>"><?= htmlspecialchars($attraction['name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                        <label class="form-label">Látványosságok</label>
+                        <div class="row">
+                            <?php foreach ($attractions as $attraction) { ?>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="<?= $attraction['attractions_id'] ?>" id="attraction_<?= $attraction['attractions_id'] ?>" name="attractions[]">
+                                        <label class="form-check-label" for="attraction_<?= $attraction['attractions_id'] ?>">
+                                            <?= htmlspecialchars($attraction['name']) ?> (<?= htmlspecialchars($attraction['city_name']) ?>)
+                                        </label>
+                                    </div>
+                                </div>
+                            <?php } ?>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Statusz</label>
@@ -198,8 +220,6 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <option value="public">Public</option>
                         </select>
                     </div>
-                    <label for="image">Kép feltöltése</label>
-                    <input type="file" name="image" class="form-control-file" id="image">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
@@ -238,6 +258,7 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const editButtons = document.querySelectorAll('.edit-btn');
+        const deleteButtons = document.querySelectorAll('.delete-btn');
         
         editButtons.forEach(button => {
             button.addEventListener('click', function() {
@@ -258,6 +279,12 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 document.getElementById('edit-tour-status').value = status; 
             });
         });
+        deleteButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.dataset.id;
+            document.getElementById('delete-tour-id').value = id;
+        });
+    });
     });
 </script>
 
