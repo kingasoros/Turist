@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2025. Jan 19. 16:18
+-- Létrehozás ideje: 2025. Jan 21. 02:27
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.0.30
 
@@ -172,6 +172,18 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Tábla szerkezet ehhez a táblához `password_resets`
+--
+
+CREATE TABLE `password_resets` (
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Tábla szerkezet ehhez a táblához `tours`
 --
 
@@ -192,7 +204,6 @@ CREATE TABLE `tours` (
 
 INSERT INTO `tours` (`tour_id`, `tour_name`, `tour_description`, `price`, `start_date`, `end_date`, `status`, `created_at`) VALUES
 (1, 'Szabadka szecessziós túra', 'Ismerd meg Szabadka építészeti csodáit.', 5000.00, '2024-01-15', '2024-01-20', 'public', '2024-12-10 14:04:07'),
-(2, 'Palicsi tó túra', 'Kellemes séta a Palicsi tó körül.', 3000.00, '2024-02-10', '2024-02-15', 'private', '2024-12-10 14:04:07'),
 (3, 'Petrovaradini erőd túra', 'Fedezd fel a híres Petrovaradini erődöt.', 6000.00, '2024-03-05', '2024-03-10', 'public', '2024-12-10 14:04:07'),
 (4, 'Zentai csata nyomában', 'Látogatás a Zentai csata emlékműhöz.', 4000.00, '2024-04-20', '2024-04-25', 'public', '2024-12-10 14:04:07'),
 (5, 'Óbecsei kastélyok', 'Kastélyok és parkok Óbecsén.', 7000.00, '2024-05-10', '2024-05-15', 'public', '2024-12-10 14:04:07'),
@@ -222,7 +233,6 @@ CREATE TABLE `tour_attractions` (
 INSERT INTO `tour_attractions` (`id`, `tour_id`, `attractions_id`, `attraction_order`) VALUES
 (1, 1, 1, NULL),
 (2, 1, 6, NULL),
-(3, 2, 4, NULL),
 (4, 3, 3, NULL),
 (5, 4, 2, NULL),
 (6, 5, 7, NULL),
@@ -251,9 +261,7 @@ CREATE TABLE `turist_favorites` (
 --
 
 INSERT INTO `turist_favorites` (`favorite_id`, `id`, `tour_id`) VALUES
-(9, 26, 1),
-(10, 26, 2),
-(11, 26, 3);
+(12, 28, 1);
 
 -- --------------------------------------------------------
 
@@ -267,35 +275,37 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) NOT NULL,
+  `activation_token` varchar(64) DEFAULT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `role` int(1) DEFAULT 1,
-  `is_active` int(11) NOT NULL
+  `is_active` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- A tábla adatainak kiíratása `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `role`, `is_active`) VALUES
-(2, 'Titan Solutions Group', 'org2@example.com', NULL, '$2y$10$qifZJcE2.utQLnen.9fT0ulS7zszQYXvcknMDuwk8ghtfkovGp1oO', NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 0),
-(3, 'Pinnacle Consulting Services', 'org3@example.com', NULL, 'hashedpassword3', NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 1),
-(4, 'Horizon Development Corporation', 'org4@example.com', NULL, 'hashedpassword4', NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 0),
-(5, 'Silvercrest International', 'org5@example.com', NULL, 'hashedpassword5', NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 1),
-(6, 'Fortress Management Group', 'org6@example.com', NULL, 'hashedpassword6', NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 0),
-(7, 'Phoenix Global Industries', 'org7@example.com', NULL, 'hashedpassword7', NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 0),
-(8, 'Bluewater Solutions Inc.', 'org8@example.com', NULL, 'hashedpassword8', NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 1),
-(9, 'Vanguard Technologies Corp.', 'org9@example.com', NULL, 'hashedpassword9', NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 0),
-(10, 'Regal Consulting Group', 'org10@example.com', NULL, 'hashedpassword10', NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 0),
-(11, 'Global Enterprises Ltd.', 'org1@example.com', NULL, 'hashedpassword1', NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 1),
-(12, 'Kata', 'kataexample@gmail.com', NULL, '$2y$10$BRtUs32QrEU.IdYPdyXUDePcC0xK405f69TUfDgDjvugMFwm6Jide', NULL, '2025-01-11 12:37:40', '2025-01-11 12:37:40', 1, 0),
-(13, 'Boy', 'example@gmail.com', NULL, '$2y$10$0Y/KlEop49DGXuOyPx/yMukADzRAkpBYwW/rYtj8pBGDBDrX/gWQu', NULL, '2025-01-11 12:50:40', '2025-01-11 12:50:40', 1, 0),
-(14, 'Peti', 'example1@gmail.com', NULL, '$2y$10$NJc1qDmqZlxyDhAXg.XpZOFHB42ghclhkpendv7jKPwaf...dUTjK', NULL, '2025-01-11 13:02:19', '2025-01-11 13:02:19', 1, 1),
-(15, 'Endre', 'example2@gmail.com', NULL, '$2y$10$4aTGw/TMQBswk3Lc.ctIGuk0QSUaCRG/q68JVFGbT1JTaMcfPPzZy', NULL, '2025-01-11 14:03:59', '2025-01-11 14:03:59', 1, 0),
-(16, 'Kata', 'example3@gmail.com', NULL, '$2y$10$SjJL2G5WvKvdX90Rob39COVoWwAeut6odNx7sxHWE6EKyiEi5T/VC', NULL, '2025-01-11 15:09:51', '2025-01-11 15:09:51', 1, 1),
-(17, 'Example4', 'example4@gmail.com', NULL, '$2y$10$TXTGRYlA.zmIhTVO3vwMTuhn.W0mmk0z1bnawD5vcCs4j7FgmTgz.', NULL, '2025-01-11 15:11:51', '2025-01-11 15:11:51', 2, 0),
-(26, 'Kinga', 'kingasoros@gmail.com', NULL, '$2y$10$xhTrSYv4C.T3Acr349kP6eIlCNNDWKyl4LZvKwfApAiAPZpi6wN2q', NULL, '2025-01-12 15:31:41', '2025-01-12 15:31:50', 3, 1);
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `activation_token`, `remember_token`, `created_at`, `updated_at`, `role`, `is_active`) VALUES
+(2, 'Titan Solutions Group', 'org2@example.com', NULL, '$2y$10$qifZJcE2.utQLnen.9fT0ulS7zszQYXvcknMDuwk8ghtfkovGp1oO', NULL, NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 0),
+(3, 'Pinnacle Consulting Services', 'org3@example.com', NULL, 'hashedpassword3', NULL, NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 1),
+(4, 'Horizon Development Corporation', 'org4@example.com', NULL, 'hashedpassword4', NULL, NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 0),
+(5, 'Silvercrest International', 'org5@example.com', NULL, 'hashedpassword5', NULL, NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 1),
+(6, 'Fortress Management Group', 'org6@example.com', NULL, 'hashedpassword6', NULL, NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 0),
+(7, 'Phoenix Global Industries', 'org7@example.com', NULL, 'hashedpassword7', NULL, NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 0),
+(8, 'Bluewater Solutions Inc.', 'org8@example.com', NULL, 'hashedpassword8', NULL, NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 1),
+(9, 'Vanguard Technologies Corp.', 'org9@example.com', NULL, 'hashedpassword9', NULL, NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 0),
+(10, 'Regal Consulting Group', 'org10@example.com', NULL, 'hashedpassword10', NULL, NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 0),
+(11, 'Global Enterprises Ltd.', 'org1@example.com', NULL, 'hashedpassword1', NULL, NULL, '2024-12-16 20:45:56', '2024-12-16 20:45:56', 2, 1),
+(12, 'Kata', 'kataexample@gmail.com', NULL, '$2y$10$BRtUs32QrEU.IdYPdyXUDePcC0xK405f69TUfDgDjvugMFwm6Jide', NULL, NULL, '2025-01-11 12:37:40', '2025-01-11 12:37:40', 1, 0),
+(13, 'Boy', 'example@gmail.com', NULL, '$2y$10$0Y/KlEop49DGXuOyPx/yMukADzRAkpBYwW/rYtj8pBGDBDrX/gWQu', NULL, NULL, '2025-01-11 12:50:40', '2025-01-11 12:50:40', 1, 0),
+(14, 'Peti', 'example1@gmail.com', NULL, '$2y$10$NJc1qDmqZlxyDhAXg.XpZOFHB42ghclhkpendv7jKPwaf...dUTjK', NULL, NULL, '2025-01-11 13:02:19', '2025-01-11 13:02:19', 1, 1),
+(15, 'Endre', 'example2@gmail.com', NULL, '$2y$10$4aTGw/TMQBswk3Lc.ctIGuk0QSUaCRG/q68JVFGbT1JTaMcfPPzZy', NULL, NULL, '2025-01-11 14:03:59', '2025-01-11 14:03:59', 1, 0),
+(16, 'Kata', 'example3@gmail.com', NULL, '$2y$10$SjJL2G5WvKvdX90Rob39COVoWwAeut6odNx7sxHWE6EKyiEi5T/VC', NULL, NULL, '2025-01-11 15:09:51', '2025-01-11 15:09:51', 1, 1),
+(17, 'Example4', 'example4@gmail.com', NULL, '$2y$10$TXTGRYlA.zmIhTVO3vwMTuhn.W0mmk0z1bnawD5vcCs4j7FgmTgz.', NULL, NULL, '2025-01-11 15:11:51', '2025-01-11 15:11:51', 2, 0),
+(28, 'Kinga', 'kingasoros@gmail.com', NULL, '$2y$10$jbQJIl1GZCktIub.o0mYA.8b9J52cJ6ZYIkQ5CUCymoepnH0nXZUO', NULL, NULL, '2025-01-20 23:01:46', '2025-01-20 23:01:55', 3, 1),
+(30, 'kingasoros@gmail.com', 'me@gmail.com', NULL, '$2y$10$j3mwkF7M3n6a5KT/PWxw5ObLGNaq5VFZ5YPEtPkYXaLwhHH87Z9O6', NULL, NULL, NULL, NULL, 2, 0);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -334,6 +344,12 @@ ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
+-- A tábla indexei `password_resets`
+--
+ALTER TABLE `password_resets`
+  ADD PRIMARY KEY (`email`);
+
+--
 -- A tábla indexei `tours`
 --
 ALTER TABLE `tours`
@@ -370,13 +386,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT a táblához `attractions`
 --
 ALTER TABLE `attractions`
-  MODIFY `attractions_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `attractions_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT a táblához `blogs`
 --
 ALTER TABLE `blogs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT a táblához `cities`
@@ -400,25 +416,25 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT a táblához `tours`
 --
 ALTER TABLE `tours`
-  MODIFY `tour_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `tour_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT a táblához `tour_attractions`
 --
 ALTER TABLE `tour_attractions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT a táblához `turist_favorites`
 --
 ALTER TABLE `turist_favorites`
-  MODIFY `favorite_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `favorite_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT a táblához `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- Megkötések a kiírt táblákhoz
