@@ -12,7 +12,13 @@ const ToursScreen = () => {
         'Content-Type': 'application/json',
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error(`Error: ${response.status}`);
+        }
+      })
       .then((data) => {
         if (data.success) {
           setTours(data.tours);

@@ -1,6 +1,7 @@
 <?php
 include base_path('resources/views/static-pages/front/php/db_conn.php');
 
+
 $stmt = $conn->prepare("SELECT * FROM blogs");
 $stmt->execute();
 $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -33,7 +34,7 @@ $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="col-md-4 mb-4">
                         <div class="card">
                             <a href="{{ route('blogs_page', ['id' => $blog['id']]) }}">
-                                <img src="http://localhost/Turist/img/<?= htmlspecialchars($blog['image']) ?>" alt="Blog image" class="card-img-top" style="width: 100%; height: auto;">
+                                <img src="http://localhost/Turist/img/<?= !empty($blog['image']) ? htmlspecialchars($blog['image']) : 'default.jpg' ?>" alt="Blog image" class="card-img-top" style="width: 100%; height: auto;">
                                 <div class="card-body">
                                     <h5 class="card-title"><?= htmlspecialchars($blog['title']) ?></h5>
                                     <p class="card-text"><?= htmlspecialchars(substr($blog['content'], 0, 100)) ?>...</p>
@@ -57,18 +58,17 @@ $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <footer>
         <div class="footer__container">
             <?php
-                $userAgent = $_SERVER['HTTP_USER_AGENT'];
-
-                if (preg_match('/mobile/i', $userAgent)) {
-                    // Ha mobil eszköz, akkor megjelenítjük a linket
-                    echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
-                } else {
-                    // Ha asztali gép, nem jelenítünk meg semmit
-                    echo '';
-                }
+               $userAgent = $_SERVER['HTTP_USER_AGENT'];
+               
+               if (preg_match('/mobile/i', $userAgent)) {
+                   echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
+               } else {
+                   echo '';
+               }
+               
             ?>
             <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
         </div>
-    </footer>    
+</footer>    
 </body>
 </html>

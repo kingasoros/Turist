@@ -1,10 +1,9 @@
 <?php
 include base_path('resources/views/static-pages/front/php/db_conn.php');
 
-// Get the ID from the URL path
 $request_uri = $_SERVER['REQUEST_URI'];
 $parts = explode('/', $request_uri);
-$id = isset($parts[2]) ? $parts[2] : null; // Get the 3rd part of the URL
+$id = isset($parts[2]) ? $parts[2] : null; 
 
 if ($id) {
     $stmt = $conn->prepare("SELECT * FROM blogs WHERE id = :id");
@@ -36,7 +35,7 @@ if ($id) {
         </h2>   
     </x-slot>
     <div class="blog_container">
-        <img src="http://localhost/Turist/img/<?= htmlspecialchars($blog['image']) ?>" class="img-fluid" alt="...">
+        <img src="http://localhost/Turist/img/<?= !empty($blog['image']) ? htmlspecialchars($blog['image']) : 'default.jpg' ?>" class="img-fluid" alt="...">
 
         <h5 class="card-title"><?= htmlspecialchars($blog['title']) ?></h5>
             <p class="card-text"><small class="text-muted"><?= htmlspecialchars($blog['author']) ?></small></p>
@@ -56,17 +55,18 @@ if ($id) {
 <footer>
         <div class="footer__container">
             <?php
-                $userAgent = $_SERVER['HTTP_USER_AGENT'];
-
-                if (preg_match('/mobile/i', $userAgent)) {
-                    echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
-                } else {
-                    echo '';
-                }
+               $userAgent = $_SERVER['HTTP_USER_AGENT'];
+               
+               if (preg_match('/mobile/i', $userAgent)) {
+                   echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
+               } else {
+                   echo '';
+               }
+               
             ?>
             <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
         </div>
-    </footer>
+</footer> 
 </body>
 </html>
 

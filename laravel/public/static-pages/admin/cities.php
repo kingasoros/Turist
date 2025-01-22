@@ -18,6 +18,8 @@
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <style>
     @media (max-width: 768px) {
         .table-responsive {
@@ -40,7 +42,7 @@
     <h2>Városok</h2>
     <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addCityModal">Új város hozzáadása</button>
     <div class="table-responsive">
-        <table class="table table-bordered">
+        <table id="cityTable" class="table table-bordered">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -182,6 +184,12 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    $('#cityTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/Hungarian.json"
+            }
+        });
+
     const editButtons = document.querySelectorAll('.edit-btn');
     const deleteButtons = document.querySelectorAll('.delete-btn');
 

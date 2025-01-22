@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Http\Middleware\CheckIfUserCanRegister;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DeviceDetectionController;
 
 
 require __DIR__.'/auth.php';
@@ -128,7 +129,7 @@ Route::get('/activate/{token}', function ($token) {
     $user->activation_token = null;
     $user->save();
 
-    return redirect('/')->with('message', 'Fiókod aktiválva lett!');
+    return redirect('/login')->with('message', 'Fiók aktiválása sikeres!');
 })->name('activate.account');
 
 Route::post('/api/saveSelectedName', function (Request $request) {
@@ -205,3 +206,6 @@ Route::get('/api/getAttractionsByFilters', function (Request $request) {
 
     return response()->json($attractions);
 });
+
+Route::get('/store-device-data', [DeviceDetectionController::class, 'storeDeviceData']);
+

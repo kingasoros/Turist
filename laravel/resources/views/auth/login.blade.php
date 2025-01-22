@@ -12,8 +12,10 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
+        <x-input-success :messages="session('message')" class="mt-2" />
         <!-- Password -->
         <div class="mt-4">
+
             <x-input-label for="password" :value="__('Password')" />
 
             <x-text-input id="password" class="block mt-1 w-full"

@@ -6,7 +6,8 @@ $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $stmt = $conn->prepare("
     SELECT t.tour_id, t.tour_name, t.tour_description, t.price, t.start_date, t.end_date, t.status, 
-           GROUP_CONCAT(a.name ORDER BY ta.attraction_order) AS attractions
+           GROUP_CONCAT(a.name ORDER BY ta.attraction_order) AS attractions,
+           GROUP_CONCAT(a.attractions_id ORDER BY ta.attraction_order) AS attraction_ids
     FROM tours t
     LEFT JOIN tour_attractions ta ON t.tour_id = ta.tour_id
     LEFT JOIN attractions a ON ta.attractions_id = a.attractions_id
@@ -15,6 +16,7 @@ $stmt = $conn->prepare("
 ");
 $stmt->execute();
 $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +35,8 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <style>
     @media(min-width:1200px){
         .container{
@@ -51,7 +54,7 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <div class="container mt-10">
     <h2>Túrák</h2>
     <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addTourModal">Új túra hozzáadása</button>
-    <table class="table table-bordered">
+    <table id="tourTable" class="table table-bordered">
         <thead>
             <tr>
                 <th>ID</th>
@@ -78,16 +81,17 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars($tour['attractions']) ?></td>
                     <td><?= htmlspecialchars($tour['status']) ?></td> <!-- Display the status -->
                     <td>
-                        <button class="btn btn-sm btn-warning edit-btn" 
-                            data-id="<?= htmlspecialchars($tour['tour_id']) ?>"
-                            data-name="<?= htmlspecialchars($tour['tour_name']) ?>"
-                            data-description="<?= htmlspecialchars($tour['tour_description']) ?>"
-                            data-price="<?= htmlspecialchars($tour['price']) ?>"
-                            data-start-date="<?= htmlspecialchars($tour['start_date']) ?>"
-                            data-end-date="<?= htmlspecialchars($tour['end_date']) ?>"
-                            data-status="<?= htmlspecialchars($tour['status']) ?>" 
-                            data-toggle="modal" 
-                            data-target="#editTourModal">Szerkesztés</button>
+                    <button class="btn btn-sm btn-warning edit-btn" 
+                        data-id="<?= htmlspecialchars($tour['tour_id']) ?>"
+                        data-name="<?= htmlspecialchars($tour['tour_name']) ?>"
+                        data-description="<?= htmlspecialchars($tour['tour_description']) ?>"
+                        data-price="<?= htmlspecialchars($tour['price']) ?>"
+                        data-start-date="<?= htmlspecialchars($tour['start_date']) ?>"
+                        data-end-date="<?= htmlspecialchars($tour['end_date']) ?>"
+                        data-status="<?= htmlspecialchars($tour['status']) ?>" 
+                        data-attractions="<?= htmlspecialchars($tour['attraction_ids']) ?>"
+                        data-toggle="modal" 
+                        data-target="#editTourModal">Szerkesztés</button>
                         <button class="btn btn-sm btn-danger delete-btn" 
                             data-id="<?= htmlspecialchars($tour['tour_id']) ?>" 
                             data-toggle="modal" 
@@ -129,11 +133,15 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <label>Ár</label>
                         <input type="number" class="form-control" name="price" required>
                     </div>
-                    <label for="start_date">Kezdő dátum:</label>
-                    <input type="date" id="start_date" name="start_date" required><br>
+                    <label for="add_start_date">Kezdő dátum:</label>
+                    <input type="date" id="add_start_date" name="start_date" required><br>
 
-                    <label for="end_date">Befejező dátum:</label>
-                    <input type="date" id="end_date" name="end_date" required>
+                    <label for="add_end_date">Befejező dátum:</label>
+                    <input type="date" id="add_end_date" name="end_date" required><br>
+                    <div id="add_date_error" class="text-danger" style="display: none; color: red; font-size: 0.9em;">
+                        A kezdő dátum nem lehet későbbi, mint a befejező dátum!
+                    </div>
+
                     <div class="form-group">
                         <label class="form-label">Látványosságok</label>
                         <div class="row">
@@ -193,11 +201,15 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <label>Ár</label>
                         <input type="number" class="form-control" name="price" id="edit-tour-price" required>
                     </div>
-                    <label for="start_date">Kezdő dátum:</label>
-                    <input type="date" id="start_date" name="start_date" required><br>
+                    <label for="edit_start_date">Kezdő dátum:</label>
+                    <input type="date" id="edit_start_date" name="start_date" required><br>
 
-                    <label for="end_date">Befejező dátum:</label>
-                    <input type="date" id="end_date" name="end_date" required>
+                    <label for="edit_end_date">Befejező dátum:</label>
+                    <input type="date" id="edit_end_date" name="end_date" required><br>
+                    <div id="edit_date_error" class="text-danger" style="display: none; color: red; font-size: 0.9em;">
+                        A kezdő dátum nem lehet későbbi, mint a befejező dátum!
+                    </div>
+
                     <div class="form-group">
                         <label class="form-label">Látványosságok</label>
                         <div class="row">
@@ -257,6 +269,13 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
+        $('#tourTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/Hungarian.json"
+            }
+        });
+
         const editButtons = document.querySelectorAll('.edit-btn');
         const deleteButtons = document.querySelectorAll('.delete-btn');
         
@@ -269,22 +288,66 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 const startDate = this.dataset.startDate;
                 const endDate = this.dataset.endDate;
                 const status = this.dataset.status;
+                const attractions = this.dataset.attractions ? this.dataset.attractions.split(',') : [];
 
                 document.getElementById('edit-tour-id').value = tourId;
                 document.getElementById('edit-tour-name').value = tourName;
                 document.getElementById('edit-tour-description').value = tourDescription;
                 document.getElementById('edit-tour-price').value = price;
-                document.getElementById('edit-tour-start-date').value = startDate;
-                document.getElementById('edit-tour-end-date').value = endDate;
-                document.getElementById('edit-tour-status').value = status; 
+                document.getElementById('edit_start_date').value = startDate;
+                document.getElementById('edit_end_date').value = endDate;
+                document.getElementById('edit-tour-status').value = status;
+
+                // Clear all checkboxes
+                document.querySelectorAll('#editTourModal .form-check-input').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+
+                // Set the selected attractions
+                attractions.forEach(attractionId => {
+                    const checkbox = document.querySelector(`#editTourModal .form-check-input[value="${attractionId}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
             });
         });
+
         deleteButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const id = this.dataset.id;
-            document.getElementById('delete-tour-id').value = id;
+            button.addEventListener('click', function () {
+                const id = this.dataset.id;
+                document.getElementById('delete-tour-id').value = id;
+            });
         });
-    });
+        
+        function validateDates(startDateInput, endDateInput, errorDiv) {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+
+            if (startDate && endDate && startDate > endDate) {
+                errorDiv.style.display = 'block';
+                startDateInput.setCustomValidity('A kezdő dátum nem lehet későbbi, mint a befejező dátum!');
+            } else {
+                errorDiv.style.display = 'none';
+                startDateInput.setCustomValidity('');
+            }
+        }
+
+        // Add Tour Modal
+        const addStartDateInput = document.getElementById('add_start_date');
+        const addEndDateInput = document.getElementById('add_end_date');
+        const addErrorDiv = document.getElementById('add_date_error');
+
+        addStartDateInput.addEventListener('input', () => validateDates(addStartDateInput, addEndDateInput, addErrorDiv));
+        addEndDateInput.addEventListener('input', () => validateDates(addStartDateInput, addEndDateInput, addErrorDiv));
+
+        // Edit Tour Modal
+        const editStartDateInput = document.getElementById('edit_start_date');
+        const editEndDateInput = document.getElementById('edit_end_date');
+        const editErrorDiv = document.getElementById('edit_date_error');
+
+        editStartDateInput.addEventListener('input', () => validateDates(editStartDateInput, editEndDateInput, editErrorDiv));
+        editEndDateInput.addEventListener('input', () => validateDates(editStartDateInput, editEndDateInput, editErrorDiv));
     });
 </script>
 

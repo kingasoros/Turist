@@ -23,6 +23,30 @@ if (!empty($selectedName)) {
     }
 }
 
+use Detection\MobileDetect;
+
+$ipAddress = getIpAddress();
+$ipAddress = $ipAddress === "127.0.0.1" ? "119.14.26.0" : $ipAddress;
+
+$cookie = $_COOKIE["visited"] ?? "";
+
+$detect = new MobileDetect();
+
+if (!isset($_COOKIE['VISITED'])) {
+    $apiFields = "country,proxy,isp"; 
+    $response = getCurlData("http://ip-api.com/json/$ipAddress?fields=$apiFields");
+    $apiData = json_decode($response, true);
+
+    $userAgent = $detect->getUserAgent();
+    $deviceType = $detect->isMobile() ? ($detect->isTablet() ? "tablet" : "phone") : "computer";
+    $country = $apiData['country'] ?? "unknown";
+    $proxy = $apiData['proxy'] ?? false;
+    $isp = $apiData['isp'] ?? "unknown";
+
+    insertIntoLog($userAgent, $ipAddress, $deviceType, $country, $proxy, $isp);
+    setcookie("VISITED", "YES", time() + 10);
+}
+
 ?>
 <script>
     const sectors = <?= json_encode(array_map(fn($attraction) => ['color' => '', 'label' => $attraction['name']], $attractions)); ?>;
@@ -88,11 +112,7 @@ if (!empty($selectedName)) {
                 <div class="card mb-3" style=" margin:5px; background-color:#002f3b; color:#fff;" data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>">
                     <div class="row g-0">
                         <div class="col-md-4">
-                            <?php if (!empty($attraction['image'])){ ?>
-                                <img src="http://localhost/Turist/img/<?= htmlspecialchars($attraction['image']) ?>" alt="<?= htmlspecialchars($attraction['name']) ?>" style="height:100%;">
-                            <?php }else{ ?>
-                                <img src=".." class="img-fluid rounded-start" alt="...">
-                            <?php } ?>
+                                <img src="http://localhost/Turist/img/<?= !empty($attraction['image']) ? htmlspecialchars($attraction['image']) : 'default.jpg' ?>" alt="<?= htmlspecialchars($attraction['name']) ?>" style="height:100%;">
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
@@ -126,21 +146,23 @@ if (!empty($selectedName)) {
     <footer>
         <div class="footer__container">
             <?php
-                $userAgent = $_SERVER['HTTP_USER_AGENT'];
-
-                if (preg_match('/mobile/i', $userAgent)) {
-                    echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
-                } else {
-                    echo '';
-                }
+               $userAgent = $_SERVER['HTTP_USER_AGENT'];
+               
+               if (preg_match('/mobile/i', $userAgent)) {
+                   echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
+               } else {
+                   echo '';
+               }
+               
             ?>
             <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
         </div>
-    </footer>
+</footer> 
+
 <script>
     const searchInput = document.getElementById('search');
     const resultsList = document.getElementById('results');
-
+    
     searchInput.addEventListener('input', function () {
     const query = this.value;
 
@@ -352,7 +374,19 @@ function copyToClipboard() {
 
     alert("Szöveg másolva: " + text);
 }
-
+fetch('/store-device-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.deviceType === 'Mobile') {
+                const footer = document.querySelector('.footer__container');
+                const appText = document.createElement('a');
+                appText.classList.add('app__text');
+                appText.href = 'https://example.com';
+                appText.textContent = 'Töltsd le az applikációt!';
+                footer.appendChild(appText);
+            }
+        })
+        .catch(error => console.error('Error:', error));
 </script>
 </body>
 </html>

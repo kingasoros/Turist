@@ -39,6 +39,7 @@ foreach ($tours as $tour) {
         ];
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -88,9 +89,7 @@ foreach ($tours as $tour) {
                                                 <small class="text-muted"><?= htmlspecialchars($attraction['description'] ?? 'Nincs leírás') ?></small>
                                             </div>
                                             <div class="col-md-6 text-center">
-                                                <?php if (!empty($attraction['image'])) { ?>
-                                                    <img src="http://localhost/Turist/img/<?= htmlspecialchars($attraction['image']) ?>" alt="<?= htmlspecialchars($attraction['name']) ?>">
-                                                <?php } ?>
+                                                    <img src="http://localhost/Turist/img/<?= !empty($attraction['image']) ? htmlspecialchars($attraction['image']) : 'default.jpg' ?>" alt="<?= htmlspecialchars($attraction['name']) ?>">
                                             </div>
                                         </div>
                                     </li>
@@ -127,19 +126,18 @@ foreach ($tours as $tour) {
 <footer>
         <div class="footer__container">
             <?php
-                $userAgent = $_SERVER['HTTP_USER_AGENT'];
-
-                if (preg_match('/mobile/i', $userAgent)) {
-                    // Ha mobil eszköz, akkor megjelenítjük a linket
-                    echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
-                } else {
-                    // Ha asztali gép, nem jelenítünk meg semmit
-                    echo '';
-                }
+               $userAgent = $_SERVER['HTTP_USER_AGENT'];
+               
+               if (preg_match('/mobile/i', $userAgent)) {
+                   echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
+               } else {
+                   echo '';
+               }
+               
             ?>
             <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
         </div>
-    </footer>
+</footer>    
 <script>
     function deleteFavorite(tourId) {
         var form = document.getElementById('deleteForm-' + tourId);

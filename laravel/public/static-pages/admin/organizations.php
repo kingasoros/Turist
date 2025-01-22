@@ -18,7 +18,8 @@
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 </head>
 
 <body id="page-top">
@@ -26,7 +27,7 @@
 <div class="container mt-4">
     <h2>Szervezetek</h2>
     <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addUserModal">Új szervezet hozzáadása</button>
-    <table class="table table-bordered">
+        <table id="organizationTable" class="table table-bordered">
         <thead>
             <tr>
                 <th>ID</th>
@@ -166,6 +167,12 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    $('#organizationTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/Hungarian.json"
+            }
+        });
+
     const editButtons = document.querySelectorAll('.edit-btn');
     const deleteButtons = document.querySelectorAll('.delete-btn');
 

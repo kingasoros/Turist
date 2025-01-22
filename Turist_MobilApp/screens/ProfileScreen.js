@@ -10,7 +10,13 @@ const ProfileScreen = () => {
     fetch('http://192.168.1.6/Turist/Turist_MobilApp/screens/get_user_name.php', {
       method: 'GET',
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error('Failed to fetch user name');
+        }
+      })
       .then(data => {
         if (data.success) {
           setUserName(data.user_name); 
@@ -28,7 +34,13 @@ const ProfileScreen = () => {
     fetch('http://192.168.1.6/Turist/Turist_MobilApp/screens/logout.php', {
       method: 'POST',
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error('Failed to log out');
+        }
+      })
       .then(data => {
         if (data.success) {
           Alert.alert('Kijelentkezés', 'Sikeresen kijelentkeztél!');

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -18,6 +19,9 @@ const LoginScreen = ({ navigation }) => {
       const result = await response.json();
 
       if (result.success) {
+        // Mentsd el a tokent AsyncStorage-ba
+        await AsyncStorage.setItem('auth_token', result.token);
+
         Alert.alert('Sikeres bejelentkezés', `Üdvözlünk, ${result.user.name}!`);
         navigation.navigate('Home');
       } else {
@@ -30,29 +34,29 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-        <View style={styles.containerlogin}>
-            <Text style={styles.title}>Bejelentkezés</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="E-mail"
-                keyboardType="email-address"
-                value={email}
-                onChangeText={setEmail}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Jelszó"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-            />
-            <Button title="Bejelentkezés" onPress={handleLogin} />
-            
-            {/* Regisztrációs információ */}
-            <Text style={styles.registerText}>
-              Regisztrálni csak az oldalon lehet.
-            </Text>
-        </View>    
+      <View style={styles.containerlogin}>
+        <Text style={styles.title}>Bejelentkezés</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="E-mail"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Jelszó"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+        <Button title="Bejelentkezés" onPress={handleLogin} />
+        
+        {/* Regisztrációs információ */}
+        <Text style={styles.registerText}>
+          Regisztrálni csak az oldalon lehet.
+        </Text>
+      </View>
     </View>
   );
 };

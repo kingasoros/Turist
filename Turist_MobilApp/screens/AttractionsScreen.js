@@ -9,15 +9,18 @@ const AttractionsScreen = () => {
   const fetchAttractions = (searchQuery) => {
     console.log('API hívás indítása', searchQuery); 
     axios
-        .get(`http://192.168.1.6/Turist/Turist_MobilApp/screens/get_attractions.php?search=${searchQuery}`)
-        .then((response) => {
-            setAttractions(response.data);
-        })
-        .catch((error) => {
-            console.error('Hiba az API hívás során: ', error);
-        });
+      .get(`http://192.168.1.6/Turist/Turist_MobilApp/screens/get_attractions.php?search=${searchQuery}`)
+      .then((response) => {
+        if (response.status === 200) { // Ellenőrizzük, hogy sikeres-e a válasz
+          setAttractions(response.data);
+        } else {
+          console.warn(`Nem sikeres válasz: ${response.status}`);
+        }
+      })
+      .catch((error) => {
+        console.error('Hiba az API hívás során: ', error);
+      });
   };
-  
 
   useEffect(() => {
     fetchAttractions(''); 

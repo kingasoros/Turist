@@ -1,3 +1,28 @@
+<?php
+use Detection\MobileDetect;
+
+$ipAddress = getIpAddress();
+$ipAddress = $ipAddress === "127.0.0.1" ? "119.14.26.0" : $ipAddress;
+
+$cookie = $_COOKIE["visited"] ?? "";
+
+$detect = new MobileDetect();
+
+if (!isset($_COOKIE['VISITED'])) {
+    $apiFields = "country,proxy,isp"; 
+    $response = getCurlData("http://ip-api.com/json/$ipAddress?fields=$apiFields");
+    $apiData = json_decode($response, true);
+
+    $userAgent = $detect->getUserAgent();
+    $deviceType = $detect->isMobile() ? ($detect->isTablet() ? "tablet" : "phone") : "computer";
+    $country = $apiData['country'] ?? "unknown";
+    $proxy = $apiData['proxy'] ?? false;
+    $isp = $apiData['isp'] ?? "unknown";
+
+    insertIntoLog($userAgent, $ipAddress, $deviceType, $country, $proxy, $isp);
+    setcookie("VISITED", "YES", time() + 10);
+}
+?>
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -74,19 +99,18 @@
     <footer>
         <div class="footer__container">
             <?php
-                $userAgent = $_SERVER['HTTP_USER_AGENT'];
-
-                if (preg_match('/mobile/i', $userAgent)) {
-                    // Ha mobil eszköz, akkor megjelenítjük a linket
-                    echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
-                } else {
-                    // Ha asztali gép, nem jelenítünk meg semmit
-                    echo '';
-                }
+               $userAgent = $_SERVER['HTTP_USER_AGENT'];
+               
+               if (preg_match('/mobile/i', $userAgent)) {
+                   echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
+               } else {
+                   echo '';
+               }
+               
             ?>
             <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
         </div>
-    </footer>
+</footer>    
 </x-app-layout>
 </body>
 </html>

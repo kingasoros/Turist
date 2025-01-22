@@ -21,11 +21,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user) {
             if (password_verify($password, $user['password'])) {
                 unset($user['password']);
-                
+
+                // Generáljunk egy új tokent
+                $token = bin2hex(random_bytes(32)); 
+
+                // Mentsük el a token-t az adatbázisba
+                $updateStmt = $conn->prepare("UPDATE users SET auth_token = :token WHERE id = :id");
+                $updateStmt->bindParam(':token', $token);
+                $updateStmt->bindParam(':id', $user['id']);
+                $updateStmt->execute();
+
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['id'] = $user['id'];
                 
-                echo json_encode(['success' => true, 'message' => 'Bejelentkezés sikeres!', 'user' => $user]);
+                echo json_encode(['success' => true, 'message' => 'Bejelentkezés sikeres!', 'user' => $user, 'token' => $token]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Hibás jelszó.']);
             }

@@ -16,7 +16,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <style>
         .blog-image {
             width: 100px;
@@ -40,52 +41,52 @@
     <?php include 'nav.php'; ?>
 
     <div class="container mt-4">
-        <h2>Blogbejegyzések</h2>
-        <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addBlogModal">Új bejegyzés hozzáadása</button>
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
+    <h2>Blogbejegyzések</h2>
+    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addBlogModal">Új bejegyzés hozzáadása</button>
+    <div class="table-responsive">
+        <table id="blogTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cím</th>
+                    <th>Szerző</th>
+                    <th>Szöveg</th>
+                    <th>Műveletek</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($blogs)): ?>
+                    <?php foreach ($blogs as $blog): ?>
                     <tr>
-                        <th>ID</th>
-                        <th>Cím</th>
-                        <th>Szerző</th>
-                        <th>Szöveg</th>
-                        <th>Műveletek</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($blogs)): ?>
-                        <?php foreach ($blogs as $blog): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($blog['id']) ?></td>
-                            <td><?= htmlspecialchars($blog['title']) ?></td>
-                            <td><?= htmlspecialchars($blog['author']) ?></td>
-                            <td><?= htmlspecialchars(substr($blog['content'], 0, 10)) . (strlen($blog['content']) > 10 ? '...' : '') ?></td>
-                            <td>
-                                <button class="btn btn-sm btn-warning edit-btn" 
-                                    data-id="<?= htmlspecialchars($blog['id']) ?>"
-                                    data-title="<?= htmlspecialchars($blog['title']) ?>"
-                                    data-content="<?= htmlspecialchars($blog['content']) ?>"
-                                    data-author="<?= htmlspecialchars($blog['author']) ?>"
-                                    data-toggle="modal" 
-                                    data-target="#editBlogModal">Szerkesztés</button>
+                        <td><?= htmlspecialchars($blog['id']) ?></td>
+                        <td><?= htmlspecialchars($blog['title']) ?></td>
+                        <td><?= htmlspecialchars($blog['author']) ?></td>
+                        <td><?= htmlspecialchars(substr($blog['content'], 0, 10)) . (strlen($blog['content']) > 10 ? '...' : '') ?></td>
+                        <td>
+                            <button class="btn btn-sm btn-warning edit-btn" 
+                                data-id="<?= htmlspecialchars($blog['id']) ?>"
+                                data-title="<?= htmlspecialchars($blog['title']) ?>"
+                                data-content="<?= htmlspecialchars($blog['content']) ?>"
+                                data-author="<?= htmlspecialchars($blog['author']) ?>"
+                                data-toggle="modal" 
+                                data-target="#editBlogModal">Szerkesztés</button>
 
-                                <button class="btn btn-sm btn-danger delete-btn" 
-                                    data-id="<?= htmlspecialchars($blog['id']) ?>" 
-                                    data-toggle="modal" 
-                                    data-target="#deleteBlogModal">Törlés</button>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="6" class="text-center">Nincsenek elérhető bejegyzések.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+                            <button class="btn btn-sm btn-danger delete-btn" 
+                                data-id="<?= htmlspecialchars($blog['id']) ?>" 
+                                data-toggle="modal" 
+                                data-target="#deleteBlogModal">Törlés</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5" class="text-center">Nincsenek elérhető bejegyzések.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
+</div>
 
     <!-- Edit Blog Modal -->
     <div class="modal fade" id="editBlogModal" tabindex="-1" role="dialog" aria-labelledby="editBlogModalLabel" aria-hidden="true">
@@ -188,35 +189,41 @@
         </div>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const editButtons = document.querySelectorAll('.edit-btn');
-            const deleteButtons = document.querySelectorAll('.delete-btn');
+    $(document).ready(function() {
+        // DataTables inicializálása
+        $('#blogTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/Hungarian.json"
+            }
+        });
 
-            // Edit modal
-            editButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const blogId = this.dataset.id;
-                    const title = this.dataset.title;
-                    const content = this.dataset.content;
-                    const author = this.dataset.author;
-                    const image = this.dataset.image;
+        // Modal események kezelése
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const deleteButtons = document.querySelectorAll('.delete-btn');
 
-                    document.getElementById('edit-blog-id').value = blogId;
-                    document.getElementById('edit-title').value = title;
-                    document.getElementById('edit-content').value = content;
-                    document.getElementById('edit-author').value = author;
-                    document.getElementById('edit-image').value = image;
-                });
-            });
+        // Edit modal
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const blogId = this.dataset.id;
+                const title = this.dataset.title;
+                const content = this.dataset.content;
+                const author = this.dataset.author;
 
-            // Delete modal
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const blogId = this.dataset.id;
-                    document.getElementById('delete-blog-id').value = blogId;
-                });
+                document.getElementById('edit-blog-id').value = blogId;
+                document.getElementById('edit-title').value = title;
+                document.getElementById('edit-content').value = content;
+                document.getElementById('edit-author').value = author;
             });
         });
-    </script>
+
+        // Delete modal
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const blogId = this.dataset.id;
+                document.getElementById('delete-blog-id').value = blogId;
+            });
+        });
+    });
+</script>
 </body>
 </html>
