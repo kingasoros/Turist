@@ -2,6 +2,8 @@
 session_start();
 header('Content-Type: application/json');
 
+$baseUrl = "http://192.168.1.6/Turist";
+
 if (!isset($_SESSION['id'])) {
     echo json_encode(['success' => false, 'message' => 'User not logged in']);
     exit;
@@ -51,8 +53,8 @@ try {
             foreach ($attractions as $attraction) {
                 if ($attraction['tour_id'] == $tour['tour_id']) {
                     $attraction['image'] = !empty($attraction['image']) 
-                        ? "http://192.168.1.6/Turist/Turist_MobilApp/img/" . $attraction['image'] 
-                        : "http://192.168.1.6/Turist/Turist_MobilApp/img/default.jpg";
+                        ? $baseUrl . "/Turist_MobilApp/img/" . $attraction['image'] 
+                        : $baseUrl . "/Turist_MobilApp/img/default.jpg";
                     $tour['attractions'][] = $attraction;
                 }
             }

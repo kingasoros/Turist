@@ -1,0 +1,220 @@
+{
+  "info": {
+    "_postman_id": "4b672e7f-712c-4f8b-be65-7ce8806ccf99",
+    "name": "Turist",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+    "_exporter_id": "39876056"
+  },
+  "item": [
+    {
+      "name": "AttractionSearch",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://192.168.1.6/Turist/Turist_MobilApp/screens/get_attractions.php?search=",
+          "protocol": "http",
+          "host": [
+            "192",
+            "168",
+            "1",
+            "6"
+          ],
+          "path": [
+            "Turist",
+            "Turist_MobilApp",
+            "screens",
+            "get_attractions.php"
+          ],
+          "query": [
+            {
+              "key": "search",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "saveSelectedName",
+      "protocolProfileBehavior": {
+        "disabledSystemHeaders": {}
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "url": "http://127.0.0.1:8000/api/saveSelectedName"
+      },
+      "response": []
+    },
+    {
+      "name": "MobilLogin",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"kingasoros@gmail.com\",\r\n  \"password\": \"Francia.1\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "http://192.168.1.6/Turist/Turist_MobilApp/screens/login.php"
+      },
+      "response": []
+    },
+    {
+      "name": "GetUserName",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://192.168.1.6/Turist/Turist_MobilApp/screens/get_user_name.php"
+      },
+      "response": []
+    },
+    {
+      "name": "LogOut",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "http://192.168.1.6/Turist/Turist_MobilApp/screens/logout.php"
+      },
+      "response": []
+    },
+    {
+      "name": "GetTour",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "token": "ecea6a4305cfce2521df98a1e48570e328c9b8c7f1b498787c71a01e2a044918"
+          }
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "http://192.168.1.6/Turist/Turist_MobilApp/screens/get_user_tours.php"
+      },
+      "response": []
+    },
+    {
+      "name": "IpApi",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://ip-api.com/json/198.168.1.6?fields=country,proxy,isp",
+          "protocol": "http",
+          "host": [
+            "ip-api",
+            "com"
+          ],
+          "path": [
+            "json",
+            "198.168.1.6"
+          ],
+          "query": [
+            {
+              "key": "fields",
+              "value": "country,proxy,isp"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AttrSearch",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/search?query=",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "query",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "getAttraction",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/getAttractions?selectedName=",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "getAttractions"
+          ],
+          "query": [
+            {
+              "key": "selectedName",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cities",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://127.0.0.1:8000/api/cities"
+      },
+      "response": []
+    },
+    {
+      "name": "Types",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://127.0.0.1:8000/api/types"
+      },
+      "response": []
+    }
+  ]
+}

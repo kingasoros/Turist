@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, Button, Image } from 'react-native';
 import axios from 'axios';
+import BASE_URL from './config';
 
 const AttractionsScreen = () => {
   const [attractions, setAttractions] = useState([]);
@@ -9,7 +10,7 @@ const AttractionsScreen = () => {
   const fetchAttractions = (searchQuery) => {
     console.log('API hívás indítása', searchQuery); 
     axios
-      .get(`http://192.168.1.6/Turist/Turist_MobilApp/screens/get_attractions.php?search=${searchQuery}`)
+      .get(`${BASE_URL}/Turist_MobilApp/screens/get_attractions.php?search=${searchQuery}`)
       .then((response) => {
         if (response.status === 200) { // Ellenőrizzük, hogy sikeres-e a válasz
           setAttractions(response.data);
@@ -57,7 +58,7 @@ const AttractionsScreen = () => {
             <Text>Érdekeltség: {item.interest}</Text>
             <Text>Cím: {item.address}</Text>
             <Text>Készítette: {item.created_by}</Text>
-            <Image source={{ uri: `http://192.168.1.6/Turist/Turist_MobilApp/img/${item.image}` }}  
+            <Image source={{ uri: `${BASE_URL}/Turist_MobilApp/img/${item.image}` }}  
              style={styles.image}/>
           </View>
         )}

@@ -9,6 +9,7 @@ import AttractionsScreen from './screens/AttractionsScreen';
 import Map from './screens/Map';
 import ProfileScreen from './screens/ProfileScreen';
 import ToursScreen from './screens/ToursScreen';
+import BASE_URL from './screens/config';
 
 const Stack = createStackNavigator();
 
@@ -31,13 +32,13 @@ export default function App() {
   const HomeScreen = ({ navigation }) => {
     return (
       <ImageBackground
-        source={{ uri: 'http://192.168.1.6/Turist/Turist_MobilApp/img/backgrnd.jpg' }} 
+        source={{ uri: `${BASE_URL}/Turist_MobilApp/img/backgrnd.jpg` }} 
         style={styles.container}
       >
         <StatusBar style="auto" />
 
         <Image
-          source={{ uri: 'http://192.168.1.6/Turist/Turist_MobilApp/img/home_page3.jpg' }} 
+          source={{ uri: `${BASE_URL}/Turist_MobilApp/img/home_page3.jpg` }} 
           style={styles.image}
         />
         
@@ -48,21 +49,21 @@ export default function App() {
         <View style={styles.featureContainer}>
           <View style={styles.featureItem}>
             <Image
-              source={{ uri: 'http://192.168.1.6/Turist/Turist_MobilApp/img/home_page2.jpg' }} 
+              source={{ uri: `${BASE_URL}/Turist_MobilApp/img/home_page2.jpg` }} 
               style={styles.featureImage}
             />
             <Text style={styles.featureText}>Túrák</Text>
           </View>
           <View style={styles.featureItem}>
             <Image
-              source={{ uri: 'http://192.168.1.6/Turist/Turist_MobilApp/img/home_page1.jpg' }} 
+              source={{ uri: `${BASE_URL}/Turist_MobilApp/img/home_page1.jpg` }} 
               style={styles.featureImage}
             />
             <Text style={styles.featureText}>Látványok</Text>
           </View>
           <View style={styles.featureItem}>
             <Image
-              source={{ uri: 'http://192.168.1.6/Turist/Turist_MobilApp/img/home_page0.jpg' }}
+              source={{ uri: `${BASE_URL}/Turist_MobilApp/img/home_page0.jpg` }}
               style={styles.featureImage}
             />
             <Text style={styles.featureText}>Térképek </Text>

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, Alert, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import BASE_URL from './config';
 
 const ProfileScreen = () => {
   const [userName, setUserName] = useState('');
   const navigation = useNavigation();
 
   useEffect(() => {
-    fetch('http://192.168.1.6/Turist/Turist_MobilApp/screens/get_user_name.php', {
+    fetch(`${BASE_URL}/Turist_MobilApp/screens/get_user_name.php`, {
       method: 'GET',
     })
       .then(response => {
@@ -31,7 +32,7 @@ const ProfileScreen = () => {
   }, []);
 
   const handleLogout = () => {
-    fetch('http://192.168.1.6/Turist/Turist_MobilApp/screens/logout.php', {
+    fetch(`${BASE_URL}/Turist_MobilApp/screens/logout.php`, {
       method: 'POST',
     })
       .then(response => {
@@ -58,7 +59,7 @@ const ProfileScreen = () => {
   return (
     <View style={styles.container}>
       <Image 
-        source={{uri: 'http://192.168.1.6/Turist/img/profil.jpg'}} 
+        source={{uri: `${BASE_URL}/img/profil.jpg`}} 
         style={styles.profileImage}
       />
       

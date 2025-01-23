@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, FlatList, Image } from 'react-native';
+import BASE_URL from './config';
 
 const ToursScreen = () => {
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://192.168.1.6/Turist/Turist_MobilApp/screens/get_user_tours.php', {
+    fetch(`${BASE_URL}/Turist_MobilApp/screens/get_user_tours.php`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
