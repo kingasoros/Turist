@@ -14,21 +14,23 @@ const ProfileScreen = () => {
       .then(response => {
         if (response.status === 200) {
           return response.json();
+        } else if (response.status === 401) {
+          Alert.alert('Hiba', 'Session lejárt, kérlek jelentkezz be újra.');
+          navigation.navigate('Login');
+          throw new Error('Unauthorized access');
         } else {
           throw new Error('Failed to fetch user name');
         }
       })
       .then(data => {
         if (data.success) {
-          setUserName(data.user_name); 
-        } else {
-          Alert.alert('Hiba', 'Nem sikerült lekérni a felhasználó nevét.');
+          setUserName(data.user_name);
         }
       })
       .catch(error => {
         console.error(error);
         Alert.alert('Hiba', 'Hiba történt a session lekérése közben.');
-      });
+      });    
   }, []);
 
   const handleLogout = () => {

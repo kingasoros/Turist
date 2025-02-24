@@ -17,16 +17,22 @@ const LoginScreen = ({ navigation }) => {
         body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
       });
 
-      const result = await response.json();
+      const result = await response.json(); 
 
-      if (result.success) {
-        // Mentsd el a tokent AsyncStorage-ba
-        await AsyncStorage.setItem('auth_token', result.token);
-
-        Alert.alert('Sikeres bejelentkezés', `Üdvözlünk, ${result.user.name}!`);
-        navigation.navigate('Home');
+      if (response.status === 200) {
+        if (result.success) {
+          await AsyncStorage.setItem('auth_token', result.token);
+          Alert.alert('Sikeres bejelentkezés', `Üdvözlünk, ${result.user.name}!`);
+          navigation.navigate('Home');
+        }
+      } else if (response.status === 401) {
+        Alert.alert('Hiba', 'Hibás jelszó.');
+      } else if (response.status === 404) {
+        Alert.alert('Hiba', 'Az e-mail nem található vagy a fiók inaktív.');
+      } else if (response.status === 400) {
+        Alert.alert('Hiba', 'Hiányzó adatok.');
       } else {
-        Alert.alert('Hiba', result.message);
+        Alert.alert('Hiba', 'Nem várt hiba történt.');
       }
     } catch (error) {
       Alert.alert('Hiba', 'Nem sikerült kapcsolódni a szerverhez.');

@@ -16,22 +16,28 @@ const ToursScreen = () => {
       .then((response) => {
         if (response.status === 200) {
           return response.json();
+        } else if (response.status === 401) {
+          Alert.alert('Hiba', 'Kérlek jelentkezz be újra!');
+          throw new Error('Unauthorized access');
+        } else if (response.status === 404) {
+          Alert.alert('Nincs kedvenc túra', 'Nem található túra az adatbázisban.');
+          throw new Error('No tours found');
+        } else if (response.status === 500) {
+          Alert.alert('Hiba', 'Szerverhiba történt.');
+          throw new Error('Server error');
         } else {
-          throw new Error(`Error: ${response.status}`);
+          throw new Error(`Unhandled status code: ${response.status}`);
         }
       })
       .then((data) => {
         if (data.success) {
           setTours(data.tours);
-        } else {
-          Alert.alert('Nincs kedvenc túra', 'A felhasználónak nincs kedvenc túrája.');
         }
       })
       .catch((error) => {
         console.error('Fetch Error:', error);
-        Alert.alert('Hiba', 'Hiba történt a túrák lekérése közben.');
       })
-      .finally(() => setLoading(false));
+      .finally(() => setLoading(false));    
   }, []);
 
   const renderAttractions = (attractions) => {

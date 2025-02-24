@@ -5,6 +5,7 @@ header('Content-Type: application/json');
 $baseUrl = "http://192.168.1.6/Turist";
 
 if (!isset($_SESSION['id'])) {
+    http_response_code(401); 
     echo json_encode(['success' => false, 'message' => 'User not logged in']);
     exit;
 }
@@ -60,11 +61,14 @@ try {
             }
         }
 
+        http_response_code(200); // Sikeres válasz
         echo json_encode(['success' => true, 'tours' => $tours]);
     } else {
+        http_response_code(404); 
         echo json_encode(['success' => false, 'message' => 'No favorite tours found']);
     }
 } catch (PDOException $e) {
+    http_response_code(500); 
     echo json_encode(['success' => false, 'message' => 'Database query failed: ' . $e->getMessage()]);
 }
 ?>
