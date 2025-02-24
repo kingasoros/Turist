@@ -122,6 +122,17 @@ if (!isset($_COOKIE['VISITED'])) {
         </div>
     </div>
 
+    <h2 class="text-2xl font-semibold text-white mb-3 partners">Partnereink</h2>
+    <ul class="partner-list mb-6">
+        <li>GreenTech Solutions</li>
+        <li>Skyline Ventures</li>
+        <li>BlueWave Innovations</li>
+        <li>QuantumSoft</li>
+        <li>Future Foods</li>
+        <li>SmartEnergy Systems</li>
+        <li>TechLink Industries</li>
+    </ul>
+
     <section class="gallery">
         <div class="gallery-images">
             <img src="http://localhost/Turist/img/home_img0.jpg" alt="Túra kép 1">
@@ -130,7 +141,6 @@ if (!isset($_COOKIE['VISITED'])) {
             <img src="http://localhost/Turist/img/home_img3.jpg" alt="Túra kép 4">
         </div>
     </section>
-
 
     <footer>
         <div class="footer__container">

@@ -73,6 +73,10 @@ Route::get('/tours_make', function () {
     return view('static-pages.front.php.tours_make');
 })->name('tours_make');
 
+Route::get('/about-us', function () {
+    return view('static-pages.front.php.about-us');
+})->name('about-us');
+
 Route::get('/favorites', function () {
     return view('static-pages.front.php.favorites');
 })->name('favorites');

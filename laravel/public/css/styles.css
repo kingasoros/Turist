@@ -225,6 +225,30 @@ body {
   background-color: #0056b3; 
 }
 
+.about_us{
+  background-color: #ffffff70;
+  border-radius: 5%;
+  margin: 2% auto;
+  padding: 32px;
+  width:70%;
+}
+
+.about_us h1{
+  font-size: 24px;
+  text-align: center;
+}
+
+.about_us img{
+  width:55%;
+  margin:2% auto;
+  border-radius: 2%;
+}
+
+.list-disc{
+  list-style-type: circle;
+  margin-left:5%;
+}
+
 @media (max-width: 660px) {
   #search{
     width:300px;

@@ -20,12 +20,14 @@
                     <x-nav-link :href="route('attractions')" :active="request()->routeIs('attractions')">
                         {{ __('Látványosságok') }}
                     </x-nav-link>
-
                     @auth
                         <x-nav-link :href="route('tours')" :active="request()->routeIs('tours')">
                             {{ __('Túrák') }}
                         </x-nav-link>
                     @endauth
+                    <x-nav-link :href="route('about-us')" :active="request()->routeIs('about-us')">
+                        {{ __('Rólunk') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -139,7 +141,9 @@
                 <x-responsive-nav-link :href="route('attractions')">
                     {{ __('Látványosságok') }}
                 </x-responsive-nav-link>
-
+                <x-responsive-nav-link :href="route('about-us')">
+                    {{ __('Rólunk') }}
+                </x-responsive-nav-link>
                 @auth
                     <x-responsive-nav-link :href="route('tours')">
                         {{ __('Túrák') }}

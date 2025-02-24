@@ -1,3 +1,4 @@
+<link rel="icon" type="image/x-icon" href="https://gt.stud.vts.su.ac.rs/img/logo.png">
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">

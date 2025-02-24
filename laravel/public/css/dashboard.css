@@ -31,7 +31,7 @@
 }
 
 .text-center{
-    margin:6% 1%;
+    margin:2% 1%;
 }
 
 .card {
@@ -202,4 +202,30 @@
 @keyframes fade {
   from {opacity: .4}
   to {opacity: 1}
+}
+
+.partners{
+  text-align: center;
+  margin: 1%;
+}
+
+.partner-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  /* padding-left: 0; */
+  list-style: none;
+  margin:0 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.partner-list li {
+  font-size: 1rem;
+  color: #4a4a4a;
+  background-color: #f1f1f1;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
 }
