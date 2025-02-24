@@ -73,6 +73,7 @@
                         </x-slot>
                     </x-dropdown>
                 </div>
+                
             @endauth
 
             <style>
@@ -89,13 +90,16 @@
             </style>
 
             @guest
-                <!-- Login/Registration Links -->
                 @if (Route::has('login'))
-                    <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block register_menu">
-                        <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-500 nav-link">Log in</a>
+                    <div class="hidden sm:flex sm:items-center sm:ml-6">
+                        <x-nav-link :href="route('login')" :active="request()->routeIs('login')">
+                            {{ __('Log in') }}
+                        </x-nav-link>
 
                         @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 dark:text-gray-500 nav-link">Register</a>
+                            <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
+                                {{ __('Register') }}
+                            </x-nav-link>
                         @endif
                     </div>
                 @endif
@@ -158,17 +162,14 @@
                         </x-responsive-nav-link>
                     </form>
                 @endauth
-
-                <!-- Login/Registration Links -->
                 @guest
-                    @if (Route::has('login'))
-                        <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block register_menu">
-                            <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-500 nav-link">Log in</a>
-
-                            @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 dark:text-gray-500 nav-link">Register</a>
-                            @endif
-                        </div>
+                    <x-responsive-nav-link :href="route('login')">
+                        {{ __('Log in') }}
+                    </x-responsive-nav-link>
+                    @if (Route::has('register'))
+                        <x-responsive-nav-link :href="route('register')">
+                            {{ __('Register') }}
+                        </x-responsive-nav-link>
                     @endif
                 @endguest
             </div>

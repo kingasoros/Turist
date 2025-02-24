@@ -25,6 +25,9 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
     <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <style>
+    .nav-link:active{
+        color:#fff;
+    }
     @media(min-width:1200px){
         .container{
             max-width:1400px;

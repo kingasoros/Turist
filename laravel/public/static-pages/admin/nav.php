@@ -7,7 +7,12 @@
     $user_role=$_SESSION['user_role'];
 
 ?>
+<style>
+    .nav-item.active .nav-link:active {
+    color: #fff;
+}
 
+</style>
 
 <!-- Page Wrapper -->
 <div id="wrapper">
@@ -28,7 +33,7 @@
         <hr class="sidebar-divider my-0">
 
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item active">
+        <li class="nav-item">
             <a class="nav-link" href="index.php">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span></a>

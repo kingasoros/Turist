@@ -38,14 +38,50 @@ if (!isset($_COOKIE['VISITED'])) {
             {{ __('Home') }}
         </h2>
     </x-slot>    
-    <div class="slider-container">
-        <div class="slider">
-            <div class="slider-text">
-                <h1>Túrista túrák</h1>
-                <p>Vajdaság látványosságai</p>
-            </div>
+    <!-- Slideshow container -->
+    <div class="slideshow-container">
+
+        <!-- Full-width images with number and caption text -->
+        <div class="mySlides fade">
+        <div class="numbertext">1 / 3</div>
+        <img src="../img/slider.jpg" style="width:100%">
+        <div class="text">
+            <h1>Barangolj a Duna és Tisza között!</h1>
+            <p>Természetvédelmi területek, kastélyok és hangulatos falvak csodái egy helyen.</p>
         </div>
+        </div>
+
+        <div class="mySlides fade">
+        <div class="numbertext">2 / 3</div>
+        <img src="../img/slider1.jpg" style="width:100%">
+        <div class="text">
+            <h1>Fedezd fel Vajdaság rejtett kincseit!</h1>
+            <p>Történelmi városok, festői tájak és gasztronómiai élmények várnak rád.</p>
+        </div>
+        </div>
+
+        <div class="mySlides fade">
+        <div class="numbertext">3 / 3</div>
+        <img src="../img/slider2.jpg" style="width:100%">
+        <div class="text">
+            <h1>Kóstolj bele Vajdaság ízeibe!</h1>
+            <p>Hagyományos ételek, borászatok és helyi piacok különleges élményt nyújtanak.</p>
+        </div>
+        </div>
+
+        <!-- Next and previous buttons -->
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+        </div>
+        <br>
+
+        <!-- The dots/circles -->
+        <div style="text-align:center">
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
     </div>
+
     <div class="info-blocks">
         <div class="info-block">
             <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
@@ -111,6 +147,58 @@ if (!isset($_COOKIE['VISITED'])) {
             <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
         </div>
 </footer>    
+<script>
+    let slideIndex = 1;
+showSlides(slideIndex);
+
+// Next/previous controls
+function plusSlides(n) {
+    showSlides(slideIndex += n);
+}
+
+// Thumbnail image controls
+function currentSlide(n) {
+    showSlides(slideIndex = n);
+}
+
+function showSlides(n) {
+    let i;
+    let slides = document.getElementsByClassName("mySlides");
+    let dots = document.getElementsByClassName("dot");
+    if (n > slides.length) {slideIndex = 1}
+    if (n < 1) {slideIndex = slides.length}
+    for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+    }
+    for (i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+    }
+    slides[slideIndex - 1].style.display = "block";
+    dots[slideIndex - 1].className += " active";
+}
+
+function updateSlides() {
+    let slides = document.querySelectorAll(".mySlides img");
+
+    // Csak akkor futtassuk, ha a slides tömb legalább 3 elemet tartalmaz
+    if (slides.length >= 3) {
+        if (window.innerWidth <= 768) {
+            slides[0].src = "../img/slider-mobile.jpg";
+            slides[1].src = "../img/slider1-mobile.jpg";
+            slides[2].src = "../img/slider2-mobile.jpg";
+        } else {
+            slides[0].src = "../img/slider.jpg";
+            slides[1].src = "../img/slider1.jpg";
+            slides[2].src = "../img/slider2.jpg";
+        }
+    }
+}
+
+// Futtatás betöltéskor és ablakméret változáskor
+window.addEventListener("load", updateSlides);
+window.addEventListener("resize", updateSlides);
+
+</script>
 </x-app-layout>
 </body>
 </html>
