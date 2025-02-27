@@ -89,11 +89,11 @@
 
 .gallery-images {
     display: flex;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
 }
 
 .gallery-images img {
-    width: 21%;  
+    width: 90%;  
     margin: 1% auto;
     border-radius: 8px;
     justify-content: center;
@@ -101,7 +101,7 @@
 
 @media (max-width: 1024px) {
     .gallery-images img {
-        width: 48%;  
+        width: 90%;  
     }
 }
 
