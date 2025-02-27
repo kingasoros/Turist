@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="http://localhost/Turist/img/logo.png">
-    <title>About us</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" 
-    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-</head>
-<body>
+
+<!-- @include('layouts.header') -->
+@extends('layouts.layout')
+@section('title', 'welcome')
+@section('content')
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -63,20 +54,6 @@
     </div>
 
 </x-app-layout>
-<footer>
-        <div class="footer__container">
-            <?php
-               $userAgent = $_SERVER['HTTP_USER_AGENT'];
-               
-               if (preg_match('/mobile/i', $userAgent)) {
-                   echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
-               } else {
-                   echo '';
-               }
-               
-            ?>
-            <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
-        </div>
-</footer>    
-</body>
-</html>
+
+<!-- @include('layouts.footer') -->
+ @endsection
