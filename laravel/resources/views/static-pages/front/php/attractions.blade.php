@@ -49,26 +49,23 @@ if (!isset($_COOKIE['VISITED'])) {
 
 ?>
 <script>
-    const sectors = <?= json_encode(array_map(fn($attraction) => ['color' => '', 'label' => $attraction['name']], $attractions)); ?>;
+    const sectors = @json(array_map(fn($attraction) => ['color' => '', 'label' => $attraction['name']], $attractions));
 </script>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attractions</title>
-    <link rel="icon" type="image/x-icon" href="http://localhost/Turist/img/logo.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" 
-    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+@extends('layouts.master')
+
+@section('title', 'Látványosságok')
+
+@section('header', 'Látványosságok')
+
+@push('head')
     <script src="{{ asset('js/index.js') }}"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-</head>
-<body>
-    <x-app-layout>
+@endpush
+
+@section('content')
+
+<x-app-layout>
     <x-slot name="header">
         <div class="header-container flex items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -143,21 +140,6 @@ if (!isset($_COOKIE['VISITED'])) {
         </div>
 
     </x-app-layout>
-    <footer>
-        <div class="footer__container">
-            <?php
-               $userAgent = $_SERVER['HTTP_USER_AGENT'];
-               
-               if (preg_match('/mobile/i', $userAgent)) {
-                   echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
-               } else {
-                   echo '';
-               }
-               
-            ?>
-            <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
-        </div>
-</footer> 
 
 <script>
     const searchInput = document.getElementById('search');
@@ -388,5 +370,5 @@ fetch('/store-device-data')
         })
         .catch(error => console.error('Error:', error));
 </script>
-</body>
-</html>
+
+@endsection

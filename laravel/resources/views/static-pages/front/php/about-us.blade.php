@@ -1,8 +1,9 @@
+@extends('layouts.master')
 
-<!-- @include('layouts.header') -->
-@extends('layouts.layout')
-@section('title', 'welcome')
-@endsection
+@section('title', 'Rólunk')
+
+@section('header', 'Rólunk')
+
 @section('content')
 <x-app-layout>
     <x-slot name="header">
@@ -40,8 +41,7 @@
             Fedezd fel a világot velünk, és hozd létre saját felejthetetlen túráidat!
             Legyél részese egy természetkedvelő közösségnek, és oszd meg kalandjaidat másokkal.
         </p>
-        <img src="http://localhost/Turist/img/rolunk.jpg">
-
+        <img src="https://gt.stud.vts.su.ac.rs/Turist/img/rolunk.jpg">
         <h2 class="text-2xl font-semibold text-black mb-3">Partnereink</h2>
         <ul class="list-disc list-inside text-gray-700 mb-6">
             <li>GreenTech Solutions</li>
@@ -53,8 +53,6 @@
             <li>TechLink Industries</li>
         </ul>
     </div>
-
+	
 </x-app-layout>
-
-<!-- @include('layouts.footer') -->
- @endsection
+@endsection

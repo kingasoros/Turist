@@ -68,23 +68,16 @@ foreach ($tours as $tour) {
     }
 }
 
-
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="http://localhost/Turist/img/logo.png">
-    <title>Tours make</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" 
-    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-</head>
-<body>
+@extends('layouts.master')
+
+@section('title', 'Túra létrehozása')
+
+@section('header', 'Túra létrehozása')
+
+@section('content')
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -169,7 +162,7 @@ foreach ($tours as $tour) {
                 </div>
                     <div class="card-body">
                         <h5 class="card-title text-secondary"><?= htmlspecialchars($tour['tour_description'] ?? 'Nincs leírás') ?></h5>
-                        <p class="card-text text-muted">Felbecsült ár: <?= htmlspecialchars($tour['price'] ?? 'Nincs ár megadva') ?></p>
+                        <p class="card-text">Felbecsült ár: <?= htmlspecialchars($tour['price'] ?? 'Nincs ár megadva') ?></p>
 
                         <h6 class="mt-3 text-dark">Látványosságok:</h6>
                         <?php if (!empty($tour['attractions'])) { ?>
@@ -180,7 +173,7 @@ foreach ($tours as $tour) {
                                         <div class="row w-100">
                                             <!-- Leírás oszlop -->
                                             <div class="col-md-6">
-                                                <small class="text-muted"><?= htmlspecialchars($attraction['description'] ?? 'Nincs leírás') ?></small>
+                                                <small><?= htmlspecialchars($attraction['description'] ?? 'Nincs leírás') ?></small>
                                             </div>
                                             <!-- Kép oszlop -->
                                             <div class="col-md-6 text-center">
@@ -191,7 +184,7 @@ foreach ($tours as $tour) {
                                 <?php } ?>
                             </ul>
                         <?php } else { ?>
-                            <p class="text-muted">Nincsenek látványosságok a túrához.</p>
+                            <p>Nincsenek látványosságok a túrához.</p>
                         <?php } ?>
                         <div class="favorites_buttons">
                             <form action="{{ route('tours.destroy', $tour['id']) }}" method="POST" onsubmit="return confirm('Biztos, hogy törölni szeretnéd ezt a túrát?');">
@@ -213,21 +206,7 @@ foreach ($tours as $tour) {
         </div>
     </div>
 </x-app-layout>
-<footer>
-        <div class="footer__container">
-            <?php
-               $userAgent = $_SERVER['HTTP_USER_AGENT'];
-               
-               if (preg_match('/mobile/i', $userAgent)) {
-                   echo '<a class="app__text" href="https://192.168.1.6:8081">Töltsd le az applikációt!</a>';
-               } else {
-                   echo '';
-               }
-               
-            ?>
-            <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
-        </div>
-</footer>    
+  
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const startDateInput = document.getElementById('start_date');
@@ -251,5 +230,5 @@ foreach ($tours as $tour) {
         endDateInput.addEventListener('input', validateDates);
     });
 </script>
-</body>
-</html>
+
+@endsection
