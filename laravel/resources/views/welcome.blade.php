@@ -122,15 +122,33 @@ if (!isset($_COOKIE['VISITED'])) {
         </div>
     </div>
 
+    <h2 class="text-2xl font-semibold text-white mb-3 partners">Partnereink</h2>
+    <ul class="partner-list mb-6">
+        <li>GreenTech Solutions</li>
+        <li>Skyline Ventures</li>
+        <li>BlueWave Innovations</li>
+        <li>QuantumSoft</li>
+        <li>Future Foods</li>
+        <li>SmartEnergy Systems</li>
+        <li>TechLink Industries</li>
+    </ul>
+
     <section class="gallery">
         <div class="gallery-images">
-            <img src="http://localhost/Turist/img/home_img0.jpg" alt="Túra kép 1">
-            <img src="http://localhost/Turist/img/home_img1.jpg" alt="Túra kép 2">
-            <img src="http://localhost/Turist/img/home_img2.jpg" alt="Túra kép 3">
-            <img src="http://localhost/Turist/img/home_img3.jpg" alt="Túra kép 4">
+            <a class="" href="/attractions">
+                <img src="http://localhost/Turist/img/home_img0.jpg" alt="Túra kép 1" title="Történelmi helyek">
+            </a>
+            <a class="" href="/attractions">
+                <img src="http://localhost/Turist/img/home_img1.jpg" alt="Túra kép 2" title="Természeti látnivalók">
+            </a>
+            <a class="" href="/attractions">
+                <img src="http://localhost/Turist/img/home_img2.jpg" alt="Túra kép 3" title="Családbarát">
+            </a>
+            <a class="" href="/attractions">
+                <img src="http://localhost/Turist/img/home_img3.jpg" alt="Túra kép 4" title="Szórakoztató helyek">
+            </a>
         </div>
     </section>
-
 
     <footer>
         <div class="footer__container">

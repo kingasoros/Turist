@@ -135,16 +135,16 @@ if (!isset($_COOKIE['VISITED'])) {
 
     <section class="gallery">
         <div class="gallery-images">
-            <a href="/attractions">
+            <a class="" href="/attractions">
                 <img src="http://localhost/Turist/img/home_img0.jpg" alt="Túra kép 1" title="Történelmi helyek">
             </a>
-            <a href="/attractions">
+            <a class="" href="/attractions">
                 <img src="http://localhost/Turist/img/home_img1.jpg" alt="Túra kép 2" title="Természeti látnivalók">
             </a>
-            <a href="/attractions">
+            <a class="" href="/attractions">
                 <img src="http://localhost/Turist/img/home_img2.jpg" alt="Túra kép 3" title="Családbarát">
             </a>
-            <a href="/attractions">
+            <a class="" href="/attractions">
                 <img src="http://localhost/Turist/img/home_img3.jpg" alt="Túra kép 4" title="Szórakoztató helyek">
             </a>
         </div>

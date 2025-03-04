@@ -111,7 +111,7 @@ if (!isset($_COOKIE['VISITED'])) {
             <?php foreach ($attractions as $attraction){ ?>
                 <div class="card mb-3" style=" margin:5px; background-color:#002f3b; color:#fff;" data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>">
                     <div class="row g-0">
-                        <div class="col-md-4">
+                        <div class="col-md-4 container-img">
                                 <img src="http://localhost/Turist/img/<?= !empty($attraction['image']) ? htmlspecialchars($attraction['image']) : 'default.jpg' ?>" alt="<?= htmlspecialchars($attraction['name']) ?>" style="height:100%;">
                         </div>
                         <div class="col-md-8">

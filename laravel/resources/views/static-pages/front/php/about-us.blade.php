@@ -2,6 +2,7 @@
 <!-- @include('layouts.header') -->
 @extends('layouts.layout')
 @section('title', 'welcome')
+@endsection
 @section('content')
 <x-app-layout>
     <x-slot name="header">
