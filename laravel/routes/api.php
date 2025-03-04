@@ -23,10 +23,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/search', [AttractionController::class, 'search']);
 
-Route::post('/api/saveFilterStatistics', [AttractionController::class, 'saveFilterStatistics']);
-
-// Route::post('/saveFilterSearch', [FilterController::class, 'saveFilterSearch']);
-// Route::post('/insertNewSearchRecord', [SearchController::class, 'insertNewSearchRecord']);
 
 
 

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TourController;
 use App\Http\Controllers\FavoriteController;
 use App\Models\Tour;
@@ -15,7 +16,7 @@ use App\Models\User;
 use App\Http\Middleware\CheckIfUserCanRegister;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\DeviceDetectionController;
+use Illuminate\Support\Facades\DB;
 
 
 require __DIR__.'/auth.php';
@@ -73,10 +74,6 @@ Route::get('/tours_make', function () {
     return view('static-pages.front.php.tours_make');
 })->name('tours_make');
 
-Route::get('/about-us', function () {
-    return view('static-pages.front.php.about-us');
-})->name('about-us');
-
 Route::get('/favorites', function () {
     return view('static-pages.front.php.favorites');
 })->name('favorites');
@@ -86,6 +83,10 @@ Route::get('/admin', function () {
 })->name('admin');
 
 Route::get('/tours', [TourController::class, 'index'])->name('tours');
+
+Route::get('/about-us', function () {
+    return view('static-pages.front.php.about-us');
+})->name('about-us');
 
 Route::post('/add-to-favorites', [FavoriteController::class, 'store'])->middleware('auth');
 
@@ -98,7 +99,6 @@ Route::delete('/tour/{tour}', [TourController::class, 'destroy'])->name('tours.d
 Route::post('/api/attractions', [AttractionsController::class, 'getAttractionDetails']);
 
 Route::get('/dashboard', [AdminController::class, 'showDashboard'])->middleware('auth');
-
 
 Route::middleware(['auth', 'is_active'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -196,6 +196,7 @@ Route::get('/api/getAttractionsByFilters', function (Request $request) {
     $type = $request->input('type');
     $interest = $request->input('interest');
     
+    // Lekérdezzük az attrakciókat a szűrők alapján
     $attractions = DB::table('attractions')
                      ->when($city, function ($query, $city) {
                          return $query->where('city_name', $city);
@@ -207,9 +208,73 @@ Route::get('/api/getAttractionsByFilters', function (Request $request) {
                          return $query->where('interest', $interest);
                      })
                      ->get();
+    
+    // Szűrő értékek kezelése a filter_search_statistics táblában
+    if ($city) {
+        // Ellenőrizzük, hogy létezik-e már a szűrő a táblában
+        $existingCity = DB::table('filter_search_statistics')
+                          ->where('filter_name', 'city')
+                          ->where('filter_value', $city)
+                          ->first();
+        
+        if ($existingCity) {
+            // Ha létezik, növeljük a count értékét 1-tel
+            DB::table('filter_search_statistics')
+                ->where('id', $existingCity->id)
+                ->increment('count');
+        } else {
+            // Ha nem létezik, beszúrjuk új rekordként
+            DB::table('filter_search_statistics')->insert([
+                'filter_name' => 'city',
+                'filter_value' => $city,
+                'count' => 1,
+            ]);
+        }
+    }
+
+    if ($type) {
+        // Ellenőrizzük, hogy létezik-e már a szűrő a táblában
+        $existingType = DB::table('filter_search_statistics')
+                          ->where('filter_name', 'type')
+                          ->where('filter_value', $type)
+                          ->first();
+        
+        if ($existingType) {
+            // Ha létezik, növeljük a count értékét 1-tel
+            DB::table('filter_search_statistics')
+                ->where('id', $existingType->id)
+                ->increment('count');
+        } else {
+            // Ha nem létezik, beszúrjuk új rekordként
+            DB::table('filter_search_statistics')->insert([
+                'filter_name' => 'type',
+                'filter_value' => $type,
+                'count' => 1,
+            ]);
+        }
+    }
+
+    if ($interest) {
+        // Ellenőrizzük, hogy létezik-e már a szűrő a táblában
+        $existingInterest = DB::table('filter_search_statistics')
+                              ->where('filter_name', 'interest')
+                              ->where('filter_value', $interest)
+                              ->first();
+        
+        if ($existingInterest) {
+            // Ha létezik, növeljük a count értékét 1-tel
+            DB::table('filter_search_statistics')
+                ->where('id', $existingInterest->id)
+                ->increment('count');
+        } else {
+            // Ha nem létezik, beszúrjuk új rekordként
+            DB::table('filter_search_statistics')->insert([
+                'filter_name' => 'interest',
+                'filter_value' => $interest,
+                'count' => 1,
+            ]);
+        }
+    }
 
     return response()->json($attractions);
 });
-
-Route::get('/store-device-data', [DeviceDetectionController::class, 'storeDeviceData']);
-

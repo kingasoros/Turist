@@ -216,54 +216,126 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-  // Keresés alkalmazása a szűrőre
-  document.getElementById('apply-filters').addEventListener('click', function () {
-    const city = document.getElementById('city').value;
+// Keresés alkalmazása a szűrőre
+document.getElementById('apply-filters').addEventListener('click', function () {
+  const city = document.getElementById('city').value;
+  const type = document.getElementById('type').value;
+  const interest = document.getElementById('interest').value;
 
-    // AJAX kérés a város szűrésére
-    fetch(`/api/getAttractionsByCity?city=${encodeURIComponent(city)}`)
-        .then(response => response.json())
-        .then(data => {
-            const attractionsContainer = document.querySelector('.wheel-box_first');
-            attractionsContainer.innerHTML = ''; 
+  const data = {
+      city: city,
+      type: type,
+      interest: interest,
+  };
 
-            data.forEach(attraction => {
-                const card = document.createElement('div');
-                card.className = 'card mb-3';
-                card.style = 'margin:5px; background-color:#002f3b; color:#fff;';
-                card.innerHTML = `
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <img src="http://localhost/Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%;">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h5 class="card-title">${attraction.name}</h5>
-                                <p class="card-text">${attraction.description}</p>
-                                <p class="card-text"><small class="text-muted">${attraction.address}</small></p>
-                                <p class="card-text"><small class="text-muted">${attraction.created_by}</small></p>
-                                <p class="card-text"><small class="text-muted">${attraction.city_name}</small></p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                attractionsContainer.appendChild(card);
-            });
-        });
+  console.log('Küldött JSON:', JSON.stringify(data));
+
+  // Szűrt adatok lekérése az adatbázisból
+  fetch(`/api/getAttractionsByFilters?city=${encodeURIComponent(city)}&type=${encodeURIComponent(type)}&interest=${encodeURIComponent(interest)}`)
+      .then(response => response.json())
+      .then(data => {
+          const attractionsContainer = document.querySelector('.wheel-box_first');
+          attractionsContainer.innerHTML = ''; // Az előző találatok törlése
+
+          // Kártyák létrehozása az adatok megjelenítéséhez
+          data.forEach(attraction => {
+              const card = document.createElement('div');
+              card.className = 'card mb-3';
+              card.style = 'margin:5px; background-color:#002f3b; color:#fff;';
+              card.innerHTML = `
+                  <div class="row g-0">
+                      <div class="col-md-4">
+                          <img src="http://localhost/Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%; width:100%;">
+                      </div>
+                      <div class="col-md-8">
+                          <div class="card-body">
+                              <h5 class="card-title">${attraction.name}</h5>
+                              <p class="card-text">${attraction.description}</p>
+                              <p class="card-text"><small class="text-muted">Cím: ${attraction.address}</small></p>
+                              <p class="card-text"><small class="text-muted">Készítő: ${attraction.created_by}</small></p>
+                              <p class="card-text"><small class="text-muted">Város: ${attraction.city_name}</small></p>
+                              <p class="card-text"><small class="text-muted">Típus: ${attraction.type}</small></p>
+                              <p class="card-text"><small class="text-muted">Érdeklődés: ${attraction.interest}</small></p>
+                          </div>
+                      </div>
+                  </div>
+              `;
+              attractionsContainer.appendChild(card);
+          });
+      })
+      .catch(error => console.error('Lekérési hiba:', error));
+});
+
+
+  // A látványosságok sorrendjének frissítése
+function updateAttractionsOrder(selectedName) {
+  fetch(`/api/getAttractions?selectedName=${encodeURIComponent(selectedName)}`)
+      .then(response => response.json())
+      .then(data => {
+          const attractionsContainer = document.querySelector('.wheel-box_first');
+          attractionsContainer.innerHTML = ''; 
+
+          data.forEach(attraction => {
+              const card = document.createElement('div');
+              card.className = 'card mb-3';
+              card.style = 'margin:5px; background-color:#002f3b; color:#fff;';
+              card.innerHTML = `
+                  <div class="row g-0">
+                      <div class="col-md-4">
+                          <img src="https://gt.stud.vts.su.ac.rs//Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%;">
+                      </div>
+                      <div class="col-md-8">
+                          <div class="card-body">
+                              <h5 class="card-title">${attraction.name}</h5>
+                              <p class="card-text">${attraction.description}</p>
+                              <p class="card-text"><small class="text-muted">${attraction.address}</small></p>
+                              <p class="card-text"><small class="text-muted">${attraction.created_by}</small></p>
+                              <p class="card-text"><small class="text-muted">${attraction.city_name}</small></p>
+                              <p class="card-text"><small class="text-muted">${attraction.type}</small></p>
+                              <p class="card-text"><small class="text-muted">${attraction.interest}</small></p>
+                          </div>
+                      </div>
+                  </div>
+              `;
+              attractionsContainer.appendChild(card);
+          });
+      });
+  }
+  
+  // Kattintás kívül, hogy eltüntesse a keresési találatokat
+  document.addEventListener('click', function (event) {
+      const searchInput = document.getElementById('search');
+      const resultsContainer = document.getElementById('results');
+  
+      if (!searchInput.contains(event.target) && !resultsContainer.contains(event.target)) {
+          resultsContainer.innerHTML = '';  // Kiürítjük a találatokat
+      }
   });
 
-  // Szöveg másolása a vágólapra
-  function copyToClipboard() {
-    var text = document.getElementById("selectedWord").innerText;
+  //típus kiíratása
+  fetch('/api/types')
+  .then(response => response.json())
+  .then(types => {
+      const typeSelect = document.getElementById('type');
+      types.forEach(type => {
+          const option = document.createElement('option');
+          option.value = type;
+          option.textContent = type;
+          typeSelect.appendChild(option);
+  });
+});
 
-    var tempInput = document.createElement("input");
-    document.body.appendChild(tempInput);
-    tempInput.value = text;  
-    tempInput.select();  
-    document.execCommand("copy");  
+//érdeklődés kiíratása
+fetch('/api/interests')
+  .then(response => response.json())
+  .then(interests => {
+      const interestSelect = document.getElementById('interest');
+      interests.forEach(interest => {
+          const option = document.createElement('option');
+          option.value = interest;
+          option.textContent = interest;
+          interestSelect.appendChild(option);
+  });
+});
 
-    document.body.removeChild(tempInput);
-
-    alert("Szöveg másolva: " + text);
-  }
 });
