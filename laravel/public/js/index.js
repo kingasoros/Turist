@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const shortenText = (text, maxLength) => text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 
   sectors.forEach((sector, index) => {
-    const colors = ['#f0f5ea', '#dce7d1', '#c8d9b8', '#b4cc9f', '#a0be86', '#8bb16d', '#769353', '#61763a', '#4c5921', '#374b08'];
+    const colors = ['#7b836c', '#7d9067', '#5f714a', '#51623c', '#445331', '#3a4729', '#303c22', '#2b361e', '#232d18', '#1a2b00'];
     sector.color = colors[index % colors.length];
   });
 
@@ -337,5 +337,18 @@ fetch('/api/interests')
           interestSelect.appendChild(option);
   });
 });
+
+const toggleButton = document.getElementById("toggle-wheel");
+    const wheelBox = document.getElementById("wheel-box_second");
+
+    toggleButton.addEventListener("click", function () {
+        if (wheelBox.style.display === "none" || wheelBox.style.display === "") {
+            wheelBox.style.display = "block"; 
+            toggleButton.textContent = "▲";  
+        } else {
+            wheelBox.style.display = "none"; 
+            toggleButton.textContent = "▼";  
+        }
+    });
 
 });

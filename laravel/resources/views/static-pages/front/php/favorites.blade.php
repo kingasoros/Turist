@@ -1,45 +1,53 @@
 <?php
 include base_path('resources/views/static-pages/front/php/db_conn.php');
 
-$stmt = $conn->prepare("
-    SELECT 
-        t.*,
-        a.name AS attraction_name,
-        a.description AS attraction_description,
-        a.image AS attraction_image
-    FROM tours t
-    LEFT JOIN tour_attractions ta ON t.tour_id = ta.tour_id
-    LEFT JOIN attractions a ON ta.attractions_id = a.attractions_id
-    WHERE EXISTS (
-        SELECT 1 FROM turist_favorites tf WHERE tf.tour_id = t.tour_id
-    )
-    ORDER BY t.tour_id, ta.attraction_order
-");
-$stmt->execute();
-$tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$userId = Auth::id();
 
-$toursGrouped = [];
-foreach ($tours as $tour) {
-    $tourId = $tour['tour_id'];
-    if (!isset($toursGrouped[$tourId])) {
-        $toursGrouped[$tourId] = [
-            'id' => $tour['tour_id'],
-            'tour_name' => $tour['tour_name'],
-            'tour_description' => $tour['tour_description'],
-            'price' => $tour['price'],
-            'created_at' => $tour['created_at'],
-            'attractions' => []
-        ];
+if ($userId) {
+    $stmt = $conn->prepare("
+        SELECT 
+            t.*,
+            a.name AS attraction_name,
+            a.description AS attraction_description,
+            a.image AS attraction_image
+        FROM tours t
+        LEFT JOIN tour_attractions ta ON t.tour_id = ta.tour_id
+        LEFT JOIN attractions a ON ta.attractions_id = a.attractions_id
+        WHERE EXISTS (
+            SELECT 1 FROM turist_favorites tf 
+            WHERE tf.tour_id = t.tour_id 
+            AND tf.id = :user_id
+        )
+        ORDER BY t.tour_id, ta.attraction_order
+    ");
+    $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+    $stmt->execute();
+    $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $toursGrouped = [];
+    foreach ($tours as $tour) {
+        $tourId = $tour['tour_id'];
+        if (!isset($toursGrouped[$tourId])) {
+            $toursGrouped[$tourId] = [
+                'id' => $tour['tour_id'],
+                'tour_name' => $tour['tour_name'],
+                'tour_description' => $tour['tour_description'],
+                'price' => $tour['price'],
+                'created_at' => $tour['created_at'],
+                'attractions' => []
+            ];
+        }
+        if (!empty($tour['attraction_name'])) {
+            $toursGrouped[$tourId]['attractions'][] = [
+                'name' => $tour['attraction_name'],
+                'description' => $tour['attraction_description'],
+                'image' => $tour['attraction_image']
+            ];
+        }
     }
-    if (!empty($tour['attraction_name'])) {
-        $toursGrouped[$tourId]['attractions'][] = [
-            'name' => $tour['attraction_name'],
-            'description' => $tour['attraction_description'],
-            'image' => $tour['attraction_image']
-        ];
-    }
+} else {
+    $toursGrouped = []; 
 }
-
 ?>
 
 @extends('layouts.master')

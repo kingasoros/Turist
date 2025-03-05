@@ -49,7 +49,12 @@ if (!isset($_COOKIE['VISITED'])) {
 
 ?>
 <script>
-    const sectors = @json(array_map(fn($attraction) => ['color' => '', 'label' => $attraction['name']], $attractions));
+    const sectors = @json(
+        collect($attractions)
+            ->shuffle() // Véletlenszerű sorrendbe rakja
+            ->take(10) // Csak 10 elemet választ ki
+            ->map(fn($attraction) => ['color' => '', 'label' => $attraction['name']])
+            ->values() );
 </script>
 
 @extends('layouts.master')
@@ -98,18 +103,29 @@ if (!isset($_COOKIE['VISITED'])) {
             <button class="search__button" id="apply-filters">Keresés</button>
         </div>
 
+        <h3 id="wheelMessage">
+            Túl sok látványosság, és nem tudsz dönteni? Bízd a szerencsére! Pörgesd meg a kereket, és fedezz fel valami izgalmasat!<br>
+            <button id="toggle-wheel" class="toggle-button">▼</button>
+        </h3>
+
+        <div id="wheel-box_second">
+            <div id="wheelOfFortune">
+                <canvas id="wheel" width="500" height="500"></canvas>
+                <div id="spin">SPIN</div>
+            </div>
+            <h4 id="selectedWord" onclick="copyToClipboard()"></h4>
+        </div>
     </x-slot>
 
     <?php $selectedName = session('selectedName', ''); ?>
 
-    <div class="content-container">
-    <div class="wheel-box_first">
+    <div class="row card-group">
         <?php if (!empty($attractions)){ ?>
             <?php foreach ($attractions as $attraction){ ?>
-                <div class="card mb-3" style=" margin:5px; background-color:#002f3b; color:#fff;" data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>">
+                <div class=" mb-3 col-6 col-md-6 card-group_body" style="margin:5px; background-color:#002f3b; color:#fff;" data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>">
                     <div class="row g-0">
                         <div class="col-md-4 container-img">
-                                <img src="http://localhost/Turist/img/<?= !empty($attraction['image']) ? htmlspecialchars($attraction['image']) : 'default.jpg' ?>" alt="<?= htmlspecialchars($attraction['name']) ?>" style="height:100%;">
+                            <img src="http://localhost/Turist/img/<?= !empty($attraction['image']) ? htmlspecialchars($attraction['image']) : 'default.jpg' ?>" alt="<?= htmlspecialchars($attraction['name']) ?>" class="img-fluid">
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
@@ -129,15 +145,8 @@ if (!isset($_COOKIE['VISITED'])) {
             <p>Nincsenek elérhető adatok.</p>
         <?php } ?>
     </div>
-            <div id="wheel-box_second">
-                <h3 id="wheelMessage">Túl sok látványosság, és nem tudsz dönteni? Bízd a szerencsére! Pörgesd meg a kereket, és fedezz fel valami izgalmasat!</h3>
-                <div id="wheelOfFortune">
-                    <canvas id="wheel" width="500" height="500"></canvas>
-                    <div id="spin">SPIN</div>
-                </div>
-                <h4 id="selectedWord" onclick="copyToClipboard()"></h4>
-            </div>
-        </div>
+    
+    
 
     </x-app-layout>
     <script>
@@ -157,5 +166,6 @@ if (!isset($_COOKIE['VISITED'])) {
         alert("Szöveg másolva: " + text);
     }
     
+
     </script>
 @endsection
