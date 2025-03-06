@@ -15,7 +15,6 @@ class TourController extends Controller
         $validated = $request->validate([
             'tour_name' => 'required|string|max:255',
             'tour_description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'status' => 'required|in:private,public',
@@ -26,7 +25,6 @@ class TourController extends Controller
         $tourId = DB::table('tours')->insertGetId([
             'tour_name' => $validated['tour_name'],
             'tour_description' => $validated['tour_description'],
-            'price' => $validated['price'],
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'status' => $validated['status'],

@@ -6,13 +6,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($action == 'add') {
         $stmt = $conn->prepare("
-            INSERT INTO tours (tour_name, tour_description, price, status, start_date, end_date) 
-            VALUES (:tour_name, :tour_description, :price, :status, :start_date, :end_date)
+            INSERT INTO tours (tour_name, tour_description, status, start_date, end_date) 
+            VALUES (:tour_name, :tour_description, :status, :start_date, :end_date)
         ");
         $stmt->execute([
             ':tour_name' => $_POST['tour_name'],
             ':tour_description' => $_POST['tour_description'],
-            ':price' => $_POST['price'],
             ':status' => $_POST['status'],
             ':start_date' => $_POST['start_date'],
             ':end_date' => $_POST['end_date']
@@ -39,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             UPDATE tours 
             SET tour_name = :tour_name, 
                 tour_description = :tour_description, 
-                price = :price, 
                 status = :status, 
                 start_date = :start_date, 
                 end_date = :end_date 
@@ -48,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute([
             ':tour_name' => $_POST['tour_name'],
             ':tour_description' => $_POST['tour_description'],
-            ':price' => $_POST['price'],
             ':status' => $_POST['status'],
             ':start_date' => $_POST['start_date'],
             ':end_date' => $_POST['end_date'],

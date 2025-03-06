@@ -1,6 +1,11 @@
 <?php
 include 'php/attr_process.php';
 
+$stmtAttractions = $conn->prepare("SELECT * FROM attractions");
+$stmtAttractions->execute();
+$attractions = $stmtAttractions->fetchAll(PDO::FETCH_ASSOC);
+
+
 $stmtCities = $conn->prepare("SELECT city_id, city_name FROM cities");
 $stmtCities->execute();
 $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
@@ -67,6 +72,9 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                     <th>Város neve</th>
                     <th>Műveletek</th>
                     <th>Típus</th>
+                    <th>Ár</th>
+                    <th>Nyitás</th>
+                    <th>Zárás</th>
                     <th>Érdekeltség</th>
                 </tr>
             </thead>
@@ -81,6 +89,9 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                         <td><?= htmlspecialchars($attraction['created_by']) ?></td>
                         <td><?= htmlspecialchars($attraction['city_name']) ?></td>
                         <td><?= htmlspecialchars($attraction['type']) ?></td>
+                        <td><?= htmlspecialchars($attraction['price']) ?></td>
+                        <td><?= htmlspecialchars($attraction['open']) ?></td>
+                        <td><?= htmlspecialchars($attraction['closed']) ?></td>
                         <td><?= htmlspecialchars($attraction['interest']) ?></td>
                         <td>
                             <button class="btn btn-sm btn-warning edit-btn" 
@@ -91,6 +102,9 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                                 data-created-by="<?= htmlspecialchars($attraction['created_by']) ?>"
                                 data-city-name="<?= htmlspecialchars($attraction['city_name']) ?>"
                                 data-type="<?= htmlspecialchars($attraction['type']) ?>"
+                                data-price="<?= htmlspecialchars($attraction['price']) ?>"
+                                data-open="<?= htmlspecialchars($attraction['open']) ?>"
+                                data-closed="<?= htmlspecialchars($attraction['closed']) ?>"
                                 data-interest="<?= htmlspecialchars($attraction['interest']) ?>"
                                 data-toggle="modal" 
                                 data-target="#editAttractionModal">Szerkesztés</button>
@@ -139,6 +153,18 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                     <div class="form-group">
                         <label>Létrehozta</label>
                         <input type="text" class="form-control" name="created_by" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ár</label>
+                        <input type="text" class="form-control" name="price" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nyitás</label>
+                        <input type="time" class="form-control" name="open" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Zárás</label>
+                        <input type="time" class="form-control" name="closed" required>
                     </div>
                     <div class="form-group">
                         <label>Város neve</label>
@@ -214,6 +240,18 @@ $cities = $stmtCities->fetchAll(PDO::FETCH_ASSOC);
                     <div class="form-group">
                         <label>Létrehozta</label>
                         <input type="text" class="form-control" name="created_by" id="editAttractionCreatedBy" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ár</label>
+                        <input type="text" class="form-control" name="price" id="editPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nyitás</label>
+                        <input type="time" class="form-control" name="open" id="editOpen" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Zárás</label>
+                        <input type="time" class="form-control" name="closed" id="editClosed" required>
                     </div>
                     <div class="form-group">
                         <label>Város neve</label>
@@ -301,6 +339,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const createdBy = this.dataset.createdBy;
             const cityName = this.dataset.cityName;
             const type = this.dataset.type;
+            const price = this.dataset.price;
+            const open = this.dataset.open;
+            const closed = this.dataset.closed;
             const interest = this.dataset.interest;
 
             document.getElementById('editAttractionId').value = id;
@@ -309,6 +350,9 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('editAttractionAddress').value = address;
             document.getElementById('editAttractionCreatedBy').value = createdBy;
             document.getElementById('editType').value = type;
+            document.getElementById('editPrice').value = price;
+            document.getElementById('editOpen').value = open;
+            document.getElementById('editClosed').value = closed;
             document.getElementById('editInterest').value = interest;
 
             const citySelect = document.getElementById('editAttractionCityName');

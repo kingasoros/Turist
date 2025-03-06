@@ -40,14 +40,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($action === 'add') {
-            $stmt = $conn->prepare("INSERT INTO attractions (city_name, name, description, address, created_by, image, type, interest) 
-                                    VALUES (:city_name, :name, :description, :address, :created_by, :image, :type, :interest)");
+            $stmt = $conn->prepare("INSERT INTO attractions (city_name, name, description, address, created_by, price, open, closed, image, type, interest) 
+                                    VALUES (:city_name, :name, :description, :address, :created_by, :price, :open, :closed, :image, :type, :interest)");
             $stmt->execute([
                 ':city_name' => trim($_POST['city_name']),
                 ':name' => trim($_POST['name']),
                 ':description' => trim($_POST['description']),
                 ':address' => trim($_POST['address']),
                 ':created_by' => trim($_POST['created_by']),
+                ':price' => trim($_POST['price']),
+                ':open' => trim($_POST['open']),
+                ':closed' => trim($_POST['closed']),
                 ':image' => $new_file_name, 
                 ':type' => trim($_POST['type']),
                 ':interest' => trim($_POST['interest'])
@@ -56,7 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'edit') {
             $stmt = $conn->prepare("UPDATE attractions 
                                     SET city_name = :city_name, name = :name, description = :description, 
-                                        address = :address, created_by = :created_by, 
+                                        address = :address, created_by = :created_by, price = :price, 
+                                        open = :open, closed = :closed, 
                                         image = :image, type = :type, interest = :interest
                                     WHERE attractions_id = :attractions_id");
             $stmt->execute([
@@ -66,6 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':description' => trim($_POST['description']),
                 ':address' => trim($_POST['address']),
                 ':created_by' => trim($_POST['created_by']),
+                ':price' => trim($_POST['price']),
+                ':open' => trim($_POST['open']),
+                ':closed' => trim($_POST['closed']),
                 ':image' => $new_file_name ?? $_POST['existing_image'], 
                 ':type' => trim($_POST['type']),
                 ':interest' => trim($_POST['interest'])

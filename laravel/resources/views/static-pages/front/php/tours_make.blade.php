@@ -10,14 +10,13 @@ $attractions = $attractionsQuery->fetchAll(PDO::FETCH_ASSOC);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tourName = $_POST['tour_name'];
     $tourDescription = $_POST['tour_description'];
-    $price = $_POST['price'];
     $startDate = $_POST['start_date'];
     $endDate = $_POST['end_date'];
     $status = $_POST['status']; 
     $selectedAttractions = $_POST['attractions'];
 
-    $insertTour = $conn->prepare("INSERT INTO tours (tour_name, tour_description, price, start_date, end_date, status) VALUES (?, ?, ?, ?, ?, ?)");
-    $insertTour->execute([$tourName, $tourDescription, $price, $startDate, $endDate, $status]);
+    $insertTour = $conn->prepare("INSERT INTO tours (tour_name, tour_description, start_date, end_date, status) VALUES (?, ?, ?, ?, ?)");
+    $insertTour->execute([$tourName, $tourDescription, $startDate, $endDate, $status]);
     $tourId = $conn->lastInsertId();
 
     $order = 1;
@@ -33,16 +32,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Fetch tours and their associated attractions
 $stmt = $conn->prepare("
     SELECT 
-        t.*,
+        t.tour_id,
+        t.tour_name,
+        t.tour_description,
+        t.start_date,
+        t.end_date,
+        t.created_at,
         a.name AS attraction_name,
         a.description AS attraction_description,
-        a.image AS attraction_image
+        a.image AS attraction_image,
+        a.price AS attraction_price,
+        a.open AS attraction_open,
+        a.closed AS attraction_closed
     FROM tours t
     LEFT JOIN tour_attractions ta ON t.tour_id = ta.tour_id
     LEFT JOIN attractions a ON ta.attractions_id = a.attractions_id
-    WHERE t.status = 'private'  
+    WHERE t.status = 'private'
     ORDER BY t.tour_id, ta.attraction_order
 ");
+
 $stmt->execute();
 $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -54,8 +62,9 @@ foreach ($tours as $tour) {
             'id' => $tour['tour_id'],
             'tour_name' => $tour['tour_name'],
             'tour_description' => $tour['tour_description'],
-            'price' => $tour['price'],
             'created_at' => $tour['created_at'],
+            'start_date' => $tour['start_date'],
+            'end_date' => $tour['end_date'],
             'attractions' => []
         ];
     }
@@ -63,7 +72,10 @@ foreach ($tours as $tour) {
         $toursGrouped[$tourId]['attractions'][] = [
             'name' => $tour['attraction_name'],
             'description' => $tour['attraction_description'],
-            'image' => $tour['attraction_image']
+            'image' => $tour['attraction_image'],
+            'price' => $tour['attraction_price'],
+            'open' => $tour['attraction_open'],
+            'closed' => $tour['attraction_closed']
         ];
     }
 }
@@ -100,10 +112,6 @@ foreach ($tours as $tour) {
         <div class="mb-3">
             <label for="tour_description" class="form-label">Leírás</label>
             <textarea class="form-control tours_input" id="tour_description" name="tour_description" rows="3" required></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="price" class="form-label">Ár</label>
-            <input type="number" class="form-control tours_input" id="price" name="price" step="0.01" required>
         </div>
         <div class="row">
             <div class="col-md-6 mb-3">
@@ -162,8 +170,6 @@ foreach ($tours as $tour) {
                 </div>
                     <div class="card-body">
                         <h5 class="card-title text-secondary"><?= htmlspecialchars($tour['tour_description'] ?? 'Nincs leírás') ?></h5>
-                        <p class="card-text">Felbecsült ár: <?= htmlspecialchars($tour['price'] ?? 'Nincs ár megadva') ?></p>
-
                         <h6 class="mt-3 text-dark">Látványosságok:</h6>
                         <?php if (!empty($tour['attractions'])) { ?>
                             <ul class="list-group list-group-flush">
@@ -172,12 +178,17 @@ foreach ($tours as $tour) {
                                         <strong class="mr-2"><?= htmlspecialchars($attraction['name']) ?>:</strong>
                                         <div class="row w-100">
                                             <!-- Leírás oszlop -->
-                                            <div class="col-md-6">
-                                                <small><?= htmlspecialchars($attraction['description'] ?? 'Nincs leírás') ?></small>
+                                            <div class="col-md-4">
+                                                <small class="text-muted" style="color:#464c51 !important;"><?= htmlspecialchars($attraction['description'] ?? 'Nincs leírás') ?></small>
+                                            </div>
+                                            <!-- Ár oszlop -->
+                                            <div class="col-md-4 text-center">
+                                                <small class="text-muted" style="color:#464c51 !important;">Ár: <?= htmlspecialchars($attraction['price'] ) ?> Din</small>
+                                                <small class="text-muted" style="color:#464c51 !important;">Nyitvatartás: <?= htmlspecialchars($attraction['open'] ) ?> - <?= htmlspecialchars($attraction['closed'] ) ?></small>
                                             </div>
                                             <!-- Kép oszlop -->
-                                            <div class="col-md-6 text-center">
-                                                    <img src="http://localhost/Turist/img/<?= !empty($attraction['image']) ? htmlspecialchars($attraction['image']) : 'default.jpg' ?>" alt="<?= htmlspecialchars($attraction['name']) ?>">
+                                            <div class="col-md-4 text-center">
+                                                <img src="http://localhost/Turist/img/<?= !empty($attraction['image']) ? htmlspecialchars($attraction['image']) : 'default.jpg' ?>" class="img-fluid rounded" alt="<?= htmlspecialchars($attraction['name']) ?>" style="max-height: 100px; object-fit: cover;">
                                             </div>
                                         </div>
                                     </li>

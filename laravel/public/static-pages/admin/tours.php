@@ -5,7 +5,7 @@ $stmt->execute();
 $attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $stmt = $conn->prepare("
-    SELECT t.tour_id, t.tour_name, t.tour_description, t.price, t.start_date, t.end_date, t.status, 
+    SELECT t.tour_id, t.tour_name, t.tour_description, t.start_date, t.end_date, t.status, 
            GROUP_CONCAT(a.name ORDER BY ta.attraction_order) AS attractions,
            GROUP_CONCAT(a.attractions_id ORDER BY ta.attraction_order) AS attraction_ids
     FROM tours t
@@ -60,7 +60,6 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <th>ID</th>
                 <th>Túra neve</th>
                 <th>Leírás</th>
-                <th>Ár</th>
                 <th>Kezdő dátum</th>
                 <th>Befejező dátum</th>
                 <th>Látványosságok</th>
@@ -75,7 +74,6 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars($tour['tour_id']) ?></td>
                     <td><?= htmlspecialchars($tour['tour_name']) ?></td>
                     <td><?= htmlspecialchars($tour['tour_description']) ?></td>
-                    <td><?= htmlspecialchars($tour['price']) ?> Ft</td>
                     <td><?= htmlspecialchars($tour['start_date']) ?></td>
                     <td><?= htmlspecialchars($tour['end_date']) ?></td>
                     <td><?= htmlspecialchars($tour['attractions']) ?></td>
@@ -85,7 +83,6 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         data-id="<?= htmlspecialchars($tour['tour_id']) ?>"
                         data-name="<?= htmlspecialchars($tour['tour_name']) ?>"
                         data-description="<?= htmlspecialchars($tour['tour_description']) ?>"
-                        data-price="<?= htmlspecialchars($tour['price']) ?>"
                         data-start-date="<?= htmlspecialchars($tour['start_date']) ?>"
                         data-end-date="<?= htmlspecialchars($tour['end_date']) ?>"
                         data-status="<?= htmlspecialchars($tour['status']) ?>" 
@@ -128,10 +125,6 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="form-group">
                         <label>Leírás</label>
                         <textarea class="form-control" name="tour_description" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Ár</label>
-                        <input type="number" class="form-control" name="price" required>
                     </div>
                     <label for="add_start_date">Kezdő dátum:</label>
                     <input type="date" id="add_start_date" name="start_date" required><br>
@@ -196,10 +189,6 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="form-group">
                         <label>Leírás</label>
                         <textarea class="form-control" name="tour_description" id="edit-tour-description" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Ár</label>
-                        <input type="number" class="form-control" name="price" id="edit-tour-price" required>
                     </div>
                     <label for="edit_start_date">Kezdő dátum:</label>
                     <input type="date" id="edit_start_date" name="start_date" required><br>
@@ -284,7 +273,6 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 const tourId = this.dataset.id;
                 const tourName = this.dataset.name;
                 const tourDescription = this.dataset.description;
-                const price = this.dataset.price;
                 const startDate = this.dataset.startDate;
                 const endDate = this.dataset.endDate;
                 const status = this.dataset.status;
@@ -293,7 +281,6 @@ $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 document.getElementById('edit-tour-id').value = tourId;
                 document.getElementById('edit-tour-name').value = tourName;
                 document.getElementById('edit-tour-description').value = tourDescription;
-                document.getElementById('edit-tour-price').value = price;
                 document.getElementById('edit_start_date').value = startDate;
                 document.getElementById('edit_end_date').value = endDate;
                 document.getElementById('edit-tour-status').value = status;

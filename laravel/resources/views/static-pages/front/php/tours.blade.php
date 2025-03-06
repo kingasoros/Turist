@@ -5,18 +5,26 @@ include base_path('resources/views/static-pages/front/php/db_conn.php');
 
 $stmt = $conn->prepare("
     SELECT 
-        t.*,
+        t.tour_id,
+        t.tour_name,
+        t.tour_description,
+        t.start_date,
+        t.end_date,
+        t.created_at,
         a.name AS attraction_name,
         a.description AS attraction_description,
         a.image AS attraction_image,
-        t.start_date,  -- Hozzáadva a start_date
-        t.end_date     -- Hozzáadva az end_date
+        a.price AS attraction_price,
+        a.open AS attraction_open,
+        a.closed AS attraction_closed
     FROM tours t
     LEFT JOIN tour_attractions ta ON t.tour_id = ta.tour_id
     LEFT JOIN attractions a ON ta.attractions_id = a.attractions_id
     WHERE t.status = 'public'
     ORDER BY t.tour_id, ta.attraction_order
 ");
+
+
 $stmt->execute();
 $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -28,10 +36,9 @@ foreach ($tours as $tour) {
             'id' => $tour['tour_id'],
             'tour_name' => $tour['tour_name'],
             'tour_description' => $tour['tour_description'],
-            'price' => $tour['price'],
             'created_at' => $tour['created_at'],
-            'start_date' => $tour['start_date'],  // Hozzáadva a start_date
-            'end_date' => $tour['end_date'],      // Hozzáadva az end_date
+            'start_date' => $tour['start_date'],
+            'end_date' => $tour['end_date'],
             'attractions' => []
         ];
     }
@@ -39,10 +46,14 @@ foreach ($tours as $tour) {
         $toursGrouped[$tourId]['attractions'][] = [
             'name' => $tour['attraction_name'],
             'description' => $tour['attraction_description'],
-            'image' => $tour['attraction_image']
+            'image' => $tour['attraction_image'],
+            'price' => $tour['attraction_price'],
+            'open' => $tour['attraction_open'],
+            'closed' => $tour['attraction_closed']
         ];
     }
 }
+
 
 ?>
 
@@ -72,8 +83,8 @@ foreach ($tours as $tour) {
                     <h4><?= htmlspecialchars($tour['tour_name']) ?></h4>
                 </div>
                 <div class="card-body p-4 bg-light">
-                    <h5 class="card-title text-secondary" style="color:#464c51 !important;"><?= htmlspecialchars($tour['tour_description'] ?? 'Nincs leírás') ?></h5>
-                    <p class="card-text text-muted" style="color:#464c518a !important;">Felbecsült ár: <?= htmlspecialchars($tour['price'] ?? 'Nincs ár megadva') ?></p>
+                    <h5 class="card-title text-secondary" style="color:#464c51 !important;"><?= htmlspecialchars($tour['tour_description'] ?? 'Nincs leírás') ?>
+                    <br>Létrehozva:<?= htmlspecialchars($tour['created_at'])?></h5>
 
                     <h6 class="mt-3 text-dark">Látványosságok:</h6>
                     <?php if (!empty($tour['attractions'])) { ?>
@@ -83,15 +94,21 @@ foreach ($tours as $tour) {
                                     <strong class="mr-2"><?= htmlspecialchars($attraction['name']) ?>:</strong>
                                     <div class="row w-100">
                                         <!-- Leírás oszlop -->
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <small class="text-muted" style="color:#464c51 !important;"><?= htmlspecialchars($attraction['description'] ?? 'Nincs leírás') ?></small>
                                         </div>
+                                        <!-- Ár oszlop -->
+                                        <div class="col-md-4 text-center">
+                                            <small class="text-muted" style="color:#464c51 !important;">Ár: <?= htmlspecialchars($attraction['price'] ) ?> Din</small>
+                                            <small class="text-muted" style="color:#464c51 !important;">Nyitvatartás: <?= htmlspecialchars($attraction['open'] ) ?> - <?= htmlspecialchars($attraction['closed'] ) ?></small>
+                                        </div>
                                         <!-- Kép oszlop -->
-                                        <div class="col-md-6 text-center">
+                                        <div class="col-md-4 text-center">
                                             <img src="http://localhost/Turist/img/<?= !empty($attraction['image']) ? htmlspecialchars($attraction['image']) : 'default.jpg' ?>" class="img-fluid rounded" alt="<?= htmlspecialchars($attraction['name']) ?>" style="max-height: 100px; object-fit: cover;">
                                         </div>
                                     </div>
                                 </li>
+                                
                             <?php } ?>
                         </ul>
                     <?php } else { ?>
