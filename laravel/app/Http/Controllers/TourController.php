@@ -28,6 +28,7 @@ class TourController extends Controller
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'status' => $validated['status'],
+            'favorites_count' => 0,
             'created_at' => now(),
         ]);
         if (!empty($validated['attractions'])) {

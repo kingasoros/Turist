@@ -14,13 +14,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $endDate = $_POST['end_date'];
     $status = $_POST['status']; 
     $selectedAttractions = $_POST['attractions'];
+    $order = $_POST['attraction_order']; // A sorrend itt lesz
 
     $insertTour = $conn->prepare("INSERT INTO tours (tour_name, tour_description, start_date, end_date, status) VALUES (?, ?, ?, ?, ?)");
     $insertTour->execute([$tourName, $tourDescription, $startDate, $endDate, $status]);
     $tourId = $conn->lastInsertId();
 
+    // Az $order alapján rendezzük a látványosságokat
+    $orderArray = explode(',', $order); // Az order tömb létrehozása
+    $attractionsOrdered = [];
+    foreach ($orderArray as $attractionId) {
+        if (in_array($attractionId, $selectedAttractions)) {
+            $attractionsOrdered[] = $attractionId;
+        }
+    }
+
+    // Most már az orderedAttractions tartalmazza a látványosságokat a kívánt sorrendben
     $order = 1;
-    foreach ($selectedAttractions as $attractionId) {
+    foreach ($attractionsOrdered as $attractionId) {
         $insertAttraction = $conn->prepare("INSERT INTO tour_attractions (tour_id, attractions_id, attraction_order) VALUES (?, ?, ?)");
         $insertAttraction->execute([$tourId, $attractionId, $order]);
         $order++;
@@ -79,7 +90,6 @@ foreach ($tours as $tour) {
         ];
     }
 }
-
 ?>
 
 @extends('layouts.master')
@@ -140,9 +150,9 @@ foreach ($tours as $tour) {
         </div>
         <div class="mb-3">
             <label class="form-label">Látványosságok</label>
-            <div class="row">
+            <div class="row" id="attractions-list">
                 <?php foreach ($attractions as $attraction) { ?>
-                    <div class="col-md-6">
+                    <div class="col-md-6" id="attraction_<?= $attraction['attractions_id'] ?>">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="<?= $attraction['attractions_id'] ?>" id="attraction_<?= $attraction['attractions_id'] ?>" name="attractions[]">
                             <label class="form-check-label" for="attraction_<?= $attraction['attractions_id'] ?>">
@@ -152,7 +162,10 @@ foreach ($tours as $tour) {
                     </div>
                 <?php } ?>
             </div>
+            <!-- Rejtett mező a sorrend tárolására -->
+            <input type="hidden" id="attraction-order" name="attraction_order">
         </div>
+        
         <button type="submit" class="btn btn-primary">Mentés</button>
     </form>
 </div>
@@ -188,14 +201,14 @@ foreach ($tours as $tour) {
                                             </div>
                                             <!-- Kép oszlop -->
                                             <div class="col-md-4 text-center">
-                                                <img src="http://localhost/Turist/img/<?= !empty($attraction['image']) ? htmlspecialchars($attraction['image']) : 'default.jpg' ?>" class="img-fluid rounded" alt="<?= htmlspecialchars($attraction['name']) ?>" style="max-height: 100px; object-fit: cover;">
+                                                <img src="http://localhost/Turist/img/<?= !empty($attraction['image']) ? htmlspecialchars($attraction['image']) : 'default.jpg' ?>" class="img-fluid rounded" alt="<?= htmlspecialchars($attraction['name']) ?>">
                                             </div>
                                         </div>
                                     </li>
                                 <?php } ?>
                             </ul>
                         <?php } else { ?>
-                            <p>Nincsenek látványosságok a túrához.</p>
+                            <p class="text-muted">Nincs látványosság hozzáadva ehhez a túrához.</p>
                         <?php } ?>
                         <div class="favorites_buttons">
                             <form action="{{ route('tours.destroy', $tour['id']) }}" method="POST" onsubmit="return confirm('Biztos, hogy törölni szeretnéd ezt a túrát?');">
@@ -211,35 +224,24 @@ foreach ($tours as $tour) {
                 </div>
             </div>
         <?php } ?>
-    <?php } else { ?>
-        <p class="text-center text-muted">Nincsenek elérhető adatok.</p>
-    <?php } ?>
+        <?php } ?>
         </div>
-    </div>
+</div>
 </x-app-layout>
-  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const startDateInput = document.getElementById('start_date');
-        const endDateInput = document.getElementById('end_date');
-        const errorDiv = document.getElementById('date_error');
-
-        function validateDates() {
-            const startDate = new Date(startDateInput.value);
-            const endDate = new Date(endDateInput.value);
-
-            if (startDate && endDate && startDate > endDate) {
-                errorDiv.style.display = 'block'; 
-                startDateInput.setCustomValidity('A kezdési dátum nem lehet későbbi, mint a befejezési dátum!');
-            } else {
-                errorDiv.style.display = 'none'; 
-                startDateInput.setCustomValidity(''); 
-            }
+    // Sorrend rendezése drag-and-drop-al
+    const attractionList = document.getElementById('attractions-list');
+    const sortable = new Sortable(attractionList, {
+        onEnd(evt) {
+            // Mentsük el a sorrendet a rejtett mezőbe
+            let order = [];
+            const items = sortable.toArray(); // Ez egy tömb lesz, amiben a sorrend van
+            items.forEach(itemId => {
+                order.push(itemId.split('_')[1]); // Kivesszük az id-t
+            });
+            document.getElementById('attraction-order').value = order.join(',');
         }
-
-        startDateInput.addEventListener('input', validateDates);
-        endDateInput.addEventListener('input', validateDates);
     });
 </script>
-
 @endsection
