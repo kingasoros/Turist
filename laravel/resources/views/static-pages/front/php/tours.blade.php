@@ -117,9 +117,6 @@ foreach ($tours2 as $tour) {
                                         <div class="col-md-4 text-center">
                                             <small class="text-muted" style="color:#464c51 !important;">Ár: <?= htmlspecialchars($attraction['price'] ) ?> Din</small>
                                             <small class="text-muted" style="color:#464c51 !important;">Nyitvatartás: <?= htmlspecialchars($attraction['open'] ) ?> - <?= htmlspecialchars($attraction['closed'] ) ?></small>
-                                        </div>
-                                        <!-- Kép oszlop -->
-                                        <div class="col-md-4 text-center">
                                             <img src="http://localhost/Turist/img/<?= !empty($attraction['image']) ? htmlspecialchars($attraction['image']) : 'default.jpg' ?>" class="img-fluid rounded" alt="<?= htmlspecialchars($attraction['name']) ?>" style="max-height: 100px; object-fit: cover;">
                                         </div>
                                     </div>

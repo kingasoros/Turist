@@ -23,8 +23,7 @@
 .footer__container{
     background: #3b5147;
     padding:2%;
-    margin-top:2%;
-  }
+}
   
 .app__text{
     color:#fff;
@@ -64,13 +63,6 @@
 .card-text {
     color: #b0b0b0;
     margin-bottom: 20px;
-}
-
-.card-footer {
-    background-color: #3b5147;
-    color: white;
-    padding: 10px;
-    font-size: 14px;
 }
 
 .btn-primary {
@@ -223,6 +215,34 @@
   transform: scale(1.05);
 }
 
+.footer__div {
+  background-color: #3b5147;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.footer__container {
+  flex: 1;
+  min-width: 300px;
+}
+
+.footer__app{
+  text-align: right;
+}
+
+.footer__container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer__container ul li {
+  margin-bottom: 5px;
+}
+
 @media (max-width: 1024px) {
   .gallery-images img {
       width: 90%;  
@@ -245,6 +265,20 @@
 
   .gallery-images {
     grid-template-columns: repeat(1, 1fr);
+}
+
+.footer__div {
+  flex-direction: column;
+  text-align: center;
+}
+
+.footer__container {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.footer__container ul {
+  display: inline-block;
 }
 }
 

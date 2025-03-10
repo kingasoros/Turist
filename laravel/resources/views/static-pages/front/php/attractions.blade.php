@@ -132,11 +132,11 @@ if (!isset($_COOKIE['VISITED'])) {
                                 <h5 class="card-title" style="font-weight:bold; font-size:20px;"><?= htmlspecialchars($attraction['name']) ?><br>
                                     <?= htmlspecialchars($attraction['open']) ?>-<?= htmlspecialchars($attraction['closed']) ?></h5>
                                 <p class="card-text"><?= htmlspecialchars($attraction['description']) ?></p>
-                                <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['address']) ?></small></p>
-                                <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['created_by']) ?></small></p>
-                                <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['city_name']) ?></small></p>
-                                <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['type']) ?></small></p>
-                                <p class="card-text"><small class="text-muted"><?= htmlspecialchars($attraction['interest']) ?></small></p>
+                                <p class="card-text">Cím:<small class="text-muted"><?= htmlspecialchars($attraction['address']) ?></small></p>
+                                <p class="card-text">Helység:<small class="text-muted"><?= htmlspecialchars($attraction['city_name']) ?></small></p>
+                                <p class="card-text">Létrehozta:<small class="text-muted"><?= htmlspecialchars($attraction['created_by']) ?></small></p>
+                                <p class="card-text">Típus:<small class="text-muted"><?= htmlspecialchars($attraction['type']) ?></small></p>
+                                <p class="card-text">Érdekeltség:<small class="text-muted"><?= htmlspecialchars($attraction['interest']) ?></small></p>
                                 <p class="card-text">Belépő ára: <?= htmlspecialchars($attraction['price']) ?></p>
                             </div>
                         </div>

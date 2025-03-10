@@ -173,7 +173,7 @@ if (!isset($_COOKIE['VISITED'])) {
                 <p>&copy; {{ date('Y') }} My Application. All rights reserved.</p>
             </div>
         </div>
-    </footer>    
+    </footer> 
 <script>
     let slideIndex = 1;
 showSlides(slideIndex);

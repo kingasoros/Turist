@@ -35,7 +35,7 @@ if ($id) {
         <h5 class="card-title"><?= htmlspecialchars($blog['title']) ?></h5>
             <p class="card-text"><small class="text-muted"><?= htmlspecialchars($blog['author']) ?></small></p>
             <br>
-            <p class="card-text"><?= htmlspecialchars($blog['content']) ?></p>
+            <pre><?= htmlspecialchars($blog['content']) ?></pre>
     </div>
 </x-app-layout>
 <script>
