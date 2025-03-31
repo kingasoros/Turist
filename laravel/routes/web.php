@@ -275,6 +275,6 @@ Route::get('/api/getAttractionsByFilters', function (Request $request) {
             ]);
         }
     }
-
+    Log::info('Keresési paraméterek:', $request->all());
     return response()->json($attractions);
 });

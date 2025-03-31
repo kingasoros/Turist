@@ -13,7 +13,10 @@ class AttractionController extends Controller
     {
         $query = $request->get('query', '');
 
-        $results = Attraction::where('name', 'LIKE', '%' . $query . '%')->get();
+        $results = Attraction::where('name', 'LIKE', '%' . $query . '%')
+        ->orderBy('name') // <-- Itt rendezzük ábécé sorrendbe
+        ->get();
+
 
         return response()->json($results);
     }

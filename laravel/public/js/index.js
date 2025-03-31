@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch(`/api/getAttractions?selectedName=${encodeURIComponent(selectedName)}`)
         .then(response => response.json())
         .then(data => {
-            const attractionsContainer = document.querySelector('.wheel-box_first');
+            const attractionsContainer = document.querySelector('.card-group');
             attractionsContainer.innerHTML = ''; 
 
             data.forEach(attraction => {
@@ -234,7 +234,7 @@ document.getElementById('apply-filters').addEventListener('click', function () {
   fetch(`/api/getAttractionsByFilters?city=${encodeURIComponent(city)}&type=${encodeURIComponent(type)}&interest=${encodeURIComponent(interest)}`)
       .then(response => response.json())
       .then(data => {
-          const attractionsContainer = document.querySelector('.wheel-box_first');
+          const attractionsContainer = document.querySelector('.card-group');
           attractionsContainer.innerHTML = ''; // Az előző találatok törlése
 
           // Kártyák létrehozása az adatok megjelenítéséhez
@@ -267,41 +267,52 @@ document.getElementById('apply-filters').addEventListener('click', function () {
 });
 
 
-  // A látványosságok sorrendjének frissítése
+// A látványosságok sorrendjének frissítése
 function updateAttractionsOrder(selectedName) {
+  const attractionsContainer = document.querySelector('.wheel-box_first');
+  const cardGroup = document.querySelector('.card-group'); // Ha van .card-group elem
+
+  // Elrejtjük a .card-group-ot frissítés közben
+  if (cardGroup) {
+    cardGroup.style.display = 'none';
+  }
+
   fetch(`/api/getAttractions?selectedName=${encodeURIComponent(selectedName)}`)
       .then(response => response.json())
       .then(data => {
-          const attractionsContainer = document.querySelector('.wheel-box_first');
-          attractionsContainer.innerHTML = ''; 
+        attractionsContainer.innerHTML = '';  // Töröljük az előző látványosságokat
 
-          data.forEach(attraction => {
-              const card = document.createElement('div');
-              card.className = 'card mb-3';
-              card.style = 'margin:5px; background-color:#002f3b; color:#fff;';
-              card.innerHTML = `
-                  <div class="row g-0">
-                      <div class="col-md-4">
-                          <img src="https://gt.stud.vts.su.ac.rs//Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%;">
-                      </div>
-                      <div class="col-md-8">
-                          <div class="card-body">
-                              <h5 class="card-title">${attraction.name}</h5>
-                              <p class="card-text">${attraction.description}</p>
-                              <p class="card-text"><small class="text-muted">${attraction.address}</small></p>
-                              <p class="card-text"><small class="text-muted">${attraction.created_by}</small></p>
-                              <p class="card-text"><small class="text-muted">${attraction.city_name}</small></p>
-                              <p class="card-text"><small class="text-muted">${attraction.type}</small></p>
-                              <p class="card-text"><small class="text-muted">${attraction.interest}</small></p>
-                          </div>
-                      </div>
-                  </div>
-              `;
-              attractionsContainer.appendChild(card);
-          });
+        data.forEach(attraction => {
+            const card = document.createElement('div');
+            card.className = 'card mb-3';
+            card.style = 'margin:5px; background-color:#002f3b; color:#fff;';
+            card.innerHTML = `
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="http://localhost/Turist/img/${attraction.image || '..'}" alt="${attraction.name}" style="height:100%; width:100%; object-fit:cover;">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">${attraction.name}</h5>
+                            <p class="card-text">${attraction.description}</p>
+                            <p class="card-text"><small class="text-muted">${attraction.address}</small></p>
+                            <p class="card-text"><small class="text-muted">${attraction.created_by}</small></p>
+                            <p class="card-text"><small class="text-muted">${attraction.city_name}</small></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            attractionsContainer.appendChild(card);
+        });
+
+        // Visszaállítjuk a .card-group-ot, miután a frissítés befejeződött
+        if (cardGroup) {
+          cardGroup.style.display = 'block';
+        }
       });
-  }
-  
+}
+
+
   // Kattintás kívül, hogy eltüntesse a keresési találatokat
   document.addEventListener('click', function (event) {
       const searchInput = document.getElementById('search');

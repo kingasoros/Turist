@@ -20,6 +20,10 @@
     margin: 0 auto 10px;
 }
 
+.info-block:hover{
+  background-color: #2d4135;
+}
+
 .footer__container{
     background: #3b5147;
     padding:2%;
@@ -30,7 +34,7 @@
 }
 
 .text-center{
-    margin:2% 1%;
+    margin:5% 1%;
 }
 
 .card {
@@ -82,6 +86,7 @@
 .gallery-images {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    margin:5% 0;
 }
 
 .gallery-images img {
@@ -206,6 +211,10 @@
   white-space: nowrap;
 }
 
+.partner-list li:hover{
+  background-color: #aeadad;
+}
+
 .gallery {
   display: flex;
   justify-content: center;
@@ -222,6 +231,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   align-items: center;
+  margin-top: 10px;
 }
 
 .footer__container {

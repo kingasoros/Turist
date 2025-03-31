@@ -10,6 +10,9 @@ import Map from './screens/Map';
 import ProfileScreen from './screens/ProfileScreen';
 import ToursScreen from './screens/ToursScreen';
 import BASE_URL from './screens/config';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { TouchableOpacity } from 'react-native';
+
 
 const Stack = createStackNavigator();
 
@@ -32,46 +35,47 @@ export default function App() {
   const HomeScreen = ({ navigation }) => {
     return (
       <ImageBackground
-        source={{ uri: `${BASE_URL}/Turist_MobilApp/img/backgrnd.jpg` }} 
-        style={styles.container}
+      source={{ uri: `${BASE_URL}/Turist_MobilApp/img/backgrnd.jpg` }} 
+      style={styles.container}
       >
-        <StatusBar style="auto" />
+      <StatusBar style="auto" />
 
-        <Image
-          source={{ uri: `${BASE_URL}/Turist_MobilApp/img/home_page3.jpg` }} 
-          style={styles.image}
-        />
-        
-        <Text style={styles.overlayText}>
-          Fedezd fel a természet szépségeit és válaszd ki a számodra tökéletes túraútvonalat.
-        </Text>
+      <Image
+        source={{ uri: `${BASE_URL}/Turist_MobilApp/img/home_page3.jpg` }} 
+        style={styles.image}
+      />
+      
+      <Text style={styles.overlayText}>
+        Fedezd fel a természet szépségeit és válaszd ki a számodra tökéletes túraútvonalat.
+      </Text>
 
-        <View style={styles.featureContainer}>
-          <View style={styles.featureItem}>
-            <Image
-              source={{ uri: `${BASE_URL}/Turist_MobilApp/img/home_page2.jpg` }} 
-              style={styles.featureImage}
-            />
-            <Text style={styles.featureText}>Túrák</Text>
-          </View>
-          <View style={styles.featureItem}>
-            <Image
-              source={{ uri: `${BASE_URL}/Turist_MobilApp/img/home_page1.jpg` }} 
-              style={styles.featureImage}
-            />
-            <Text style={styles.featureText}>Látványok</Text>
-          </View>
-          <View style={styles.featureItem}>
-            <Image
-              source={{ uri: `${BASE_URL}/Turist_MobilApp/img/home_page0.jpg` }}
-              style={styles.featureImage}
-            />
-            <Text style={styles.featureText}>Térképek </Text>
-          </View>
-        </View>
+      <View style={styles.featureContainer}>
+        <TouchableOpacity style={styles.featureItem} onPress={() => navigation.navigate('Tours')}>
+          <Image
+            source={{ uri: `${BASE_URL}/Turist_MobilApp/img/home_page2.jpg` }} 
+            style={styles.featureImage}
+          />
+          <Text style={styles.featureText}>Túrák</Text>
+        </TouchableOpacity>
 
-        <BottomNavBar navigation={navigation} />
-      </ImageBackground>
+        <TouchableOpacity style={styles.featureItem} onPress={() => navigation.navigate('Attractions')}>
+          <Image
+            source={{ uri: `${BASE_URL}/Turist_MobilApp/img/home_page1.jpg` }} 
+            style={styles.featureImage}
+          />
+          <Text style={styles.featureText}>Látványok</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.featureItem} onPress={() => navigation.navigate('Map')}>
+          <Image
+            source={{ uri: `${BASE_URL}/Turist_MobilApp/img/home_page0.jpg` }}
+            style={styles.featureImage}
+          />
+          <Text style={styles.featureText}>Térképek</Text>
+        </TouchableOpacity>
+      </View>
+      <BottomNavBar navigation={navigation} />
+    </ImageBackground>
     );
   };
 

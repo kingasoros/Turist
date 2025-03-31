@@ -1,3 +1,0 @@
--tablaknal datatablest hasznalj
--szerencsekerék alatt ne csak a nevet irja ki, hanem jelenitse meg a kartyat
--adminon kepek ne jelenjenek meg kicsiben, hanem ha ujat hozol letre akkor tudj hozzaadni, ha modositod, ott is tudsz hozzáadni képet, és lecseréli az előzőt

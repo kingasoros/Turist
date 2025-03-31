@@ -55,10 +55,6 @@ body {
   display: flex;
 }
 
-.wheel-box_first {
-  width: 65%;
-}
-
 .wheel-box_second {
   width: 35%;
 }
@@ -330,9 +326,9 @@ p {
     flex-direction: column-reverse;
   }
 
-  .wheel-box_first {
+  /* .wheel-box_first {
     width: 100%; 
-  }
+  } */
 
   .wheel-box_second {
     width: 100%; 

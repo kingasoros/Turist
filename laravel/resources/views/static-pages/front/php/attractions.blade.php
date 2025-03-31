@@ -118,8 +118,11 @@ if (!isset($_COOKIE['VISITED'])) {
     </x-slot>
 
     <?php $selectedName = session('selectedName', ''); ?>
-
-    <div class="row card-group">
+    {{-- <div class="wheel-box_first">
+        <!-- ide kerülnek a látványosság kártyák -->
+    </div> --}}
+    
+    <div class="row card-group wheel-box_first">
         <?php if (!empty($attractions)){ ?>
             <?php foreach ($attractions as $attraction){ ?>
                 <div class=" mb-3 col-6 col-md-6 card-group_body" style="margin:5px; background-color:#002f3b; color:#fff;" data-id="<?= htmlspecialchars($attraction['attractions_id']) ?>">
@@ -167,7 +170,7 @@ if (!isset($_COOKIE['VISITED'])) {
     
         alert("Szöveg másolva: " + text);
     }
-    
+
 
     </script>
 @endsection
