@@ -1,117 +1,77 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, ActivityIndicator, Button } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Button, Platform } from 'react-native';
+import * as Linking from 'expo-linking';
 import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import * as Location from 'expo-location';
 
-const GOOGLE_MAPS_APIKEY = 'AIzaSyDVSOhkMOeIE1WAx1ifwwpsuKEVCnyYk2Q';
+const MapScreen = () => {
+  const origin = { latitude: 46.0989, longitude: 19.6676 }; // Szabadka
+  const destination = { latitude: 46.1031, longitude: 19.7582 }; // Palics
+  const GOOGLE_MAPS_APIKEY = 'AIzaSyDVSOhkMOeIE1WAx1ifwwpsuKEVCnyYk2Q';
 
-const Map = () => {
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [tracking, setTracking] = useState(false); // Kezdetben nincs követés
-  const [region, setRegion] = useState(null); // A térkép aktuális régiója
-
-  const destination = {
-    latitude: 46.2496,
-    longitude: 20.1071,
-  };
-
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Hozzáférés megtagadva a helyadatokhoz.');
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-
-      // Hely folyamatos frissítése
-      Location.watchPositionAsync(
-        { accuracy: Location.Accuracy.High, timeInterval: 1000, distanceInterval: 1 },
-        (newLocation) => {
-          setLocation({
-            latitude: newLocation.coords.latitude,
-            longitude: newLocation.coords.longitude,
-          });
-        }
-      );
-    })();
-  }, []);
-
-  if (!location) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text style={{ marginTop: 10 }}>Helyzet meghatározása...</Text>
-      </View>
-    );
-  }
-
-  const handleStartTracking = () => {
-    setTracking(true);
-    setRegion({
-      latitude: location.latitude,
-      longitude: location.longitude,
-      latitudeDelta: 0.05, // Nagyobb nagyítás, amikor követi a helyzetet
-      longitudeDelta: 0.05,
+  // Navigáció indítása Google Maps alkalmazásban
+  const startNavigation = () => {
+    const url = Platform.select({
+      ios: `maps://app?saddr=${origin.latitude},${origin.longitude}&daddr=${destination.latitude},${destination.longitude}&directionsmode=driving`,
+      android: `google.navigation:q=${destination.latitude},${destination.longitude}&mode=d`
     });
-  };
 
-  const handleStopTracking = () => {
-    setTracking(false);
-    setRegion({
-      latitude: location.latitude,
-      longitude: location.longitude,
-      latitudeDelta: 0.1, // Normál nézet
-      longitudeDelta: 0.1,
-    });
+    Linking.openURL(url).catch(err => console.error('Hiba a Google Maps megnyitásakor:', err));
   };
 
   return (
-    <>
+    <View style={styles.container}>
       <MapView
         style={styles.map}
-        region={region || { latitude: location.latitude, longitude: location.longitude, latitudeDelta: 0.1, longitudeDelta: 0.1 }}
-        showsUserLocation={true} // Aktuális helyzet megjelenítése
-        followUserLocation={tracking} // Követi a helyzetet, ha a tracking be van kapcsolva
-        showsMyLocationButton={true} // Helymeghatározás gomb
+        initialRegion={{
+          latitude: 46.1000,
+          longitude: 19.7000,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+        }}
       >
-        <Marker coordinate={location} title="Te" />
-        <Marker coordinate={destination} title="Cél: Horgosi út 136" />
-
+        <Marker coordinate={origin} title="Szabadka" />
+        <Marker coordinate={destination} title="Palics" />
         <MapViewDirections
-          origin={location}
+          origin={origin}
           destination={destination}
           apikey={GOOGLE_MAPS_APIKEY}
-          strokeWidth={4}
+          strokeWidth={5}
           strokeColor="blue"
+          mode="DRIVING"
         />
       </MapView>
 
-      {/* Gomb a követés be- és kikapcsolásához */}
-      <Button
-        title={tracking ? "Követés kikapcsolása" : "Követés bekapcsolása"}
-        onPress={tracking ? handleStopTracking : handleStartTracking}
-      />
-    </>
+      {/* Gomb a navigáció indítására */}
+      <View style={styles.buttonContainer}>
+        <Button title="Indítás Google Maps-ben" onPress={startNavigation} />
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  map: {
+  container: {
     flex: 1,
   },
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  map: {
+    width: '100%',
+    height: '90%',
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });
 
-export default Map;
+export default MapScreen;

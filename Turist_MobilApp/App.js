@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import BottomNavBar from './components/BottomNavBar';
 import LoginScreen from './screens/LoginScreen';
 import AttractionsScreen from './screens/AttractionsScreen';
-import Map from './screens/Map';
+import MapScreen from './screens/Map';
 import ProfileScreen from './screens/ProfileScreen';
 import ToursScreen from './screens/ToursScreen';
 import BASE_URL from './screens/config';
@@ -93,7 +93,7 @@ export default function App() {
           options={{ headerLeft: null }}
         />
         <Stack.Screen name="Attractions" component={AttractionsScreen} />
-        <Stack.Screen name="Map" component={Map} />
+        <Stack.Screen name="Map" component={MapScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Tours" component={ToursScreen} />
       </Stack.Navigator>
