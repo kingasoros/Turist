@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity } from 'react-native';
 import BASE_URL from './config';
+import { useNavigation } from '@react-navigation/native';
 
 const ToursScreen = () => {
   const [tours, setTours] = useState([]);
@@ -40,10 +41,13 @@ const ToursScreen = () => {
       .finally(() => setLoading(false));    
   }, []);
 
+  const [coordinates, setCoordinates] = useState([]); // állapot koordináták tárolására
+
+  // A komponensben
+  const navigation = useNavigation();
+
   const startTour = (attractions) => {
     const addresses = attractions.map(attraction => attraction.address);
-
-    console.log("Küldött JSON:", JSON.stringify({ addresses })); // Ellenőrzésre
 
     fetch(`${BASE_URL}/Turist_MobilApp/screens/Map.php`, {
       method: 'POST',
@@ -52,15 +56,15 @@ const ToursScreen = () => {
       },
       body: JSON.stringify({ addresses }),
     })
-    .then(response => response.text()) // Váltás text módra
-    .then(text => {
-      console.log("Szerver válasz:", text);
-      return JSON.parse(text); // Kézi JSON parse, ha esetleg formátumhiba van
-    })
+    .then(response => response.json())
     .then(data => {
-      if (data.success) {
-        Alert.alert('Siker', 'Az útvonal sikeresen elküldve.');
+      if (data.success && data.coordinates) {
+        console.log("Visszakapott koordináták:", data.coordinates);
+        
+        // Navigálás a MapScreen-re, és a koordináták átadása
+        navigation.navigate("Map", { coordinates: data.coordinates });
       } else {
+        console.log('Hiba történt:', data.message);
         Alert.alert('Hiba', data.message || 'Ismeretlen hiba történt.');
       }
     })
@@ -68,7 +72,6 @@ const ToursScreen = () => {
       console.error('Hálózati hiba:', error);
       Alert.alert('Hálózati hiba', error.message);
     });
-
   };
 
   const renderAttractions = (attractions) => {

@@ -10,14 +10,20 @@ const MapScreen = () => {
   const GOOGLE_MAPS_APIKEY = 'AIzaSyDVSOhkMOeIE1WAx1ifwwpsuKEVCnyYk2Q';
 
   // Navigáció indítása Google Maps alkalmazásban
-  const startNavigation = () => {
-    const url = Platform.select({
-      ios: `maps://app?saddr=${origin.latitude},${origin.longitude}&daddr=${destination.latitude},${destination.longitude}&directionsmode=driving`,
-      android: `google.navigation:q=${destination.latitude},${destination.longitude}&mode=d`
-    });
+  // const startNavigation = () => {
+  //   const url = Platform.select({
+  //     ios: `maps://app?saddr=${origin.latitude},${origin.longitude}&daddr=${destination.latitude},${destination.longitude}&directionsmode=driving`,
+  //     android: `google.navigation:q=${destination.latitude},${destination.longitude}&mode=d`
+  //   });
 
+  //   Linking.openURL(url).catch(err => console.error('Hiba a Google Maps megnyitásakor:', err));
+  // };
+  const startNavigation = () => {
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&travelmode=driving`;
+    
     Linking.openURL(url).catch(err => console.error('Hiba a Google Maps megnyitásakor:', err));
   };
+  
 
   return (
     <View style={styles.container}>

@@ -1,8 +1,8 @@
 <?php
 header('Content-Type: application/json');
 
-// Google Maps API kulcsod
-$apiKey = "YOUR_GOOGLE_MAPS_API_KEY";
+// Google Maps API kulcs
+$apiKey = "AIzaSyDVSOhkMOeIE1WAx1ifwwpsuKEVCnyYk2Q";
 
 // JSON adat beolvasása
 $input = file_get_contents("php://input");
@@ -28,7 +28,12 @@ function getCoordinates($address, $apiKey) {
     $formattedAddress = urlencode($address);
     $url = "https://maps.googleapis.com/maps/api/geocode/json?address={$formattedAddress}&key={$apiKey}";
 
-    $response = file_get_contents($url);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
+
     $json = json_decode($response, true);
 
     if ($json['status'] === 'OK') {
@@ -51,10 +56,9 @@ foreach ($data['addresses'] as $address) {
     ];
 }
 
-// Visszaküldjük a koordinátákat JSON formátumban
+// **Válasz a ToursScreen.js-nek (koordináták visszaküldése)**
 echo json_encode([
     'success' => true,
-    'message' => 'Coordinates retrieved successfully',
-    'data' => $coordinates
+    'coordinates' => $coordinates
 ]);
 ?>

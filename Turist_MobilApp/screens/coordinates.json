@@ -1,0 +1,14 @@
+[
+    {
+        "address": "Raichle utca 4.",
+        "coordinates": {
+            "error": "Failed to geocode: REQUEST_DENIED"
+        }
+    },
+    {
+        "address": "Zsinag\u00f3ga t\u00e9r",
+        "coordinates": {
+            "error": "Failed to geocode: REQUEST_DENIED"
+        }
+    }
+]
