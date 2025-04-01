@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity } from 'react-native';
 import BASE_URL from './config';
 
 const ToursScreen = () => {
@@ -40,6 +40,37 @@ const ToursScreen = () => {
       .finally(() => setLoading(false));    
   }, []);
 
+  const startTour = (attractions) => {
+    const addresses = attractions.map(attraction => attraction.address);
+
+    console.log("Küldött JSON:", JSON.stringify({ addresses })); // Ellenőrzésre
+
+    fetch(`${BASE_URL}/Turist_MobilApp/screens/Map.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ addresses }),
+    })
+    .then(response => response.text()) // Váltás text módra
+    .then(text => {
+      console.log("Szerver válasz:", text);
+      return JSON.parse(text); // Kézi JSON parse, ha esetleg formátumhiba van
+    })
+    .then(data => {
+      if (data.success) {
+        Alert.alert('Siker', 'Az útvonal sikeresen elküldve.');
+      } else {
+        Alert.alert('Hiba', data.message || 'Ismeretlen hiba történt.');
+      }
+    })
+    .catch(error => {
+      console.error('Hálózati hiba:', error);
+      Alert.alert('Hálózati hiba', error.message);
+    });
+
+  };
+
   const renderAttractions = (attractions) => {
     if (attractions && attractions.length > 0) {
       return attractions.map((attraction, index) => (
@@ -48,10 +79,6 @@ const ToursScreen = () => {
           <Text style={styles.attractionText}>Név: {attraction.name || 'Nincs név'}</Text>
           <Text style={styles.attractionText}>Leírás: {attraction.description || 'Nincs leírás'}</Text>
           <Text style={styles.attractionText}>Cím: {attraction.address || 'Nincs cím'}</Text>
-          <Text style={styles.attractionText}>Létrehozta: {attraction.created_by || 'Nincs adat'}</Text>
-          <Text style={styles.attractionText}>Létrehozva: {attraction.created_at || 'Nincs adat'}</Text>
-          <Text style={styles.attractionText}>Típus: {attraction.type || 'Nincs típus'}</Text>
-          <Text style={styles.attractionText}>Érdeklődés: {attraction.interest || 'Nincs adat'}</Text>
           <Image source={{ uri: attraction.image }} style={styles.image} />
         </View>
       ));
@@ -72,11 +99,12 @@ const ToursScreen = () => {
             <View style={styles.tourCard}>
               <Text style={styles.tourName}>{item.tour_name}</Text>
               <Text style={styles.tourDescription}>{item.tour_description}</Text>
-              <Text style={styles.startDate}>
-                {item.start_date} - {item.end_date}
-              </Text>
+              <Text style={styles.startDate}>{item.start_date} - {item.end_date}</Text>
               <Text style={styles.tourPrice}>Ár: {item.price} HUF</Text>
               <View style={styles.attrContainer}>{renderAttractions(item.attractions)}</View>
+              <TouchableOpacity style={styles.startButton} onPress={() => startTour(item.attractions)}>
+                <Text style={styles.buttonText}>Indítás</Text>
+              </TouchableOpacity>
             </View>
           )}
         />
@@ -90,27 +118,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#3b5147',
     padding: 16,
-  },
-  attractionCard: {
-    marginBottom: 10,
-    padding: 8,
-    backgroundColor: '#9f9f9f',
-    borderRadius: 5,
-  },
-  attractionText: {
-    fontSize: 14,
-    color: '#000',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 20,
-  },
-  loadingText: {
-    fontSize: 18,
-    color: '#aaa',
-    marginBottom: 20,
   },
   tourCard: {
     backgroundColor: '#f9f9f9',
@@ -127,22 +134,27 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#3b5147',
   },
-  tourDescription: {
+  attractionCard: {
+    marginBottom: 10,
+    padding: 8,
+    backgroundColor: '#9f9f9f',
+    borderRadius: 5,
+  },
+  attractionText: {
     fontSize: 14,
-    color: '#555',
-    marginBottom: 10,
+    color: '#000',
   },
-  tourPrice: {
-    fontSize: 16,
-    color: '#3b5147',
-    marginBottom: 10,
-  },
-  image: {
-    width: 200,
-    height: 150,
-    resizeMode: 'cover',
-    borderRadius: 10,
+  startButton: {
     marginTop: 10,
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
