@@ -1,5 +1,6 @@
-import React from 'react';
-import { StyleSheet, View, Button, Platform, Alert, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Button, Platform, Alert, Text, ActivityIndicator } from 'react-native';
+import * as Location from 'expo-location';
 import * as Linking from 'expo-linking';
 import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -9,36 +10,63 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyDVSOhkMOeIE1WAx1ifwwpsuKEVCnyYk2Q';
 
 const MapScreen = () => {
   const route = useRoute();
-  const { coordinates } = route.params || { coordinates: [] }; // ✅ Helyes változónév
+  const { coordinates } = route.params || { coordinates: [] };
+  
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  console.log("Kapott koordináták:", coordinates);
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Hozzáférési hiba', 'Engedély szükséges a helymeghatározáshoz.');
+        setLoading(false);
+        return;
+      }
 
-  if (!coordinates.length) {
+      let location = await Location.getCurrentPositionAsync({});
+      setCurrentLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+
+      setLoading(false);
+    })();
+  }, []);
+
+  if (loading) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Nincsenek elérhető koordináták!</Text>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Helyzet betöltése...</Text>
       </View>
     );
   }
 
-  // Átalakítjuk a koordinátákat a megfelelő formátumba
+  if (!currentLocation) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Nem sikerült betölteni az aktuális helyzetet.</Text>
+      </View>
+    );
+  }
+
   const formattedCoords = coordinates.map(coord => ({
     latitude: coord.coordinates.lat,
     longitude: coord.coordinates.lng
   }));
 
-  const origin = formattedCoords.length > 0 ? formattedCoords[0] : null;
-  const destination = formattedCoords.length > 1 ? formattedCoords[formattedCoords.length - 1] : null;
+  const allPoints = [currentLocation, ...formattedCoords];
 
   const startNavigation = () => {
-    if (!origin || !destination) {
-      Alert.alert("Hiba", "Nincsenek megfelelő koordináták a navigációhoz.");
+    if (allPoints.length < 2) {
+      Alert.alert("Hiba", "Nincsenek megfelelő pontok a navigációhoz.");
       return;
     }
 
     const url = Platform.select({
-      ios: `maps://app?saddr=${origin.latitude},${origin.longitude}&daddr=${destination.latitude},${destination.longitude}&directionsmode=driving`,
-      android: `google.navigation:q=${destination.latitude},${destination.longitude}&mode=d`
+      ios: `maps://app?saddr=${allPoints[0].latitude},${allPoints[0].longitude}&daddr=${allPoints[1].latitude},${allPoints[1].longitude}&directionsmode=driving`,
+      android: `google.navigation:q=${allPoints[1].latitude},${allPoints[1].longitude}&mode=d`
     });
 
     Linking.openURL(url).catch(err => console.error('Hiba a Google Maps megnyitásakor:', err));
@@ -49,21 +77,25 @@ const MapScreen = () => {
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: origin.latitude,
-          longitude: origin.longitude,
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
           latitudeDelta: 0.05,
           longitudeDelta: 0.05,
         }}
       >
-        {formattedCoords.map((coord, index) => (
-          <Marker key={index} coordinate={coord} title={`Helyszín ${index + 1}`} />
+        {allPoints.map((coord, index) => (
+          <Marker 
+            key={index} 
+            coordinate={coord} 
+            title={index === 0 ? "Jelenlegi helyzet" : `Helyszín ${index}`} 
+          />
         ))}
 
-        {origin && destination && (
+        {allPoints.length > 1 && (
           <MapViewDirections
-            origin={origin}
-            destination={destination}
-            waypoints={formattedCoords.length > 2 ? formattedCoords.slice(1, -1) : []}
+            origin={allPoints[0]}
+            destination={allPoints[allPoints.length - 1]}
+            waypoints={allPoints.length > 2 ? allPoints.slice(1, -1) : []}
             apikey={GOOGLE_MAPS_APIKEY}
             strokeWidth={5}
             strokeColor="blue"
@@ -110,6 +142,11 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     marginTop: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
