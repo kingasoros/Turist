@@ -83,7 +83,6 @@ foreach ($tours2 as $tour) {
 
 <x-app-layout>
     <x-slot name="header">
-        <div class="header-container flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Túrák') }}
             </h2>

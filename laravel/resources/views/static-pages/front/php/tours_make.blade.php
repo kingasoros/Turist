@@ -49,6 +49,7 @@ $stmt = $conn->prepare("
         t.start_date,
         t.end_date,
         t.created_at,
+        t.favorites_count,
         a.name AS attraction_name,
         a.description AS attraction_description,
         a.image AS attraction_image,
@@ -74,6 +75,7 @@ foreach ($tours as $tour) {
             'tour_name' => $tour['tour_name'],
             'tour_description' => $tour['tour_description'],
             'created_at' => $tour['created_at'],
+            'favorites_count' => $tour['favorites_count'],
             'start_date' => $tour['start_date'],
             'end_date' => $tour['end_date'],
             'attractions' => []
@@ -89,6 +91,21 @@ foreach ($tours as $tour) {
             'closed' => $tour['attraction_closed']
         ];
     }
+}
+
+$stmt = $conn->prepare("SELECT * FROM tours");
+$stmt->execute();
+$tours2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+foreach ($tours2 as $tour) {
+    // Megszámoljuk, hogy hányszor szerepel a tour_id a turist_favorites táblában
+    $stmt = $conn->prepare('SELECT COUNT(*) FROM turist_favorites WHERE tour_id = :tour_id');
+    $stmt->execute(['tour_id' => $tour['tour_id']]);
+    $favoritesCount = $stmt->fetchColumn();
+
+    // Frissítjük a tours táblát
+    $updateStmt = $conn->prepare('UPDATE tours SET favorites_count = :favorites_count WHERE tour_id = :tour_id');
+    $updateStmt->execute(['favorites_count' => $favoritesCount, 'tour_id' => $tour['tour_id']]);
 }
 ?>
 
@@ -210,13 +227,23 @@ foreach ($tours as $tour) {
                         <?php } else { ?>
                             <p class="text-muted">Nincs látványosság hozzáadva ehhez a túrához.</p>
                         <?php } ?>
-                        <div class="favorites_buttons">
-                            <form action="{{ route('tours.destroy', $tour['id']) }}" method="POST" onsubmit="return confirm('Biztos, hogy törölni szeretnéd ezt a túrát?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger mt-3">Törlés</button>
-                            </form>
-                        </div>
+                        <form method="POST" action="{{ url('/add-to-favorites') }}">
+                            @csrf <!-- Laravel CSRF token -->
+                            <input type="hidden" name="tour_id" value="{{ $tour['id'] }}"> 
+                            <input type="hidden" name="user_id" value="{{ Auth::id() }}"> 
+                            
+                            <button type="submit" class="btn btn-dark mt-3" 
+                                @if(\App\Models\Tour::find($tour['id'])->isFavorite(Auth::id())) disabled @endif>
+                                @if(\App\Models\Tour::find($tour['id'])->isFavorite(Auth::id())) 
+                                    Kedvencek között
+                                @else
+                                    Tetszik
+                                @endif
+                            </button>
+                            <button type="submit" class="btn btn-dark mt-3">
+                                <?= htmlspecialchars($tour['favorites_count']) ?> Kedvelés
+                            </button>
+                        </form>
                     </div>
                     <div class="card-footer text-center py-2">
                         <small><?= date('Y-m-d', strtotime($tour['created_at'] ?? 'now')) ?></small>
