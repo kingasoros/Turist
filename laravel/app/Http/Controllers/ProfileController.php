@@ -48,6 +48,9 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        \DB::table('turist_favorites')->where('id', $user->id)->delete();
+        \DB::table('subscribe')->where('id', $user->id)->delete();
+
         Auth::logout();
 
         $user->delete();
@@ -57,4 +60,5 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
 }

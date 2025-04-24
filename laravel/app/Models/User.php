@@ -37,4 +37,9 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function subscribes()
+    {
+        return $this->hasMany(\App\Models\Subscribe::class, 'user_id');
+    }
+
 }

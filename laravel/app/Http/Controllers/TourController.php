@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Tour;
 use App\Models\Attraction;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TourCreated;
 
 
 class TourController extends Controller
@@ -41,9 +43,11 @@ class TourController extends Controller
             }
         }
 
+        Mail::to('kingasoros@gmail.com')->send(new TourCreated($validated));
+
         return redirect()->route('tours_make')->with('success', 'Túra sikeresen létrehozva!');
     }
-
+    
     public function destroy(Tour $tour)
     {
         $tour->attractions()->detach();

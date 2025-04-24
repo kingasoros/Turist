@@ -9,30 +9,31 @@
         </p>
     </header>
     
-    <form method="post" action="" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.sub-solution') }}" class="mt-6 space-y-6">
         @csrf
     
         <div>
             <x-input-label :value="__('Select Cities')" />
-
+            
             {{-- Közvetlen adatlekérés Blade-ben --}}
             @php
                 $cities = DB::table('cities')->orderBy('city_name')->get();
             @endphp
     
             @foreach($cities as $city)
-                <div class="flex items-center mt-2">
-                    <input
-                        type="checkbox"
-                        id="city_{{ $city->city_id }}"
-                        name="selected_cities[]"
-                        value="{{ $city->city_id }}"
-                        class="text-indigo-600 focus:ring-indigo-500 border-gray-300"
-                    >
-                    <label for="city_{{ $city->city_id }}" class="ml-2 text-sm dark:text-gray-400">
-                        {{ $city->city_name }}, {{ $city->country_name }} ({{ $city->zip_code }})
-                    </label>
-                </div>
+            <div class="flex items-center mt-2">
+                <input
+                    type="checkbox"
+                    id="city_{{ $city->city_id }}"
+                    name="selected_cities[]"
+                    value="{{ $city->city_id }}"
+                    class="text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                    @if(auth()->user()->subscribes->contains('city_id', $city->city_id)) checked @endif
+                >
+                <label for="city_{{ $city->city_id }}" class="ml-2 text-sm dark:text-gray-400">
+                    {{ $city->city_name }}, {{ $city->country_name }} ({{ $city->zip_code }})
+                </label>
+            </div>
             @endforeach
     
             <x-input-error :messages="$errors->get('selected_cities')" class="mt-2" />
@@ -42,4 +43,10 @@
             <x-primary-button>{{ __('Subscribe') }}</x-primary-button>
         </div>
     </form>
+    @if(session('success'))
+        <div class="alert alert-success dark:text-gray-400">
+            {{ session('success') }}
+        </div>
+    @endif
+
 </section>

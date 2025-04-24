@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Http\Middleware\CheckIfUserCanRegister;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\DB;
 
 
@@ -30,6 +31,9 @@ require __DIR__.'/auth.php';
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::post('/profile/subscribe', [SubscriptionController::class, 'subscribeToCities'])->name('profile.sub-solution');
+
 
 Route::get('/', function () {
     return view('welcome'); 
