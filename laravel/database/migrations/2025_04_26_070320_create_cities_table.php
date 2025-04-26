@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('cities', function (Blueprint $table) {
+            $table->increments('city_id'); // AUTO_INCREMENT id mező
+            $table->string('country_name');
+            $table->string('city_name');
+            $table->string('zip_code', 20)->nullable(); // ZIP kód nullable
+            $table->timestamp('created_at')->useCurrent(); // Automatikusan a jelenlegi idő
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('cities');
+    }
+};

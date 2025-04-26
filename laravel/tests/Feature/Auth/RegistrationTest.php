@@ -1,6 +1,7 @@
 <?php
 
 use App\Providers\RouteServiceProvider;
+use App\Models\User;
 
 test('registration screen can be rendered', function () {
     $response = $this->get('/register');
@@ -16,6 +17,10 @@ test('new users can register', function () {
         'password_confirmation' => 'password',
     ]);
 
-    $this->assertAuthenticated();
-    $response->assertRedirect(RouteServiceProvider::HOME);
+    $user = User::where('email', 'test@example.com')->first();
+    $this->assertNotNull($user);  
+
+    $this->assertEquals(0, $user->is_active); 
+
 });
+

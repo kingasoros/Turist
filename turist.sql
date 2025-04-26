@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2025. Ápr 07. 19:36
+-- Létrehozás ideje: 2025. Ápr 24. 12:23
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.0.30
 
@@ -533,7 +533,13 @@ INSERT INTO `log` (`id_log`, `user_agent`, `ip_address`, `country`, `date_time`,
 (353, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', '119.14.26.0', 'Taiwan', '2025-03-31 18:12:23', 'computer', 0, 'KE-ING'),
 (354, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', '119.14.26.0', 'Taiwan', '2025-03-31 18:53:53', 'computer', 0, 'KE-ING'),
 (355, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', '119.14.26.0', 'Taiwan', '2025-04-01 12:47:18', 'computer', 0, 'KE-ING'),
-(356, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', '119.14.26.0', 'Taiwan', '2025-04-02 09:59:55', 'computer', 0, 'KE-ING');
+(356, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', '119.14.26.0', 'Taiwan', '2025-04-02 09:59:55', 'computer', 0, 'KE-ING'),
+(357, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', '119.14.26.0', 'Taiwan', '2025-04-22 17:28:37', 'computer', 0, 'KE-ING'),
+(358, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', '119.14.26.0', 'Taiwan', '2025-04-22 17:28:52', 'computer', 0, 'KE-ING'),
+(359, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', '119.14.26.0', 'Taiwan', '2025-04-23 13:48:17', 'computer', 0, 'KE-ING'),
+(360, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', '119.14.26.0', 'Taiwan', '2025-04-23 13:59:03', 'computer', 0, 'KE-ING'),
+(361, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', '119.14.26.0', 'Taiwan', '2025-04-24 06:40:53', 'computer', 0, 'KE-ING'),
+(362, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', '119.14.26.0', 'Taiwan', '2025-04-24 08:37:57', 'computer', 0, 'KE-ING');
 
 -- --------------------------------------------------------
 
@@ -565,6 +571,25 @@ CREATE TABLE `password_resets` (
   `token` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `subscribe`
+--
+
+CREATE TABLE `subscribe` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `city_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- A tábla adatainak kiíratása `subscribe`
+--
+
+INSERT INTO `subscribe` (`id`, `user_id`, `city_id`) VALUES
+(10, 38, 5);
 
 -- --------------------------------------------------------
 
@@ -755,6 +780,14 @@ ALTER TABLE `password_resets`
   ADD PRIMARY KEY (`email`);
 
 --
+-- A tábla indexei `subscribe`
+--
+ALTER TABLE `subscribe`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `city_id` (`city_id`);
+
+--
 -- A tábla indexei `tours`
 --
 ALTER TABLE `tours`
@@ -815,13 +848,19 @@ ALTER TABLE `filter_search_statistics`
 -- AUTO_INCREMENT a táblához `log`
 --
 ALTER TABLE `log`
-  MODIFY `id_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=357;
+  MODIFY `id_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=363;
 
 --
 -- AUTO_INCREMENT a táblához `migrations`
 --
 ALTER TABLE `migrations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT a táblához `subscribe`
+--
+ALTER TABLE `subscribe`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT a táblához `tours`
@@ -839,7 +878,7 @@ ALTER TABLE `tour_attractions`
 -- AUTO_INCREMENT a táblához `turist_favorites`
 --
 ALTER TABLE `turist_favorites`
-  MODIFY `favorite_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `favorite_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT a táblához `users`
@@ -850,6 +889,13 @@ ALTER TABLE `users`
 --
 -- Megkötések a kiírt táblákhoz
 --
+
+--
+-- Megkötések a táblához `subscribe`
+--
+ALTER TABLE `subscribe`
+  ADD CONSTRAINT `subscribe_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `subscribe_ibfk_2` FOREIGN KEY (`city_id`) REFERENCES `cities` (`city_id`) ON DELETE CASCADE;
 
 --
 -- Megkötések a táblához `tour_attractions`

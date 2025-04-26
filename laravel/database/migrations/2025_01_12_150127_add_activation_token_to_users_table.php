@@ -6,27 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
+    public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('activation_token', 64)->nullable();
-        });
+        if (! Schema::hasColumn('users', 'activation_token')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('activation_token', 64)->nullable();
+            });
+        }
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
+    public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('activation_token');
-        });
+        if (Schema::hasColumn('users', 'activation_token')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('activation_token');
+            });
+        }
     }
 };

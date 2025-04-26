@@ -10,11 +10,15 @@ test('login screen can be rendered', function () {
 });
 
 test('users can authenticate using the login screen', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create([
+        'password' => bcrypt('Francia.1'),
+        'is_active' => 1,
+        'role' => 1,
+    ]);
 
     $response = $this->post('/login', [
         'email' => $user->email,
-        'password' => 'password',
+        'password' => 'Francia.1',
     ]);
 
     $this->assertAuthenticated();
@@ -22,7 +26,9 @@ test('users can authenticate using the login screen', function () {
 });
 
 test('users can not authenticate with invalid password', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create([
+        'is_active' => 1,
+    ]);
 
     $this->post('/login', [
         'email' => $user->email,
